@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>P5 Training Status Dashboard</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Sarabun', 'Prompt', -apple-system, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh; padding: 20px; color: #333; }
+  .container { max-width: 1200px; margin: 0 auto; }
+  header { background: white; border-radius: 16px; padding: 24px 28px;
+    margin-bottom: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+  h1 { color: #4c51bf; font-size: 1.8em; margin-bottom: 8px; }
+  .subtitle { color: #718096; font-size: 0.95em; }
+  .updated { display: inline-block; background: #edf2f7; color: #4a5568;
+    padding: 4px 12px; border-radius: 12px; font-size: 0.85em; margin-top: 8px; }
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px; margin-bottom: 20px; }
+  .stat-card { background: white; border-radius: 12px; padding: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  .stat-card .label { color: #718096; font-size: 0.85em; margin-bottom: 6px; }
+  .stat-card .value { font-size: 2em; font-weight: 700; color: #2d3748; }
+  .stat-card .sub { color: #a0aec0; font-size: 0.8em; margin-top: 4px; }
+  .stat-card.good { border-left: 4px solid #48bb78; }
+  .stat-card.warn { border-left: 4px solid #ed8936; }
+  .stat-card.bad  { border-left: 4px solid #e53e3e; }
+  .stat-card.info { border-left: 4px solid #4299e1; }
+  .panel { background: white; border-radius: 16px; padding: 24px;
+    margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  .panel h2 { color: #2d3748; font-size: 1.2em; margin-bottom: 16px;
+    padding-bottom: 10px; border-bottom: 2px solid #edf2f7; }
+  .company-row { display: grid; grid-template-columns: 80px 1fr 1fr 1fr;
+    gap: 12px; align-items: center; padding: 14px 0; border-bottom: 1px solid #f1f5f9; }
+  .company-row:last-child { border-bottom: none; }
+  .company-name { font-weight: 600; color: #2d3748; font-size: 1.05em; }
+  .company-name .members { display: block; color: #a0aec0; font-size: 0.75em;
+    font-weight: 400; margin-top: 2px; }
+  .bar-wrap { display: flex; align-items: center; gap: 8px; }
+  .bar-bg { flex: 1; background: #edf2f7; height: 24px; border-radius: 12px;
+    overflow: hidden; position: relative; }
+  .bar-fill { height: 100%; border-radius: 12px; transition: width 0.6s ease;
+    display: flex; align-items: center; justify-content: flex-end;
+    padding-right: 8px; color: white; font-size: 0.8em; font-weight: 600; }
+  .bar-fill.good { background: linear-gradient(90deg, #48bb78, #38a169); }
+  .bar-fill.warn { background: linear-gradient(90deg, #ed8936, #dd6b20); }
+  .bar-fill.bad  { background: linear-gradient(90deg, #fc8181, #e53e3e); }
+  .bar-fill.zero { background: #cbd5e0; width: 100% !important; }
+  .status-badge { display: inline-block; padding: 4px 10px; border-radius: 12px;
+    font-size: 0.8em; font-weight: 600; }
+  .status-badge.good { background: #c6f6d5; color: #22543d; }
+  .status-badge.warn { background: #feebc8; color: #7c2d12; }
+  .status-badge.bad  { background: #fed7d7; color: #742a2a; }
+  .status-badge.zero { background: #e2e8f0; color: #4a5568; }
+  .alert { padding: 14px 18px; border-radius: 10px; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 12px; }
+  .alert .icon { font-size: 1.5em; }
+  .alert .text { flex: 1; }
+  .alert .text strong { display: block; margin-bottom: 2px; }
+  .alert .text small { color: #4a5568; font-size: 0.85em; }
+  .alert.danger { background: #fff5f5; border-left: 4px solid #e53e3e; }
+  .alert.warning { background: #fffaf0; border-left: 4px solid #ed8936; }
+  .alert.success { background: #f0fff4; border-left: 4px solid #48bb78; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #edf2f7; }
+  th { background: #f7fafc; color: #4a5568; font-size: 0.85em;
+    text-transform: uppercase; letter-spacing: 0.5px; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .footer { text-align: center; color: rgba(255,255,255,0.8);
+    font-size: 0.85em; margin-top: 20px; padding: 12px; }
+  @media (max-width: 768px) {
+    body { padding: 12px; } h1 { font-size: 1.4em; }
+    .company-row { grid-template-columns: 1fr; gap: 8px; padding: 12px;
+      background: #f7fafc; border-radius: 8px; margin-bottom: 8px; border-bottom: none; }
+    .company-name { display: flex; justify-content: space-between; align-items: center; }
+    th, td { padding: 8px 6px; font-size: 0.85em; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>📊 P5 Training Status Dashboard</h1>
+    <div class="subtitle">สรุปรายงานวัดผลสถานการณ์ฝึกอบรม ณ ปัจจุบัน</div>
+    <div class="updated">🔄 อัปเดตล่าสุด: 12 มิถุนายน 2026 เวลา 15:47 น. | แหล่งข้อมูล: P5 - PlanTraining 69 (Google Sheets)</div>
+  </header>
+
+  <div class="summary-grid">
+    <div class="stat-card info">
+      <div class="label">👥 สมาชิกรวม 6 บริษัท</div>
+      <div class="value">359</div>
+      <div class="sub">คน (ทั้งองค์กร)</div>
+    </div>
+    <div class="stat-card warn">
+      <div class="label">📚 % ครบ 44 หน่วยกิต เฉลี่ย</div>
+      <div class="value">83.84%</div>
+      <div class="sub">301/359 คน | เป้าหมาย: 100% (สิ้นปี)</div>
+    </div>
+    <div class="stat-card good">
+      <div class="label">🎓 % GPA ผ่าน 3.5 เฉลี่ย</div>
+      <div class="value">95.26%</div>
+      <div class="sub">342/359 คน | เป้าหมาย: 100%</div>
+    </div>
+    <div class="stat-card bad">
+      <div class="label">⚠️ บริษัทที่ต้องเร่ง</div>
+      <div class="value">3 / 6</div>
+      <div class="sub">ต่ำกว่าเกณฑ์ 90%</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>🚨 สถานการณ์ที่ต้องติดตาม</h2>
+    <div class="alert success">
+  <span class="icon">✅</span>
+  <div class="text"><strong>PMSg — ดีเยี่ยม</strong>
+  <small>หน่วยกิต 99.42% | GPA 95.38%</small></div></div>
+<div class="alert success">
+  <span class="icon">✅</span>
+  <div class="text"><strong>AAMg — ดีเยี่ยม</strong>
+  <small>หน่วยกิต 98.00% | GPA 100.00%</small></div></div>
+<div class="alert danger">
+  <span class="icon">⚠️</span>
+  <div class="text"><strong>CPDg — เสี่ยงสูง</strong>
+  <small>หน่วยกิต 45.45% (เหลือ 18/33 คน) | GPA 78.79% | ต้องเร่งทั้ง 2 ด้าน</small></div></div>
+<div class="alert danger">
+  <span class="icon">⚠️</span>
+  <div class="text"><strong>RPLCg — เสี่ยงสูง</strong>
+  <small>หน่วยกิต 41.94% (เหลือ 18/31 คน) | GPA 100.00% | ต้องเร่งทั้ง 2 ด้าน</small></div></div>
+<div class="alert danger">
+  <span class="icon">🚨</span>
+  <div class="text"><strong>RAFCOg — วิกฤต!</strong>
+  <small>หน่วยกิต 13.64% (เหลือ 19/22 คน) | GPA 90.91% | ต้องเร่งแผนอบรมทันที</small></div></div>
+  </div>
+
+  <div class="panel">
+    <h2>📚 เป้าหมายหน่วยกิตประจำปี (44 หน่วยกิต/คน)</h2>
+    <div class="company-row" style="background:#f7fafc;border-radius:8px;margin-bottom:6px;font-size:0.8em;color:#718096;">
+      <div>บริษัท</div><div>% ครบ</div><div>% ยังไม่ครบ</div><div>สถานะ</div>
+    </div>
+    <div class="company-row">
+  <div class="company-name">PMSg<span class="members">173 คน</span></div>
+  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill good" style="width:99.42%">99.42%</div></div></div>
+  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill bad" style="width:0.58%">0.58%</div></div></div>
+  <div><span class="status-badge good">✅ ดี</span></div>
+</div>
+<div class="company-row">
+  <div class="company-name">AAMg<span class="members">100 คน</span></div>
+  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill good" style="width:98.00%">98.00%</div></div></div>
+  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill bad" style="width:2.00%">2.00%</div></div></div>
+  <div><span class="status-badge good">✅ ดี</span></div>
+</div>
+<div class="company-row">
+  <div class="company-name">CPDg<span class="members">33 คน</span></div>
+  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill bad" style="width:45.45%">45.45%</div></div></div>
+  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill bad" style="width:54.55%">54.55%</div></div></div>
+  <div><span class="status-badge bad">🚨 วิกฤต</span></div>
+</div>
+<div class="company-row">
+  <div class="company-name">RPLCg<span class="members">31 คน</span></div>
+  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill bad" style="width:41.94%">41.94%</div></div></div>
+  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill bad" style="width:58.06%">58.06%</div></div></div>
+  <div><span class="status-badge bad">🚨 วิกฤต</span></div>
+</div>
+<div class="company-row">
+  <div class="company-name">RAFCOg<span class="members">22 คน</span></div>
+  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill bad" style="width:13.64%">13.64%</div></div></div>
+  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill bad" style="width:86.36%">86.36%</div></div></div>
+  <div><span class="status-badge bad">🚨 วิกฤต</span></div>
+</div>
+<div class="company-row">
+  <div class="company-name">PGHg<span class="members">0 คน</span></div>
+  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill zero" style="width:0.01%">0.00%</div></div></div>
+  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill bad" style="width:100.00%">100.00%</div></div></div>
+  <div><span class="status-badge zero">ยังไม่เริ่ม</span></div>
+</div>
+  </div>
+
+  <div class="panel">
+    <h2>🎓 เป้าหมายเกรดเฉลี่ย (GPA ≥ 3.5)</h2>
+    <table>
+      <thead><tr>
+        <th>บริษัท</th><th class="num">สมาชิก</th>
+        <th class="num">GPA ผ่าน 3.5</th><th class="num">GPA ไม่ผ่าน</th>
+        <th class="num">% ผ่าน</th><th>สถานะ</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+  <td>PMSg</td><td class="num">173</td>
+  <td class="num">165</td><td class="num">8</td>
+  <td class="num">95.38%</td>
+  <td><span class="status-badge good">✅ ดี</span></td>
+</tr>
+<tr>
+  <td>AAMg</td><td class="num">100</td>
+  <td class="num">100</td><td class="num">0</td>
+  <td class="num">100.00%</td>
+  <td><span class="status-badge good">✅ ดี</span></td>
+</tr>
+<tr>
+  <td>CPDg</td><td class="num">33</td>
+  <td class="num">26</td><td class="num">7</td>
+  <td class="num">78.79%</td>
+  <td><span class="status-badge warn">⚠️ เสี่ยง</span></td>
+</tr>
+<tr>
+  <td>RPLCg</td><td class="num">31</td>
+  <td class="num">31</td><td class="num">0</td>
+  <td class="num">100.00%</td>
+  <td><span class="status-badge good">✅ ดี</span></td>
+</tr>
+<tr>
+  <td>RAFCOg</td><td class="num">22</td>
+  <td class="num">20</td><td class="num">2</td>
+  <td class="num">90.91%</td>
+  <td><span class="status-badge good">✅ ดี</span></td>
+</tr>
+<tr>
+  <td>PGHg</td><td class="num">0</td>
+  <td class="num">0</td><td class="num">0</td>
+  <td class="num">0.00%</td>
+  <td><span class="status-badge zero">ไม่มีข้อมูล</span></td>
+</tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel" style="background:#f7fafc;">
+    <h2>🔗 แหล่งข้อมูล &amp; การอัปเดต</h2>
+    <p style="color:#4a5568;line-height:1.8;">
+      📄 <strong>Google Sheet:</strong> <a href="https://docs.google.com/spreadsheets/d/15a8s_tLpuwBdIqJqwEv0be8Sy8162gnYti6kTggngh0/edit?gid=1104115053#gid=1104115053" target="_blank" style="color:#4299e1;">P5 - PlanTraining 69 (เปิดใน Google Sheets)</a><br>
+      📂 <strong>ไฟล์ Dashboard:</strong> <code>projects/p5-admin-pad/dashboard/index.html</code><br>
+      🔄 <strong>วิธีอัปเดต:</strong> รัน <code>bash projects/p5-admin-pad/dashboard/update.sh</code> หรือพิมพ์ "อัปเดต P5 Dashboard" ในแชท<br>
+      🛡️ <strong>ความปลอดภัย:</strong> อยู่ในโฟลเดอร์ <code>projects/p5-admin-pad/</code> (แยกจากงานพี่แนน) — ตามกฎ USERS_SEPARATION<br>
+      ⏰ <strong>Auto-update:</strong> 07:30 น. ทุกวัน (ผ่าน HEARTBEAT.md)
+    </p>
+  </div>
+
+  <div class="footer">
+    🐻 AliClaw · P5 Admin Pad · Auto-generated 12 มิถุนายน 2026 เวลา 15:47 น.
+  </div>
+</div>
+</body>
+</html>
