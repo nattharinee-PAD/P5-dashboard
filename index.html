@@ -3,242 +3,948 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>P5 Training Status Dashboard</title>
+<title>P5 ระบบพัฒนาบุคลากร PKG</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Sarabun', 'Prompt', -apple-system, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh; padding: 20px; color: #333; }
-  .container { max-width: 1200px; margin: 0 auto; }
-  header { background: white; border-radius: 16px; padding: 24px 28px;
-    margin-bottom: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
-  h1 { color: #4c51bf; font-size: 1.8em; margin-bottom: 8px; }
-  .subtitle { color: #718096; font-size: 0.95em; }
-  .updated { display: inline-block; background: #edf2f7; color: #4a5568;
-    padding: 4px 12px; border-radius: 12px; font-size: 0.85em; margin-top: 8px; }
-  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px; margin-bottom: 20px; }
-  .stat-card { background: white; border-radius: 12px; padding: 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-  .stat-card .label { color: #718096; font-size: 0.85em; margin-bottom: 6px; }
-  .stat-card .value { font-size: 2em; font-weight: 700; color: #2d3748; }
-  .stat-card .sub { color: #a0aec0; font-size: 0.8em; margin-top: 4px; }
-  .stat-card.good { border-left: 4px solid #48bb78; }
-  .stat-card.warn { border-left: 4px solid #ed8936; }
-  .stat-card.bad  { border-left: 4px solid #e53e3e; }
-  .stat-card.info { border-left: 4px solid #4299e1; }
-  .panel { background: white; border-radius: 16px; padding: 24px;
-    margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-  .panel h2 { color: #2d3748; font-size: 1.2em; margin-bottom: 16px;
-    padding-bottom: 10px; border-bottom: 2px solid #edf2f7; }
-  .company-row { display: grid; grid-template-columns: 80px 1fr 1fr 1fr;
-    gap: 12px; align-items: center; padding: 14px 0; border-bottom: 1px solid #f1f5f9; }
-  .company-row:last-child { border-bottom: none; }
-  .company-name { font-weight: 600; color: #2d3748; font-size: 1.05em; }
-  .company-name .members { display: block; color: #a0aec0; font-size: 0.75em;
-    font-weight: 400; margin-top: 2px; }
-  .bar-wrap { display: flex; align-items: center; gap: 8px; }
-  .bar-bg { flex: 1; background: #edf2f7; height: 24px; border-radius: 12px;
-    overflow: hidden; position: relative; }
-  .bar-fill { height: 100%; border-radius: 12px; transition: width 0.6s ease;
-    display: flex; align-items: center; justify-content: flex-end;
-    padding-right: 8px; color: white; font-size: 0.8em; font-weight: 600; }
-  .bar-fill.good { background: linear-gradient(90deg, #48bb78, #38a169); }
-  .bar-fill.warn { background: linear-gradient(90deg, #ed8936, #dd6b20); }
-  .bar-fill.bad  { background: linear-gradient(90deg, #fc8181, #e53e3e); }
-  .bar-fill.zero { background: #cbd5e0; width: 100% !important; }
-  .status-badge { display: inline-block; padding: 4px 10px; border-radius: 12px;
-    font-size: 0.8em; font-weight: 600; }
-  .status-badge.good { background: #c6f6d5; color: #22543d; }
-  .status-badge.warn { background: #feebc8; color: #7c2d12; }
-  .status-badge.bad  { background: #fed7d7; color: #742a2a; }
-  .status-badge.zero { background: #e2e8f0; color: #4a5568; }
-  .alert { padding: 14px 18px; border-radius: 10px; margin-bottom: 10px;
-    display: flex; align-items: center; gap: 12px; }
-  .alert .icon { font-size: 1.5em; }
-  .alert .text { flex: 1; }
-  .alert .text strong { display: block; margin-bottom: 2px; }
-  .alert .text small { color: #4a5568; font-size: 0.85em; }
-  .alert.danger { background: #fff5f5; border-left: 4px solid #e53e3e; }
-  .alert.warning { background: #fffaf0; border-left: 4px solid #ed8936; }
-  .alert.success { background: #f0fff4; border-left: 4px solid #48bb78; }
-  table { width: 100%; border-collapse: collapse; }
-  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #edf2f7; }
-  th { background: #f7fafc; color: #4a5568; font-size: 0.85em;
-    text-transform: uppercase; letter-spacing: 0.5px; }
-  td.num { text-align: right; font-variant-numeric: tabular-nums; }
-  .footer { text-align: center; color: rgba(255,255,255,0.8);
-    font-size: 0.85em; margin-top: 20px; padding: 12px; }
-  @media (max-width: 768px) {
-    body { padding: 12px; } h1 { font-size: 1.4em; }
-    .company-row { grid-template-columns: 1fr; gap: 8px; padding: 12px;
-      background: #f7fafc; border-radius: 8px; margin-bottom: 8px; border-bottom: none; }
-    .company-name { display: flex; justify-content: space-between; align-items: center; }
-    th, td { padding: 8px 6px; font-size: 0.85em; }
-  }
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* === CSS RESET (ทำเอง ไม่ใช้ Tailwind) === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+
+:root {
+  --bg-main: #0A0E1A;
+  --card-bg: rgba(255, 255, 255, 0.04);
+  --card-bg-solid: #161F30;
+  --border-slate: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(167, 139, 250, 0.4);
+  --text-primary: #FFFFFF;
+  --text-secondary: #94A3B8;
+  --text-mute: #64748B;
+  --neon-purple: #A78BFA;
+  --neon-cyan: #60A5FA;
+  --neon-magenta: #F472B6;
+  --neon-mint: #34D399;
+  --neon-purple-dim: rgba(167, 139, 250, 0.15);
+  --neon-cyan-dim: rgba(96, 165, 250, 0.15);
+  --neon-magenta-dim: rgba(244, 114, 182, 0.15);
+  --neon-mint-dim: rgba(52, 211, 153, 0.15);
+  --neon-yellow: #FACC15;
+  --neon-green: #10B981;
+}
+
+body {
+  font-family: 'Sarabun', 'Inter', sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-secondary);
+  position: relative;
+  overflow: hidden;
+}
+
+/* === Glow Effect (ม่วง + ฟ้า ที่มุมจอ) === */
+body::before {
+  content: '';
+  position: fixed;
+  top: -20%; left: -10%;
+  width: 70%; height: 70%;
+  background: radial-gradient(circle, rgba(167, 139, 250, 0.4), transparent 60%);
+  filter: blur(100px);
+  z-index: 0;
+  pointer-events: none;
+  animation: float1 18s ease-in-out infinite;
+}
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -20%; right: -10%;
+  width: 70%; height: 70%;
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.35), transparent 60%);
+  filter: blur(100px);
+  z-index: 0;
+  pointer-events: none;
+  animation: float2 22s ease-in-out infinite;
+}
+@keyframes float1 {
+  0%,100% { transform: translate(0,0); }
+  50% { transform: translate(5%, 4%); }
+}
+@keyframes float2 {
+  0%,100% { transform: translate(0,0); }
+  50% { transform: translate(-4%, -3%); }
+}
+
+/* === Layout === */
+.app {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* === Sidebar === */
+.sidebar {
+  width: 288px;
+  background: linear-gradient(180deg, #0F1729 0%, #0B111E 100%);
+  border-right: 1px solid var(--border-slate);
+  box-shadow: 4px 0 30px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  z-index: 10;
+}
+.sidebar-brand {
+  padding: 24px;
+  background: linear-gradient(90deg, rgba(180, 123, 255, 0.08), transparent);
+  border-bottom: 1px solid var(--border-slate);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo-p5-text {
+  font-size: 1.5em;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--neon-purple);
+  text-shadow: 0 0 20px rgba(180, 123, 255, 0.4);
+}
+.logo-subtitle {
+  font-size: 0.75em;
+  color: var(--text-mute);
+  margin-top: 4px;
+}
+.role-selector-wrap {
+  padding: 12px 24px;
+  background: rgba(11, 17, 30, 0.6);
+  border-bottom: 1px solid var(--border-slate);
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 0.75em;
+}
+.role-selector-wrap > span { color: var(--text-mute); }
+.role-selector-wrap select {
+  background: rgba(22, 31, 48, 0.8);
+  border: 1px solid var(--border-slate);
+  color: var(--text-primary);
+  border-radius: 6px;
+  padding: 4px 8px;
+  outline: none;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-family: inherit;
+}
+.role-selector-wrap select option {
+  background: #0F1729;
+  color: var(--text-primary);
+}
+
+.sidebar-menu {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+.sidebar-menu::-webkit-scrollbar { width: 6px; }
+.sidebar-menu::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.2); border-radius: 3px; }
+
+.menu-section-title {
+  color: var(--text-mute);
+  letter-spacing: 0.1em;
+  padding: 8px 16px;
+  margin-top: 8px;
+  font-size: 0.7em;
+  font-weight: 700;
+  text-transform: uppercase;
+  display: flex; align-items: center;
+}
+.menu-section-title i { margin-right: 8px; }
+
+.menu-item {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-left: 3px solid transparent;
+  color: var(--text-secondary);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.95em;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex; align-items: center;
+}
+.menu-item i.fa-solid { width: 24px; text-align: center; margin-right: 12px; font-size: 1.05em; }
+.menu-item:hover {
+  background: rgba(180, 123, 255, 0.06);
+  color: var(--text-primary);
+}
+.menu-item.active {
+  background: linear-gradient(90deg, rgba(180, 123, 255, 0.15), rgba(180, 123, 255, 0.04));
+  color: var(--neon-purple);
+  border-left-color: var(--neon-purple);
+  font-weight: 600;
+  box-shadow: inset 0 0 20px rgba(180, 123, 255, 0.05);
+}
+
+.menu-subitem {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--text-mute);
+  padding: 8px 16px 8px 48px;
+  border-radius: 6px;
+  font-size: 0.85em;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex; align-items: center;
+}
+.menu-subitem:hover {
+  color: var(--text-primary);
+  background: rgba(180, 123, 255, 0.05);
+}
+.menu-subitem.active {
+  color: var(--neon-cyan);
+  background: rgba(0, 224, 255, 0.08);
+  font-weight: 600;
+}
+.menu-subitem .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  margin-right: 12px;
+  opacity: 0.6;
+}
+.menu-subitem.active .dot {
+  background: var(--neon-cyan);
+  box-shadow: 0 0 8px var(--neon-cyan);
+  opacity: 1;
+}
+
+.sidebar-footer {
+  padding: 16px;
+  text-align: center;
+  font-size: 0.7em;
+  color: var(--text-mute);
+  background: rgba(0,0,0,0.3);
+  border-top: 1px solid var(--border-slate);
+}
+
+/* === Main Content === */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+.top-header {
+  height: 64px;
+  background: rgba(11, 17, 30, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-slate);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px;
+  flex-shrink: 0;
+}
+.top-header h2 {
+  font-size: 1.25em;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.user-info { text-align: right; }
+.user-name { color: var(--text-primary); font-size: 0.875em; font-weight: 600; margin: 0; }
+.online-status {
+  color: var(--neon-mint);
+  font-size: 0.75em;
+  display: flex; align-items: center; justify-content: flex-end;
+  margin-top: 2px;
+}
+.online-dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--neon-mint);
+  box-shadow: 0 0 8px var(--neon-mint);
+  margin-right: 4px;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+.main-view {
+  flex: 1;
+  overflow-y: auto;
+  padding: 32px;
+  position: relative;
+  z-index: 1;
+}
+.main-view::-webkit-scrollbar { width: 8px; }
+.main-view::-webkit-scrollbar-track { background: var(--bg-main); }
+.main-view::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.2); border-radius: 4px; }
+
+/* === Glow Card (Glass Effect ตามภาพ) === */
+.glow-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid var(--border-slate);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+.glow-card:hover {
+  border-color: var(--border-glow);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(167, 139, 250, 0.15);
+}
+
+/* === KPI Grid === */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+/* === KPI Card === */
+.kpi-card {
+  padding: 24px;
+}
+.kpi-card::after {
+  content: '';
+  position: absolute;
+  top: -50%; right: -20%;
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: 0.6;
+  pointer-events: none;
+}
+.kpi-card.purple::after { background: var(--neon-purple); }
+.kpi-card.cyan::after { background: var(--neon-cyan); }
+.kpi-card.magenta::after { background: var(--neon-magenta); }
+.kpi-card.mint::after { background: var(--neon-mint); }
+
+.kpi-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+  position: relative; z-index: 2;
+}
+.kpi-label { color: var(--text-secondary); font-size: 0.875em; font-weight: 500; }
+.kpi-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1em;
+}
+.kpi-icon.purple { background: var(--neon-purple-dim); color: var(--neon-purple); box-shadow: 0 0 16px rgba(167, 139, 250, 0.4); }
+.kpi-icon.cyan { background: var(--neon-cyan-dim); color: var(--neon-cyan); box-shadow: 0 0 16px rgba(96, 165, 250, 0.4); }
+.kpi-icon.magenta { background: var(--neon-magenta-dim); color: var(--neon-magenta); box-shadow: 0 0 16px rgba(244, 114, 182, 0.4); }
+.kpi-icon.mint { background: var(--neon-mint-dim); color: var(--neon-mint); box-shadow: 0 0 16px rgba(52, 211, 153, 0.4); }
+
+.kpi-value {
+  font-size: 2.25em;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.1;
+  position: relative; z-index: 2;
+}
+.kpi-unit {
+  font-size: 0.65em;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.kpi-trend {
+  font-size: 0.75em;
+  margin-top: 6px;
+  position: relative; z-index: 2;
+}
+.kpi-trend.purple { color: var(--neon-purple); }
+.kpi-trend.cyan { color: var(--neon-cyan); }
+.kpi-trend.magenta { color: var(--neon-magenta); }
+.kpi-trend.mint { color: var(--neon-mint); }
+
+.kpi-progress {
+  width: 100%;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+  margin-top: 12px;
+  overflow: hidden;
+  position: relative; z-index: 2;
+}
+.kpi-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--neon-mint), var(--neon-green));
+  box-shadow: 0 0 10px var(--neon-mint);
+  border-radius: 3px;
+  transition: width 0.8s ease;
+}
+
+/* === Workflow Panel === */
+.workflow-panel { }
+.workflow-head {
+  padding: 24px;
+  background: rgba(180, 123, 255, 0.05);
+  border-bottom: 1px solid var(--border-slate);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.workflow-head h3 {
+  font-size: 1.05em;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex; align-items: center;
+}
+.workflow-head h3 i { color: var(--neon-purple); margin-right: 8px; }
+.realtime-badge {
+  background: var(--neon-mint-dim);
+  color: var(--neon-mint);
+  border: 1px solid rgba(74, 222, 128, 0.3);
+  font-size: 0.75em;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 20px;
+  display: inline-flex; align-items: center;
+}
+.realtime-badge .blink {
+  width: 6px; height: 6px;
+  background: currentColor;
+  border-radius: 50%;
+  margin-right: 6px;
+  animation: pulse 1.5s infinite;
+}
+
+.table-wrap { overflow-x: auto; }
+.workflow-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+.workflow-table th {
+  background: rgba(11, 17, 30, 0.5);
+  color: var(--text-mute);
+  border-bottom: 1px solid var(--border-slate);
+  padding: 16px;
+  font-size: 0.7em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.workflow-table td {
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-slate);
+  padding: 16px;
+  font-size: 0.875em;
+}
+.workflow-table tbody tr { transition: background 0.2s ease; }
+.workflow-table tbody tr:hover { background: rgba(180, 123, 255, 0.04); }
+.wf-id { color: var(--text-primary); font-weight: 600; }
+.wf-title { color: var(--text-primary); }
+.wf-date { color: var(--text-mute); }
+
+.status-badge {
+  display: inline-flex; align-items: center;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.72em;
+  font-weight: 600;
+}
+.status-badge.approved { background: var(--neon-mint-dim); color: var(--neon-mint); border: 1px solid rgba(74, 222, 128, 0.3); }
+.status-badge.pending  { background: rgba(250, 204, 21, 0.12); color: var(--neon-yellow); border: 1px solid rgba(250, 204, 21, 0.3); }
+.status-badge.draft    { background: rgba(148, 163, 184, 0.1); color: var(--text-secondary); border: 1px solid var(--border-slate); }
+.status-badge i { margin-right: 6px; font-size: 0.85em; }
+
+/* === Form Pages === */
+.form-page { max-width: 672px; }
+.form-page .workflow-head { display: block; }
+.form-page .workflow-head h3 { font-size: 1.125em; margin-bottom: 4px; }
+.form-page .workflow-head .desc { font-size: 0.75em; color: var(--text-mute); margin-top: 4px; }
+.form-body { padding: 24px; }
+.form-body .space-y > * + * { margin-top: 16px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-field label {
+  display: block;
+  font-size: 0.875em;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+.form-field input,
+.form-field textarea,
+.form-field select {
+  width: 100%;
+  background: rgba(11, 17, 30, 0.6);
+  border: 1px solid var(--border-slate);
+  color: var(--text-primary);
+  border-radius: 8px;
+  padding: 10px 14px;
+  outline: none;
+  font-family: inherit;
+  font-size: 0.875em;
+  transition: border-color 0.2s ease;
+}
+.form-field input:focus,
+.form-field textarea:focus,
+.form-field select:focus {
+  border-color: var(--neon-purple);
+}
+.form-field input:disabled {
+  background: rgba(11, 17, 30, 0.4);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+}
+.form-field textarea { resize: vertical; min-height: 100px; }
+
+.form-actions {
+  padding-top: 16px;
+  border-top: 1px solid var(--border-slate);
+  display: flex; justify-content: flex-end; gap: 12px;
+}
+.btn {
+  padding: 10px 20px;
+  font-size: 0.875em;
+  font-weight: 500;
+  font-family: inherit;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex; align-items: center;
+}
+.btn-cancel {
+  background: transparent;
+  color: var(--text-secondary);
+}
+.btn-cancel:hover { background: rgba(148, 163, 184, 0.08); }
+
+.btn-submit {
+  background: linear-gradient(135deg, var(--neon-purple), var(--neon-magenta));
+  color: white;
+  box-shadow: 0 0 16px rgba(167, 139, 250, 0.5);
+}
+.btn-submit:hover { box-shadow: 0 0 24px rgba(167, 139, 250, 0.7); }
+
+.btn-save {
+  background: linear-gradient(135deg, var(--neon-cyan), #0099CC);
+  color: white;
+  box-shadow: 0 0 16px rgba(96, 165, 250, 0.5);
+}
+.btn-save:hover { box-shadow: 0 0 24px rgba(96, 165, 250, 0.7); }
+
+.placeholder-wrap { text-align: center; padding: 48px 24px; }
+.placeholder-icon {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: var(--neon-purple-dim);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 1.5em;
+  color: var(--neon-purple);
+}
+.placeholder-wrap h4 { color: var(--text-primary); font-size: 1em; font-weight: 600; margin-bottom: 4px; }
+.placeholder-wrap p { color: var(--text-mute); font-size: 0.875em; max-width: 384px; margin: 0 auto; }
+
+/* === Blank Card === */
+.blank-card {
+  padding: 32px;
+  text-align: center;
+  max-width: 448px;
+}
+.blank-card .icon { color: var(--text-mute); font-size: 2.25em; margin-bottom: 12px; display: block; }
+.blank-card h3 { color: var(--text-primary); font-weight: 700; margin-bottom: 4px; }
+.blank-card p { color: var(--text-mute); font-size: 0.875em; }
+
+/* === Fade-in === */
+.fade-in { animation: fadeIn .4s ease; }
+@keyframes fadeIn { from {opacity:0; transform:translateY(8px);} to {opacity:1; transform:translateY(0);} }
+
+/* === Responsive === */
+@media (max-width: 1024px) {
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .sidebar { width: 240px; }
+  .kpi-grid { grid-template-columns: 1fr; }
+  .main-view { padding: 16px; }
+  .top-header { padding: 0 16px; }
+  .form-row { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
-<div class="container">
-  <header>
-    <h1>📊 P5 Training Status Dashboard</h1>
-    <div class="subtitle">สรุปรายงานวัดผลสถานการณ์ฝึกอบรม ณ ปัจจุบัน</div>
-    <div class="updated">🔄 อัปเดตล่าสุด: 12 มิถุนายน 2026 เวลา 15:47 น. | แหล่งข้อมูล: P5 - PlanTraining 69 (Google Sheets)</div>
-  </header>
-
-  <div class="summary-grid">
-    <div class="stat-card info">
-      <div class="label">👥 สมาชิกรวม 6 บริษัท</div>
-      <div class="value">359</div>
-      <div class="sub">คน (ทั้งองค์กร)</div>
+<div class="app">
+  <!-- ========== SIDEBAR ========== -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div>
+        <div class="logo-p5-text">P5 SYSTEM</div>
+        <div class="logo-subtitle">ระบบพัฒนาบุคลากร PKG</div>
+      </div>
     </div>
-    <div class="stat-card warn">
-      <div class="label">📚 % ครบ 44 หน่วยกิต เฉลี่ย</div>
-      <div class="value">83.84%</div>
-      <div class="sub">301/359 คน | เป้าหมาย: 100% (สิ้นปี)</div>
+
+    <div class="role-selector-wrap">
+      <span><i class="fa-solid fa-user-shield"></i> สิทธิ์ผู้ใช้งาน:</span>
+      <select id="roleSelector" onchange="changePermission(this.value)">
+        <option value="Admin">Admin (เห็นทั้งหมด)</option>
+        <option value="Manager">Manager</option>
+        <option value="Member">Member (ทั่วไป)</option>
+      </select>
     </div>
-    <div class="stat-card good">
-      <div class="label">🎓 % GPA ผ่าน 3.5 เฉลี่ย</div>
-      <div class="value">95.26%</div>
-      <div class="sub">342/359 คน | เป้าหมาย: 100%</div>
+
+    <nav id="dynamicMenu" class="sidebar-menu"></nav>
+
+    <div class="sidebar-footer">&copy; 2026 PKG All Rights Reserved.</div>
+  </aside>
+
+  <!-- ========== MAIN ========== -->
+  <main class="main">
+    <header class="top-header">
+      <h2 id="currentPageTitle">Dashboard</h2>
+      <div class="user-info">
+        <p class="user-name" id="userDisplayName">ผู้ดูแลระบบ (Admin)</p>
+        <p class="online-status">
+          <span class="online-dot"></span> Online
+        </p>
+      </div>
+    </header>
+
+    <section id="mainView" class="main-view"></section>
+  </main>
+</div>
+
+<script>
+// ============================================================
+// 1. โครงสร้างข้อมูลเมนูแบบ Dynamic
+// ============================================================
+const menuData = [
+  { id: "m1", title: "Dashboard", icon: "fa-chart-pie", permissions: ["Admin", "Manager", "Member"] },
+  {
+    id: "m2", title: "Training", icon: "fa-graduation-cap", permissions: ["Admin", "Manager", "Member"],
+    subMenus: [
+      { id: "m2_1", title: "2.1 ลงทะเบียนหลักสูตร", permissions: ["Admin", "Manager", "Member"] },
+      { id: "m2_2", title: "2.2 ขอเปิดอบรม ภายใน/ภายนอก", permissions: ["Admin", "Manager"] },
+      { id: "m2_3", title: "2.3 ส่งผลอบรม ภายใน/ภายนอก", permissions: ["Admin", "Manager", "Member"] },
+      { id: "m2_4", title: "2.4 รายงานการอบรมภายนอก", permissions: ["Admin", "Manager"] }
+    ]
+  },
+  {
+    id: "m3", title: "Mentor", icon: "fa-user-group", permissions: ["Admin", "Manager"],
+    subMenus: [
+      { id: "m3_1", title: "3.1 Set ระบบพี่เลี้ยงน้องเลี้ยง", permissions: ["Admin"] },
+      { id: "m3_2", title: "3.2 แบบ From การส่งรายงานน้องเลี้ยง PKG", permissions: ["Admin", "Manager"] }
+    ]
+  },
+  {
+    id: "m4", title: "Coach", icon: "fa-chalkboard-user", permissions: ["Admin", "Manager", "Member"],
+    subMenus: [
+      { id: "m4_1", title: "4.1 Menter Coach เชื่อมสมุดพก", permissions: ["Admin", "Manager"] },
+      { id: "m4_2", title: "4.2 อื่นๆ", permissions: ["Admin", "Manager", "Member"] }
+    ]
+  },
+  {
+    id: "m5", title: "Roleplay", icon: "fa-masks-theater", permissions: ["Admin", "Manager", "Member"],
+    subMenus: [
+      { id: "m5_1", title: "5.1 รายงานการ Roleplay", permissions: ["Admin", "Manager"] },
+      { id: "m5_2", title: "5.2 แบบ From ส่ง Roleplay", permissions: ["Admin", "Manager", "Member"] }
+    ]
+  },
+  {
+    id: "m6", title: "กำกับทุนองค์กร", icon: "fa-sack-dollar", permissions: ["Admin"],
+    subMenus: [
+      { id: "m6_1", title: "6.1 รายงานการอบรม", permissions: ["Admin"] },
+      { id: "m6_2", title: "6.2 อื่นๆ", permissions: ["Admin"] }
+    ]
+  }
+];
+
+let currentRole = "Admin";
+let activeMenuId = "m1";
+
+let workflowData = [
+  { id: "WF-001", type: "ขอเปิดอบรมภายใน", title: "หลักสูตร Service Excellence", requestBy: "สมชาย มีสุข", date: "2026-06-15", status: "Pending" },
+  { id: "WF-002", type: "ส่งผลอบรมภายนอก", title: "อบรมเทคนิคยานยนต์ไฟฟ้า", requestBy: "วิชัย รวยเจริญ", date: "2026-06-14", status: "Approved" },
+  { id: "WF-003", type: "รายงานน้องเลี้ยง PKG", title: "ประเมินผลรอบ 1 เดือน - ณัฐพล", requestBy: "พี่เลี้ยงสมศักดิ์", date: "2026-06-12", status: "Draft" }
+];
+
+// ============================================================
+// 2. Render Sidebar Menu
+// ============================================================
+function renderMenu() {
+  const menuContainer = document.getElementById('dynamicMenu');
+  menuContainer.innerHTML = '';
+
+  menuData.forEach(menu => {
+    if (!menu.permissions.includes(currentRole)) return;
+
+    const hasSubs = menu.subMenus && menu.subMenus.filter(s => s.permissions.includes(currentRole)).length > 0;
+    const wrapper = document.createElement('div');
+
+    if (!hasSubs) {
+      wrapper.innerHTML = `
+        <button onclick="navigateTo('${menu.id}', '${menu.title}')" class="menu-item ${activeMenuId === menu.id ? 'active' : ''}">
+          <i class="fa-solid ${menu.icon}"></i>
+          <span>${menu.title}</span>
+        </button>
+      `;
+    } else {
+      let subsHtml = '';
+      menu.subMenus.forEach(sub => {
+        if (!sub.permissions.includes(currentRole)) return;
+        const isSubActive = activeMenuId === sub.id;
+        subsHtml += `
+          <button onclick="navigateTo('${sub.id}', '${sub.title}')" class="menu-subitem ${isSubActive ? 'active' : ''}">
+            <span class="dot"></span>
+            <span>${sub.title}</span>
+          </button>
+        `;
+      });
+      wrapper.innerHTML = `
+        <div class="menu-section-title">
+          <i class="fa-solid ${menu.icon}"></i> ${menu.title}
+        </div>
+        <div>${subsHtml}</div>
+      `;
+    }
+    menuContainer.appendChild(wrapper);
+  });
+}
+
+// ============================================================
+// 3. Router
+// ============================================================
+function navigateTo(menuId, menuTitle) {
+  activeMenuId = menuId;
+  document.getElementById('currentPageTitle').innerText = menuTitle;
+  renderMenu();
+
+  const view = document.getElementById('mainView');
+  switch(menuId) {
+    case 'm1': view.innerHTML = renderDashboardView(); break;
+    case 'm2_1': view.innerHTML = renderSimpleFormView("ฟอร์มระบบลงทะเบียนหลักสูตรอบรม", "กรุณากรอกข้อมูลหลักสูตรที่ต้องการลงทะเบียนเรียนเพื่อสะสมทักษะ"); break;
+    case 'm2_2': view.innerHTML = renderWorkflowFormView("แบบฟอร์มขอเปิดอบรม (ภายใน/ภายนอก)", "ขอเปิดอบรมภายใน"); break;
+    case 'm2_3': view.innerHTML = renderWorkflowFormView("แบบฟอร์มส่งผลการอบรม (ภายใน/ภายนอก)", "ส่งผลอบรมภายนอก"); break;
+    case 'm2_4': view.innerHTML = renderTableView("รายงานสรุปผลการเข้าอบรมภายนอกองค์กร", "ตารางแสดงรายชื่อสมาชิกที่ผ่านการอนุมัติและเข้าร่วมอบรมภายนอก"); break;
+    case 'm3_1': view.innerHTML = renderSimpleFormView("ระบบตั้งค่าและจับคู่ พี่เลี้ยง (Mentor) & น้องเลี้ยง (Mentee)", "จับคู่บุคลากรเข้าสู่ระบบติดตามทักษะการทำงานขององค์กร PKG"); break;
+    case 'm3_2': view.innerHTML = renderWorkflowFormView("แบบฟอร์มการส่งรายงานน้องเลี้ยง PKG", "รายงานน้องเลี้ยง PKG"); break;
+    case 'm4_1': view.innerHTML = renderTableView("ระบบ Mentor Coach เชื่อมโยงสมุดพกพัฒนาตนเอง", "บันทึกข้อมูลการ Coaching และดึงคะแนนเชื่อมตรงสู่สมุดพกรายบุคคล"); break;
+    case 'm4_2': view.innerHTML = renderBlankCardView("ฟังก์ชันอื่นๆ ของระบบการ Coach"); break;
+    case 'm5_1': view.innerHTML = renderTableView("รายงานสถิติและการประเมินผลการ Roleplay", "ตารางแสดงคะแนนทักษะและผลการจำลองสถานการณ์ (Roleplay) ของสมาชิก"); break;
+    case 'm5_2': view.innerHTML = renderSimpleFormView("แบบฟอร์มบันทึกผลและส่งคลิป/คะแนน Roleplay", "กรอกผลการทดสอบการจำลองบทบาทและบันทึกคะแนนเข้าสู่ระบบประเมินผล"); break;
+    case 'm6_1': view.innerHTML = renderTableView("รายงานวิเคราะห์ทุนการศึกษาและงบประมาณการอบรมองค์กร", "ตรวจสอบการใช้งบประมาณพัฒนาทรัพยากรบุคคลและภาระผูกพันทุนองค์กร"); break;
+    case 'm6_2': view.innerHTML = renderBlankCardView("ฟังก์ชันอื่นๆ ของระบบกำกับทุนองค์กร"); break;
+    default: view.innerHTML = renderDashboardView();
+  }
+}
+
+// ============================================================
+// 4. Templates
+// ============================================================
+function renderDashboardView() {
+  return `
+    <div class="fade-in">
+      <div class="kpi-grid">
+        <div class="glow-card kpi-card purple">
+          <div class="kpi-head">
+            <span class="kpi-label">หลักสูตรทั้งหมด</span>
+            <div class="kpi-icon purple"><i class="fa-solid fa-book-open"></i></div>
+          </div>
+          <p class="kpi-value">24</p>
+          <p class="kpi-trend purple"><i class="fa-solid fa-arrow-up"></i> +2 หลักสูตรใหม่เดือนนี้</p>
+        </div>
+
+        <div class="glow-card kpi-card cyan">
+          <div class="kpi-head">
+            <span class="kpi-label">จับคู่พี่เลี้ยง</span>
+            <div class="kpi-icon cyan"><i class="fa-solid fa-users"></i></div>
+          </div>
+          <p class="kpi-value">12 <span class="kpi-unit">คู่</span></p>
+          <p class="kpi-trend cyan"><i class="fa-solid fa-check"></i> ครอบคลุม 6 บริษัท</p>
+        </div>
+
+        <div class="glow-card kpi-card magenta">
+          <div class="kpi-head">
+            <span class="kpi-label">รายการรอดำเนินการ</span>
+            <div class="kpi-icon magenta"><i class="fa-solid fa-clock-rotate-left"></i></div>
+          </div>
+          <p class="kpi-value">5</p>
+          <p class="kpi-trend magenta"><i class="fa-solid fa-circle-exclamation"></i> ต้องตรวจสอบด่วน</p>
+        </div>
+
+        <div class="glow-card kpi-card mint">
+          <div class="kpi-head">
+            <span class="kpi-label">งบประมาณทุนที่ใช้ไป</span>
+            <div class="kpi-icon mint"><i class="fa-solid fa-wallet"></i></div>
+          </div>
+          <p class="kpi-value">85<span class="kpi-unit">%</span></p>
+          <div class="kpi-progress">
+            <div class="kpi-progress-bar" style="width: 85%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="glow-card workflow-panel">
+        <div class="workflow-head">
+          <h3><i class="fa-solid fa-route"></i> รายการติดตามสถานะแผนงาน (Workflow Tracking)</h3>
+          <span class="realtime-badge"><span class="blink"></span>อัปเดตเรียลไทม์</span>
+        </div>
+        <div class="table-wrap">
+          <table class="workflow-table">
+            <thead>
+              <tr>
+                <th>เลขที่เอกสาร</th>
+                <th>ประเภท Workflow</th>
+                <th>หัวข้อ/เรื่อง</th>
+                <th>ผู้ส่งเรื่อง</th>
+                <th>วันที่ยื่น</th>
+                <th>สถานะปัจจุบัน</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${workflowData.map(wf => `
+                <tr>
+                  <td class="wf-id">${wf.id}</td>
+                  <td>${wf.type}</td>
+                  <td class="wf-title">${wf.title}</td>
+                  <td>${wf.requestBy}</td>
+                  <td class="wf-date">${wf.date}</td>
+                  <td>${getStatusBadge(wf.status)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-    <div class="stat-card bad">
-      <div class="label">⚠️ บริษัทที่ต้องเร่ง</div>
-      <div class="value">3 / 6</div>
-      <div class="sub">ต่ำกว่าเกณฑ์ 90%</div>
+  `;
+}
+
+function renderWorkflowFormView(title, type) {
+  return `
+    <div class="fade-in form-page glow-card">
+      <div class="workflow-head">
+        <h3>${title}</h3>
+        <div class="desc">ระบบจำลองการส่งข้อมูลเข้าสู่กระบวนการพิจารณาตรวจสอบ (Workflow)</div>
+      </div>
+      <form onsubmit="handleSubmitWorkflow(event, '${type}')" class="form-body space-y">
+        <div class="form-field">
+          <label>หัวข้อ / เรื่อง</label>
+          <input type="text" required id="formTitle" placeholder="ระบุชื่อหลักสูตร หรือรายงานที่เกี่ยวข้อง" />
+        </div>
+        <div class="form-field">
+          <label>รายละเอียดข้อมูลเพิ่มเติม</label>
+          <textarea rows="4" placeholder="อธิบายเนื้อหา หรือระบุรายละเอียดเพื่อพิจารณา..."></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" onclick="navigateTo('m1','Dashboard')" class="btn btn-cancel">ยกเลิก</button>
+          <button type="submit" class="btn btn-submit">
+            <i class="fa-solid fa-paper-plane"></i>&nbsp; ส่งขออนุมัติข้อมูล (Submit)
+          </button>
+        </div>
+      </form>
     </div>
-  </div>
+  `;
+}
 
-  <div class="panel">
-    <h2>🚨 สถานการณ์ที่ต้องติดตาม</h2>
-    <div class="alert success">
-  <span class="icon">✅</span>
-  <div class="text"><strong>PMSg — ดีเยี่ยม</strong>
-  <small>หน่วยกิต 99.42% | GPA 95.38%</small></div></div>
-<div class="alert success">
-  <span class="icon">✅</span>
-  <div class="text"><strong>AAMg — ดีเยี่ยม</strong>
-  <small>หน่วยกิต 98.00% | GPA 100.00%</small></div></div>
-<div class="alert danger">
-  <span class="icon">⚠️</span>
-  <div class="text"><strong>CPDg — เสี่ยงสูง</strong>
-  <small>หน่วยกิต 45.45% (เหลือ 18/33 คน) | GPA 78.79% | ต้องเร่งทั้ง 2 ด้าน</small></div></div>
-<div class="alert danger">
-  <span class="icon">⚠️</span>
-  <div class="text"><strong>RPLCg — เสี่ยงสูง</strong>
-  <small>หน่วยกิต 41.94% (เหลือ 18/31 คน) | GPA 100.00% | ต้องเร่งทั้ง 2 ด้าน</small></div></div>
-<div class="alert danger">
-  <span class="icon">🚨</span>
-  <div class="text"><strong>RAFCOg — วิกฤต!</strong>
-  <small>หน่วยกิต 13.64% (เหลือ 19/22 คน) | GPA 90.91% | ต้องเร่งแผนอบรมทันที</small></div></div>
-  </div>
-
-  <div class="panel">
-    <h2>📚 เป้าหมายหน่วยกิตประจำปี (44 หน่วยกิต/คน)</h2>
-    <div class="company-row" style="background:#f7fafc;border-radius:8px;margin-bottom:6px;font-size:0.8em;color:#718096;">
-      <div>บริษัท</div><div>% ครบ</div><div>% ยังไม่ครบ</div><div>สถานะ</div>
+function renderSimpleFormView(title, description) {
+  return `
+    <div class="fade-in form-page glow-card">
+      <div class="workflow-head">
+        <h3>${title}</h3>
+        <div class="desc">${description}</div>
+      </div>
+      <div class="form-body space-y">
+        <div class="form-row">
+          <div class="form-field">
+            <label>ชื่อผู้ดำเนินการ</label>
+            <input type="text" value="${document.getElementById('userDisplayName').innerText}" disabled />
+          </div>
+          <div class="form-field">
+            <label>วันที่ทำรายการ</label>
+            <input type="date" value="2026-06-16" />
+          </div>
+        </div>
+        <div class="form-field">
+          <label>กรอกข้อมูลบันทึกในระบบ</label>
+          <input type="text" placeholder="พิมพ์รายละเอียดบันทึกรายการข้อมูล..." />
+        </div>
+        <div class="form-actions">
+          <button onclick="alert('ระบบได้บันทึกฟอร์มข้อมูลนี้เรียบร้อยแล้ว!')" class="btn btn-save">
+            <i class="fa-solid fa-floppy-disk"></i>&nbsp; บันทึกข้อมูล
+          </button>
+        </div>
+      </div>
     </div>
-    <div class="company-row">
-  <div class="company-name">PMSg<span class="members">173 คน</span></div>
-  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill good" style="width:99.42%">99.42%</div></div></div>
-  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill bad" style="width:0.58%">0.58%</div></div></div>
-  <div><span class="status-badge good">✅ ดี</span></div>
-</div>
-<div class="company-row">
-  <div class="company-name">AAMg<span class="members">100 คน</span></div>
-  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill good" style="width:98.00%">98.00%</div></div></div>
-  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill bad" style="width:2.00%">2.00%</div></div></div>
-  <div><span class="status-badge good">✅ ดี</span></div>
-</div>
-<div class="company-row">
-  <div class="company-name">CPDg<span class="members">33 คน</span></div>
-  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill bad" style="width:45.45%">45.45%</div></div></div>
-  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill bad" style="width:54.55%">54.55%</div></div></div>
-  <div><span class="status-badge bad">🚨 วิกฤต</span></div>
-</div>
-<div class="company-row">
-  <div class="company-name">RPLCg<span class="members">31 คน</span></div>
-  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill bad" style="width:41.94%">41.94%</div></div></div>
-  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill bad" style="width:58.06%">58.06%</div></div></div>
-  <div><span class="status-badge bad">🚨 วิกฤต</span></div>
-</div>
-<div class="company-row">
-  <div class="company-name">RAFCOg<span class="members">22 คน</span></div>
-  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill bad" style="width:13.64%">13.64%</div></div></div>
-  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill bad" style="width:86.36%">86.36%</div></div></div>
-  <div><span class="status-badge bad">🚨 วิกฤต</span></div>
-</div>
-<div class="company-row">
-  <div class="company-name">PGHg<span class="members">0 คน</span></div>
-  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill zero" style="width:0.01%">0.00%</div></div></div>
-  <div class="bar-wrap"><div class="bar-bg"><div class="bar-fill bad" style="width:100.00%">100.00%</div></div></div>
-  <div><span class="status-badge zero">ยังไม่เริ่ม</span></div>
-</div>
-  </div>
+  `;
+}
 
-  <div class="panel">
-    <h2>🎓 เป้าหมายเกรดเฉลี่ย (GPA ≥ 3.5)</h2>
-    <table>
-      <thead><tr>
-        <th>บริษัท</th><th class="num">สมาชิก</th>
-        <th class="num">GPA ผ่าน 3.5</th><th class="num">GPA ไม่ผ่าน</th>
-        <th class="num">% ผ่าน</th><th>สถานะ</th>
-      </tr></thead>
-      <tbody>
-        <tr>
-  <td>PMSg</td><td class="num">173</td>
-  <td class="num">165</td><td class="num">8</td>
-  <td class="num">95.38%</td>
-  <td><span class="status-badge good">✅ ดี</span></td>
-</tr>
-<tr>
-  <td>AAMg</td><td class="num">100</td>
-  <td class="num">100</td><td class="num">0</td>
-  <td class="num">100.00%</td>
-  <td><span class="status-badge good">✅ ดี</span></td>
-</tr>
-<tr>
-  <td>CPDg</td><td class="num">33</td>
-  <td class="num">26</td><td class="num">7</td>
-  <td class="num">78.79%</td>
-  <td><span class="status-badge warn">⚠️ เสี่ยง</span></td>
-</tr>
-<tr>
-  <td>RPLCg</td><td class="num">31</td>
-  <td class="num">31</td><td class="num">0</td>
-  <td class="num">100.00%</td>
-  <td><span class="status-badge good">✅ ดี</span></td>
-</tr>
-<tr>
-  <td>RAFCOg</td><td class="num">22</td>
-  <td class="num">20</td><td class="num">2</td>
-  <td class="num">90.91%</td>
-  <td><span class="status-badge good">✅ ดี</span></td>
-</tr>
-<tr>
-  <td>PGHg</td><td class="num">0</td>
-  <td class="num">0</td><td class="num">0</td>
-  <td class="num">0.00%</td>
-  <td><span class="status-badge zero">ไม่มีข้อมูล</span></td>
-</tr>
-      </tbody>
-    </table>
-  </div>
+function renderTableView(title, description) {
+  return `
+    <div class="fade-in glow-card">
+      <div class="workflow-head">
+        <h3>${title}</h3>
+        <div class="desc">${description}</div>
+      </div>
+      <div class="placeholder-wrap">
+        <div class="placeholder-icon"><i class="fa-solid fa-folder-open"></i></div>
+        <h4>ตารางรายงานแสดงข้อมูลสำเร็จ</h4>
+        <p>นี่คือหน้าตารางรายงานจำลอง ข้อมูลจริงจะถูกดึงออกมาแสดงผลเป็นตารางตามเมนูที่คุณเลือกเข้าใช้งาน</p>
+      </div>
+    </div>
+  `;
+}
 
-  <div class="panel" style="background:#f7fafc;">
-    <h2>🔗 แหล่งข้อมูล &amp; การอัปเดต</h2>
-    <p style="color:#4a5568;line-height:1.8;">
-      📄 <strong>Google Sheet:</strong> <a href="https://docs.google.com/spreadsheets/d/15a8s_tLpuwBdIqJqwEv0be8Sy8162gnYti6kTggngh0/edit?gid=1104115053#gid=1104115053" target="_blank" style="color:#4299e1;">P5 - PlanTraining 69 (เปิดใน Google Sheets)</a><br>
-      📂 <strong>ไฟล์ Dashboard:</strong> <code>projects/p5-admin-pad/dashboard/index.html</code><br>
-      🔄 <strong>วิธีอัปเดต:</strong> รัน <code>bash projects/p5-admin-pad/dashboard/update.sh</code> หรือพิมพ์ "อัปเดต P5 Dashboard" ในแชท<br>
-      🛡️ <strong>ความปลอดภัย:</strong> อยู่ในโฟลเดอร์ <code>projects/p5-admin-pad/</code> (แยกจากงานพี่แนน) — ตามกฎ USERS_SEPARATION<br>
-      ⏰ <strong>Auto-update:</strong> 07:30 น. ทุกวัน (ผ่าน HEARTBEAT.md)
-    </p>
-  </div>
+function renderBlankCardView(title) {
+  return `
+    <div class="fade-in glow-card blank-card">
+      <i class="fa-solid fa-ellipsis-stroke icon"></i>
+      <h3>${title}</h3>
+      <p>เนื้อหาเมนูส่วนเพิ่มเติมนอกเหนือจากข้อกำหนดหลัก หน้าเพจสแตนด์บายสำหรับการพัฒนาเนื้อหาตามคำสั่งปรับเปลี่ยนข้อมูลเมนูในอนาคต</p>
+    </div>
+  `;
+}
 
-  <div class="footer">
-    🐻 AliClaw · P5 Admin Pad · Auto-generated 12 มิถุนายน 2026 เวลา 15:47 น.
-  </div>
-</div>
+// ============================================================
+// 5. Helpers
+// ============================================================
+function getStatusBadge(status) {
+  if (status === 'Approved') {
+    return `<span class="status-badge approved"><i class="fa-solid fa-circle-check"></i> อนุมัติแล้ว</span>`;
+  } else if (status === 'Pending') {
+    return `<span class="status-badge pending"><i class="fa-solid fa-circle-notch fa-spin"></i> รอพิจารณา</span>`;
+  } else {
+    return `<span class="status-badge draft"><i class="fa-solid fa-circle-minus"></i> ร่างแบบฟอร์ม</span>`;
+  }
+}
+
+function changePermission(role) {
+  currentRole = role;
+  const names = { 'Admin': 'ผู้ดูแลระบบ (Admin)', 'Manager': 'ผู้จัดการฝ่าย (Manager)', 'Member': 'สมาชิกทีม (Member)' };
+  document.getElementById('userDisplayName').innerText = names[role];
+  activeMenuId = "m1";
+  document.getElementById('currentPageTitle').innerText = "Dashboard";
+  renderMenu();
+  navigateTo('m1', 'Dashboard');
+}
+
+function handleSubmitWorkflow(event, type) {
+  event.preventDefault();
+  const titleInput = document.getElementById('formTitle').value;
+  const newId = "WF-0" + (workflowData.length + 1);
+  workflowData.unshift({
+    id: newId, type: type, title: titleInput,
+    requestBy: document.getElementById('userDisplayName').innerText,
+    date: "2026-06-16", status: "Pending"
+  });
+  alert("ส่งข้อมูลเข้าสู่กระบวนการอนุมัติ (Workflow) เรียบร้อยแล้ว!");
+  navigateTo('m1', 'Dashboard');
+}
+
+// ============================================================
+// 6. Init
+// ============================================================
+renderMenu();
+navigateTo('m1', 'Dashboard');
+</script>
 </body>
 </html>
