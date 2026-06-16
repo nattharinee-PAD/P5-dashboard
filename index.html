@@ -94,17 +94,21 @@ body::after {
   z-index: 10;
 }
 .sidebar-brand {
-  padding: 14px 16px;
+  padding: 12px 14px;
   background: linear-gradient(90deg, rgba(180, 123, 255, 0.08), transparent);
   border-bottom: 1px solid var(--border-slate);
   display: flex; align-items: center; justify-content: space-between;
+  min-height: 48px;
 }
 .logo-p5-text {
-  font-size: 1em; line-height: 1.2;
+  font-size: 0.95em; line-height: 1.2;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.02em;
   color: var(--neon-purple);
   text-shadow: 0 0 20px rgba(180, 123, 255, 0.4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .role-selector-wrap {
   padding: 12px 24px;
