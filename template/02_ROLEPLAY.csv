@@ -1,0 +1,5 @@
+Metric,Value,Unit,Note
+TotalTeams,55,ทีม,จำนวนทีม Roleplay ทั้งหมด
+Pass,55,ทีม,Roleplay ผ่าน
+Fail,0,ทีม,ยังไม่บรรลุ
+CheerPct,100,%,Cheer up

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P5 · ระบบพัฒนาบุคลากร PKG</title>
+  <link rel="stylesheet" href="p5-style.css">
+</head>
+<body>
+
+  <!-- Animated Background -->
+  <div class="bg-blobs" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+  </div>
+
+  <div class="app">
+
+    <!-- ==================== TOP BAR ==================== -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-logo">
+          <span class="logo-mark">P5</span>
+        </div>
+        <div class="brand-text">
+          <h1>P5 · ระบบพัฒนาบุคลากร PKG</h1>
+          <p>People Performance & Progress · PKG</p>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="period-chip" id="liveChip" title="คลิกเพื่อ sync">
+          <span class="dot"></span>
+          <span id="liveText">🟢 Live</span>
+        </div>
+        <button class="icon-btn" id="btnSync" title="Sync">🔄</button>
+        <a class="icon-btn" id="btnSheet" target="_blank" title="Google Sheet">📊</a>
+        <button class="icon-btn" id="btnConfig" title="ตั้งค่า">⚙️</button>
+        <div class="avatar">🐻</div>
+      </div>
+    </header>
+
+    <!-- ==================== HERO ==================== -->
+    <section class="hero">
+      <div class="hero-text">
+        <div class="philo-tag">
+          🎯 พัฒนาสมาชิกตาม Core Competency PKG
+        </div>
+        <h2>สวัสดีตอนเช้า ลูกหมี <span class="wave">👋</span></h2>
+      </div>
+      <div class="hero-cta">
+        <a class="btn btn-primary" id="btnOpenSheet" target="_blank">📊 เปิด Sheet</a>
+        <button class="btn btn-ghost" id="btnRefreshNow">🔄 Sync</button>
+      </div>
+    </section>
+
+    <!-- ==================== NAV TABS ==================== -->
+    <nav class="tab-bar" id="tabBar">
+      <button class="tab active" data-page="dashboard">📊 Dashboard</button>
+      <button class="tab" data-page="training">📚 Training</button>
+      <button class="tab" data-page="roleplay">🎭 Roleplay</button>
+      <button class="tab" data-page="mentor">👥 Mentor</button>
+      <button class="tab" data-page="coach">🎯 Coach</button>
+    </nav>
+
+    <!-- ==================== MAIN ==================== -->
+    <main class="page-container" id="pageContainer">
+      <!-- Rendered by JS -->
+    </main>
+
+    <footer class="foot">
+      <span>P5 v2.0 · ระบบพัฒนาบุคลากร · AliClaw 🐾</span>
+      <span>10 มิ.ย. 2569 · Real-time จาก Google Sheet</span>
+    </footer>
+  </div>
+
+  <!-- ==================== CONFIG MODAL ==================== -->
+  <div id="configModal" class="config-modal" style="display:none">
+    <div class="config-box">
+      <div class="config-head">
+        <h3>⚙️ ตั้งค่า Google Sheet</h3>
+        <button class="config-close" id="configClose">×</button>
+      </div>
+      <div class="config-body">
+        <div class="form-row">
+          <label>📊 Sheet ID</label>
+          <input type="text" id="cfgSheetId" placeholder="15a8s_tLpuwBdIqJqwEv0be8Sy8162gnYti6kTggngh0">
+          <small>ดึงจาก URL ระหว่าง /d/ และ /edit</small>
+        </div>
+        <div class="form-row">
+          <label>🔌 Apps Script Web App URL</label>
+          <input type="text" id="cfgAppsUrl" placeholder="https://script.google.com/macros/s/AKfycb.../exec">
+          <small>ใช้สำหรับ CRUD — ดูวิธี Deploy ที่ apps-script/README.md</small>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" id="cfgSave">💾 บันทึก & Sync</button>
+          <button class="btn btn-ghost" id="cfgReset">↻ Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CRUD MODAL ==================== -->
+  <div id="crudModal" class="config-modal" style="display:none">
+    <div class="config-box" style="max-width:560px">
+      <div class="config-head">
+        <h3 id="crudTitle">➕ เพิ่มข้อมูล</h3>
+        <button class="config-close" id="crudClose">×</button>
+      </div>
+      <div class="config-body">
+        <div id="crudFields"></div>
+        <div class="form-actions">
+          <button class="btn btn-primary" id="crudSave">💾 บันทึก</button>
+          <button class="btn btn-ghost" id="crudCancel">ยกเลิก</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TOAST ==================== -->
+  <div id="toast" class="toast" style="display:none"></div>
+
+  <!-- ==================== SCRIPTS ==================== -->
+  <script src="data/p5-data.js"></script>
+  <script src="p5-sheet-sync.js"></script>
+  <script src="p5-api.js"></script>
+  <script src="p5-app.js"></script>
+</body>
+</html>

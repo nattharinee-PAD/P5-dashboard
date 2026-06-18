@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P5 — ระบบพัฒนาสมาชิก PKG (PAD-02)</title>
+  <link rel="stylesheet" href="p5-style.css">
+</head>
+<body>
+
+  <!-- Animated Background Blobs -->
+  <div class="bg-blobs" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+  </div>
+
+  <div class="app">
+
+    <!-- ==================== TOP BAR ==================== -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-logo">
+          <span class="logo-mark">P5</span>
+        </div>
+        <div class="brand-text">
+          <h1>People Performance & Progress</h1>
+          <p>PAD-02 · ระบบพัฒนาบุคลากร · PKG</p>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="period-chip" id="liveChip" title="คลิกเพื่อ sync ตอนนี้">
+          <span class="dot"></span>
+          <span id="liveText">Live · กำลังโหลด...</span>
+        </div>
+        <button class="icon-btn" id="btnSync" title="Sync ตอนนี้">🔄</button>
+        <a class="icon-btn" id="btnSheet" target="_blank" title="เปิด Google Sheet">📊</a>
+        <div class="avatar">🐻</div>
+      </div>
+    </header>
+
+    <!-- ==================== HERO ==================== -->
+    <section class="hero">
+      <div class="hero-text">
+        <div class="philo-tag">📚 Training · 🎭 Roleplay · 👥 Mentor · 🎯 Coach · 📋 AP / BP / LL / II / XP · 💬 Daily Comments</div>
+        <h2>PAD-02 · ระบบพัฒนาบุคลากร <span class="live-pill">🔴 LIVE</span></h2>
+        <p>ข้อมูลจริงจาก Google Sheet · Real-time sync ทุก 30 วินาที · <strong>แก้ใน Sheet → เว็บอัปเดตอัตโนมัติ</strong></p>
+      </div>
+      <div class="hero-cta">
+        <a class="btn btn-primary" id="btnOpenSheet" target="_blank">📊 เปิด Google Sheet</a>
+        <button class="btn btn-ghost"   id="btnRefreshNow">🔄 Sync ตอนนี้</button>
+        <button class="btn btn-ghost"   id="btnConfig">⚙️ ตั้งค่า</button>
+      </div>
+    </section>
+
+    <!-- ==================== CONFIG MODAL ==================== -->
+    <div id="configModal" class="config-modal" style="display:none">
+      <div class="config-box">
+        <div class="config-head">
+          <h3>⚙️ ตั้งค่า Google Sheet</h3>
+          <button class="config-close" id="configClose">×</button>
+        </div>
+        <div class="config-body">
+          <div class="config-row">
+            <label>📊 Sheet ID</label>
+            <input type="text" id="cfgSheetId" placeholder="เช่น 15a8s_tLpuwBdIqJqwEv0be8Sy8162gnYti6kTggngh0">
+            <small>ดึงจาก URL ระหว่าง /d/ และ /edit</small>
+          </div>
+          <div class="config-row">
+            <label>🔌 Apps Script Web App URL (สำหรับ CRUD)</label>
+            <input type="text" id="cfgAppsUrl" placeholder="เช่น https://script.google.com/macros/s/AKfycb.../exec">
+            <small>ดูวิธี Deploy ได้ที่ <code>apps-script/README.md</code> · ใช้สำหรับเพิ่ม/แก้/ลบข้อมูลผ่านเว็บ</small>
+          </div>
+          <div class="config-row">
+            <label>📑 GIDs (ไม่บังคับ — ใส่ทีละ tab)</label>
+            <div class="cfg-grid">
+              <div><span>00_META</span><input type="text" id="cfgGid_00_META" placeholder="0"></div>
+              <div><span>01_TRAINING</span><input type="text" id="cfgGid_01_TRAINING" placeholder="GID"></div>
+              <div><span>02_ROLEPLAY</span><input type="text" id="cfgGid_02_ROLEPLAY" placeholder="GID"></div>
+              <div><span>03_MENTOR</span><input type="text" id="cfgGid_03_MENTOR" placeholder="GID"></div>
+              <div><span>04_COACH</span><input type="text" id="cfgGid_04_COACH" placeholder="GID"></div>
+              <div><span>05_AP</span><input type="text" id="cfgGid_05_AP" placeholder="GID"></div>
+              <div><span>06_BP</span><input type="text" id="cfgGid_06_BP" placeholder="GID"></div>
+              <div><span>07_LL</span><input type="text" id="cfgGid_07_LL" placeholder="GID"></div>
+              <div><span>08_II</span><input type="text" id="cfgGid_08_II" placeholder="GID"></div>
+              <div><span>09_XP</span><input type="text" id="cfgGid_09_XP" placeholder="GID"></div>
+              <div><span>10_DAILY_COMMENTS</span><input type="text" id="cfgGid_10_DAILY_COMMENTS" placeholder="GID"></div>
+            </div>
+          </div>
+          <div class="config-actions">
+            <button class="btn btn-primary" id="cfgSave">💾 บันทึก & Sync</button>
+            <button class="btn btn-ghost"   id="cfgReset">↻ ค่าเริ่มต้น</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== NAV TABS (9 เมนู) ==================== -->
+    <nav class="tab-bar" id="tabBar">
+      <button class="tab active" data-page="dashboard">📊 Dashboard</button>
+      <button class="tab" data-page="training">📚 Training</button>
+      <button class="tab" data-page="roleplay">🎭 Roleplay</button>
+      <button class="tab" data-page="mentor">👥 Mentor</button>
+      <button class="tab" data-page="coach">🎯 Coach</button>
+      <button class="tab" data-page="apbp">📋 AP / BP</button>
+      <button class="tab" data-page="ll">💡 LL / II / XP</button>
+      <button class="tab" data-page="comments">💬 Comments</button>
+      <button class="tab" data-page="other">⚙️ อื่นๆ</button>
+    </nav>
+
+    <!-- ==================== PAGE CONTENT (JS render) ==================== -->
+    <main class="page-container" id="pageContainer"></main>
+
+    <!-- ==================== CRUD MODAL ==================== -->
+    <div id="crudModal" class="config-modal" style="display:none">
+      <div class="config-box" style="max-width:600px">
+        <div class="config-head">
+          <h3 id="crudTitle">➕ เพิ่มข้อมูล</h3>
+          <button class="config-close" id="crudClose">×</button>
+        </div>
+        <div class="config-body">
+          <div id="crudFields"></div>
+          <div class="config-actions">
+            <button class="btn btn-primary" id="crudSave">💾 บันทึก</button>
+            <button class="btn btn-ghost"   id="crudCancel">ยกเลิก</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TOAST ==================== -->
+    <div id="toast" class="toast" style="display:none"></div>
+
+    <footer class="foot">
+      <span>P5 v0.4.0 · PAD-02 · ระบบพัฒนาบุคลากร · AliClaw 🐾</span>
+      <span>📡 Real-time sync จาก Google Sheet · 10 มิ.ย. 2569</span>
+    </footer>
+  </div>
+
+  <script src="data/p5-data.js"></script>     <!-- Fallback (mock data) -->
+  <script src="p5-api.js"></script>          <!-- Apps Script API Client -->
+  <script src="p5-sheet-sync.js"></script>  <!-- Real Google Sheet sync -->
+  <script src="p5-app.js"></script>         <!-- App logic + Render -->
+</body>
+</html>
