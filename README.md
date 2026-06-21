@@ -6,7 +6,14 @@ Dashboard สำหรับทีม PAD ในการติดตามผ�
 
 | ไฟล์ | คำอธิบาย |
 |---|---|
-| `dashboard/P5-Dashboard-v7-Open-Direct.html` | **Production** — embed ข้อมูลจริงทั้งหมด ไม่ต้อง web server |
+| **`PROJECT_CHARTER.md`** | 🆕 Charter ฉบับเต็ม (vision, stakeholders, KPIs, timeline) |
+| **`RISK_LOG.md`** | 🆕 บันทึกความเสี่ยง + RAID (resolved/active/mitigating) |
+| **`STATUS_REPORT.md`** | 🆕 รายงานสถานะประจำสัปดาห์ (KPIs, achievements, lessons learned) |
+| `dashboard/P5-Dashboard-v7.6-RealSheet.html` | **Production** — v7.6 Real Sheet + Apps Script Backend |
+| `dashboard/P5-Dashboard-v7.5-ReOrderResultKPI.html` | v7.5 — Layout ผลลัพท์ + KPI เรียง 2 columns |
+| `dashboard/P5-Dashboard-v7.4-SuperRobust.html` | v7.4 — 3-Level Fallback (gviz → allorigins → embedded) |
+| `gas/Code.gs` | Apps Script Backend (9KB — doPost/doGet/validate/lock) |
+| `gas/DEPLOY.md` | คู่มือ Deploy Apps Script 5 ขั้นตอน (~3-4 นาที) |
 | `dashboard/data.json` | ข้อมูลดิบจาก Google Sheet |
 | `dashboard/update.sh` | Script ดึงข้อมูลจาก Google Sheet → อัปเดต `data.json` + `index.html` |
 | `dashboard/index-standalone.html` | เวอร์ชันเก่า (ใช้สำหรับ dev เท่านั้น) |
@@ -78,10 +85,20 @@ window.PERMISSIONS = {
 
 ## 📜 Version
 
+- **v7.6** (20 มิ.ย. 2569) — 🏆 **Real Sheet + Apps Script Backend** (Production)
+  - `doPost` รับ JSON → append row
+  - `doGet` health check
+  - `ensureSheet` auto-create + 29 columns headers
+  - Validate 19 required fields + LockService
+  - CORS-safe (text/plain)
+- **v7.5** (20 มิ.ย. 2569) — Re-Order ผลลัพท์ + KPI (fix 2 columns)
+- **v7.4** (20 มิ.ย. 2569) — Super Robust + 3-Level Fallback + Embedded CSV (481 รายการ)
+- **v7.3** (19 มิ.ย. 2569) — Real Auto-fill (รหัสสมาชิก → ชื่อ)
 - **v7** (18 มิ.ย. 2569) — Dynamic Menu + Permission + Real-time Clock + Rainbow Palette
 - **v6** — Glass dark theme (เก่า)
 - **v5** — Basic HTML
 
 ## 🐻 สร้างโดย
 
-AliClaw AI Co-Worker — ตาม CEO Contract คุณแนน
+AliClaw AI Co-Worker — ตาม CEO Contract คุณแนน  
+📅 Charter: 21 มิ.ย. 2569 | 📌 Project Owner: ลูกหมี (ณัฐฑริณี) — LDC-PAD

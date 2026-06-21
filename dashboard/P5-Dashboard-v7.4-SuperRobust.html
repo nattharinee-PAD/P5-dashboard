@@ -1,0 +1,1862 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P5 Dashboard · Self-contained (v7 — Open Directly)</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* (Same CSS as share.html) */
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+
+:root {
+  /* 🎨 Rainbow Palette (from sample image) */
+  --bg-main: #F9FAFE;             /* Light blue-white background */
+  --card-bg: #FFFFFF;              /* White card */
+  --border-slate: rgba(15, 23, 41, 0.08);
+  --border-glow: rgba(255, 165, 0, 0.3);
+  --text-primary: #0F1729;         /* Dark text */
+  --text-secondary: #475569;
+  --text-mute: #94A3B8;
+  
+  /* 5 Rainbow colors (Ribbon 01-05) */
+  --c1-orange: #FF8C00;            /* Ribbon 01: Orange */
+  --c2-green: #22C55E;             /* Ribbon 02: Green */
+  --c3-blue: #3B82F6;              /* Ribbon 03: Blue */
+  --c4-purple: #9333EA;            /* Ribbon 04: Purple */
+  --c5-pink: #EC4899;              /* Ribbon 05: Pink/Red */
+  
+  /* Legacy aliases (mapped to rainbow) */
+  --neon-purple: #9333EA;          /* = c4 */
+  --neon-cyan: #3B82F6;            /* = c3 */
+  --neon-magenta: #EC4899;         /* = c5 */
+  --neon-mint: #22C55E;            /* = c2 */
+  --neon-orange: #FF8C00;          /* = c1 */
+  
+  /* Status colors (rainbow version) */
+  --status-green: #22C55E;
+  --status-yellow: #F59E0B;
+  --status-red: #EF4444;
+}
+
+body {
+  font-family: 'Sarabun', 'Inter', sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-secondary);
+  position: relative;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed; top: -20%; left: -10%;
+  width: 70%; height: 70%;
+  background: radial-gradient(circle, rgba(255, 140, 0, 0.18), transparent 60%);
+  filter: blur(100px);
+  z-index: 0; pointer-events: none;
+  animation: float1 18s ease-in-out infinite;
+}
+body::after {
+  content: '';
+  position: fixed; bottom: -20%; right: -10%;
+  width: 70%; height: 70%;
+  background: radial-gradient(circle, rgba(147, 51, 234, 0.18), transparent 60%);
+  filter: blur(100px);
+  z-index: 0; pointer-events: none;
+  animation: float2 22s ease-in-out infinite;
+}
+@keyframes float1 { 0%,100%{transform:translate(0,0);} 50%{transform:translate(5%,4%);} }
+@keyframes float2 { 0%,100%{transform:translate(0,0);} 50%{transform:translate(-4%,-3%);} }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+.app {
+  position: relative; z-index: 1;
+  display: flex; min-height: 100vh;
+}
+
+/* === Sidebar (Dark Rainbow) === */
+.sidebar {
+  width: 240px;
+  background: linear-gradient(180deg, #1E1B4B 0%, #0F0A2E 100%);
+  border-right: 1px solid var(--border-slate);
+  box-shadow: 4px 0 30px rgba(0, 0, 0, 0.15);
+  display: flex; flex-direction: column; flex-shrink: 0;
+  z-index: 10; min-height: 100vh;
+}
+.sidebar-brand {
+  padding: 24px;
+  background: linear-gradient(90deg, rgba(255, 140, 0, 0.15), rgba(147, 51, 234, 0.08), transparent);
+  border-bottom: 1px solid var(--border-slate);
+}
+.logo-text {
+  font-size: 1.1em; font-weight: 800;
+  letter-spacing: 0.02em;
+  background: linear-gradient(90deg, var(--c1-orange), var(--c2-green), var(--c3-blue), var(--c4-purple), var(--c5-pink));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  text-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
+  white-space: nowrap; line-height: 1.2;
+}
+.role-selector-wrap {
+  padding: 12px 24px;
+  background: rgba(11, 17, 30, 0.6);
+  border-bottom: 1px solid var(--border-slate);
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 0.78em;
+}
+.role-selector-wrap > span { color: var(--text-mute); }
+.role-selector-wrap select {
+  background: rgba(22, 31, 48, 0.8);
+  border: 1px solid var(--border-slate);
+  color: #FFFFFF;
+  border-radius: 6px; padding: 4px 8px; outline: none;
+  font-size: 0.9em; font-family: inherit;
+}
+.role-selector-wrap select option { background: #1E1B4B; color: #FFFFFF; font-weight: 500; }
+.role-selector-wrap select option:checked { background: linear-gradient(90deg, rgba(255,140,0,0.4), rgba(147,51,234,0.4)); color: #FFFFFF; }
+
+.sidebar-menu { flex: 1; overflow-y: auto; padding: 12px; }
+.sidebar-menu::-webkit-scrollbar { width: 6px; }
+.sidebar-menu::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.2); border-radius: 3px; }
+
+.menu-section-title {
+  color: var(--text-mute);
+  letter-spacing: 0.1em;
+  padding: 8px 12px;
+  margin-top: 8px;
+  font-size: 0.7em; font-weight: 700;
+  text-transform: uppercase;
+  display: flex; align-items: center;
+}
+.menu-section-title i { margin-right: 8px; }
+
+.menu-item {
+  width: 100%; background: transparent; border: none;
+  border-left: 3px solid transparent;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.9em; font-family: inherit;
+  text-align: left; cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex; align-items: center;
+}
+.menu-item i.fa-solid { width: 22px; text-align: center; margin-right: 10px; font-size: 1em; }
+.menu-item:hover { background: rgba(255, 140, 0, 0.08); color: #FFFFFF; }
+.menu-item.active {
+  background: linear-gradient(90deg, rgba(255, 140, 0, 0.18), rgba(147, 51, 234, 0.10), rgba(236, 72, 153, 0.04));
+  color: #FFFFFF;
+  border-left-color: var(--c4-purple);
+  font-weight: 600;
+  box-shadow: inset 0 0 20px rgba(147, 51, 234, 0.08);
+}
+.menu-subitem {
+  width: 100%; background: transparent; border: none;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 7px 14px 7px 42px;
+  border-radius: 6px;
+  font-size: 0.82em; font-family: inherit;
+  text-align: left; cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex; align-items: center;
+}
+.menu-subitem:hover { color: #FFFFFF; background: rgba(255, 140, 0, 0.06); }
+.menu-subitem .dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: currentColor; margin-right: 10px; opacity: 0.6;
+}
+
+.sidebar-footer {
+  padding: 12px; text-align: center;
+  font-size: 0.7em; color: rgba(255, 255, 255, 0.5);
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid var(--border-slate);
+}
+
+/* === Main === */
+.main {
+  flex: 1; display: flex; flex-direction: column;
+  min-height: 100vh;
+}
+.top-header {
+  height: 56px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-slate);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; flex-shrink: 0;
+}
+.top-header h2 { font-size: 1.05em; font-weight: 700; color: var(--text-primary); }
+.user-info { text-align: right; }
+.user-name { color: var(--text-primary); font-size: 0.82em; font-weight: 600; margin: 0; }
+.online-status {
+  color: var(--neon-mint); font-size: 0.7em;
+  display: flex; align-items: center; justify-content: flex-end; margin-top: 2px;
+}
+.online-dot {
+  display: inline-block; width: 7px; height: 7px;
+  border-radius: 50%; background: var(--neon-mint);
+  box-shadow: 0 0 6px var(--neon-mint);
+  margin-right: 4px; animation: pulse 2s infinite;
+}
+
+.main-view { flex: 1; padding: 20px 8px; overflow-y: auto; position: relative; z-index: 1; }
+#routeContainer { width: 1200px; max-width: 100%; margin: 0 auto; box-sizing: border-box; padding: 0 8px; }
+#routeContainer .glow-card { margin-left: auto; margin-right: auto; max-width: 100%; }
+.main-view::-webkit-scrollbar { width: 8px; }
+.main-view::-webkit-scrollbar-track { background: var(--bg-main); }
+.main-view::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.2); border-radius: 4px; }
+
+/* === Glow Card === */
+.glow-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-slate);
+  border-radius: 16px;
+  position: relative; overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 12px rgba(15, 23, 41, 0.04);
+  margin-bottom: 16px;
+}
+.glow-card:hover {
+  border-color: var(--c4-purple);
+  box-shadow: 0 8px 24px rgba(147, 51, 234, 0.12);
+  transform: translateY(-1px);
+}
+
+.section-title {
+  font-size: 1.1em; font-weight: 700; color: var(--text-primary);
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 4px;
+}
+.section-title i { color: var(--c4-purple); }
+.section-subtitle {
+  font-size: 0.78em; color: var(--c3-blue);
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.section-subtitle::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--c2-green); box-shadow: 0 0 6px var(--c2-green);
+  animation: pulse 2s infinite;
+}
+
+/* === Section 1: PAD-02 Header === */
+.section-1 { padding: 20px 24px; }
+
+/* === Section 2: Strategy === */
+.section-2 { padding: 20px 24px; }
+.strategy-block {
+  background: linear-gradient(90deg, rgba(255, 140, 0, 0.06), rgba(34, 197, 94, 0.04), rgba(59, 130, 246, 0.04), rgba(147, 51, 234, 0.04), rgba(236, 72, 153, 0.04));
+  border-left: 3px solid var(--c4-purple);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+}
+.strategy-label {
+  font-size: 0.78em; font-weight: 700;
+  background: linear-gradient(90deg, var(--c1-orange), var(--c4-purple));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.strategy-text {
+  font-size: 0.88em; color: var(--text-primary);
+  line-height: 1.5;
+}
+
+/* === KR === */
+.kr-item {
+  margin-bottom: 12px;
+  padding: 12px 16px;
+  background: #F8FAFC;
+  border-left: 3px solid transparent;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+.kr-item:hover { background: #F1F5F9; }
+.kr-item.status-green { border-left-color: var(--status-green); }
+.kr-item.status-yellow { border-left-color: var(--status-yellow); }
+.kr-item.status-red { border-left-color: var(--status-red); }
+.kr-title {
+  font-size: 0.92em; font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  display: flex; align-items: center; gap: 8px;
+}
+.kr-text {
+  font-size: 0.82em; color: var(--text-secondary);
+  line-height: 1.55;
+}
+.status-icon { font-size: 1em; }
+.status-green .status-icon { color: var(--status-green); }
+.status-yellow .status-icon { color: var(--status-yellow); }
+.status-red .status-icon { color: var(--status-red); }
+
+/* === KPI Section (สำหรับ Training/Roleplay/Mentor/Coach) === */
+.kpi-section {
+  padding: 20px 24px;
+}
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+.kpi-item {
+  background: #FFFFFF;
+  border: 1px solid var(--border-slate);
+  border-radius: 10px;
+  padding: 14px 16px;
+  border-left-width: 3px;
+  transition: all 0.2s ease;
+}
+.kpi-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 23, 41, 0.06);
+}
+.kpi-item.info { border-left-color: var(--c3-blue); }
+.kpi-item.good { border-left-color: var(--status-green); }
+.kpi-item.warn { border-left-color: var(--status-yellow); }
+.kpi-item.bad { border-left-color: var(--status-red); }
+.kpi-item .k-label { font-size: 0.75em; color: var(--text-mute); margin-bottom: 6px; }
+.kpi-item .k-value { font-size: 1.5em; font-weight: 700; color: var(--text-primary); line-height: 1.1; }
+.kpi-item .k-unit { font-size: 0.7em; color: var(--text-secondary); margin-top: 2px; }
+
+/* === LG Table === */
+.lg-wrap { padding: 16px 24px 24px; overflow-x: auto; }
+.lg-table { width: 100%; border-collapse: collapse; font-size: 0.82em; }
+.lg-table th {
+  background: linear-gradient(90deg, rgba(255, 140, 0, 0.08), rgba(34, 197, 94, 0.06), rgba(59, 130, 246, 0.06), rgba(147, 51, 234, 0.06), rgba(236, 72, 153, 0.06));
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--c4-purple);
+  padding: 10px 12px;
+  font-size: 0.7em; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  text-align: left;
+  white-space: nowrap;
+}
+.lg-table th.num { text-align: right; }
+.lg-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-slate);
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+.lg-table td.num { text-align: right; }
+.lg-table td.cname { color: var(--text-primary); font-weight: 600; }
+.lg-table tbody tr:hover { background: rgba(147, 51, 234, 0.04); }
+.lg-table tbody tr:last-child td { border-bottom: none; }
+.lg-table tfoot td {
+  padding: 12px;
+  background: linear-gradient(90deg, rgba(255, 140, 0, 0.08), rgba(236, 72, 153, 0.08));
+  border-top: 2px solid var(--c4-purple);
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* === Form Styles (สำหรับ 2.1, 2.2, 2.3, ...) === */
+.form-section {
+  padding: 0 24px 24px;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* ⭐ fix 2 columns เสมอ — ผลลัพท์ → KPI ต่อ row */
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.form-field-full { grid-column: 1 / -1; }
+.result-kpi-pair { display: contents; } /* กลุ่มผลลัพท์+KPI ไม่ห่อ DOM ใหม่ — grid จัดเอง */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.form-field label {
+  font-size: 0.82em;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex; align-items: center; gap: 4px;
+}
+.form-field .req {
+  color: #EF4444;
+  font-weight: 700;
+}
+.form-field .auto-tag {
+  color: #94A3B8;
+  font-size: 0.85em;
+  font-weight: 500;
+  font-style: italic;
+}
+.form-field input,
+.form-field select,
+.form-field textarea {
+  font-family: inherit;
+  font-size: 0.92em;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border-slate);
+  border-radius: 8px;
+  background: #FFFFFF;
+  color: var(--text-primary);
+  outline: none;
+  transition: all 0.2s ease;
+}
+/* Placeholder สีเทา (เห็นเฉพาะตอน input ว่าง) */
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+  color: #94A3B8;
+  opacity: 1;
+  font-style: italic;
+}
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  border-color: var(--c4-purple);
+  box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.12);
+  background: #FAFBFF;
+}
+/* Disabled input style (สำหรับ fields auto-fill) */
+.form-field input:disabled,
+.form-field select:disabled {
+  background: #F1F5F9;
+  color: #94A3B8;
+  cursor: not-allowed;
+  font-style: italic;
+}
+/* Select placeholder style (ตอน disabled selected) */
+.form-field select:invalid {
+  color: #94A3B8;
+  font-style: italic;
+}
+.form-field select option {
+  color: var(--text-primary);
+  font-style: normal;
+}
+.form-field select option[disabled]:first-child {
+  color: #94A3B8;
+  font-style: italic;
+}
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-slate);
+}
+.btn {
+  font-family: inherit;
+  font-size: 0.92em;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+.btn-primary {
+  background: linear-gradient(90deg, var(--c1-orange), var(--c4-purple));
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(147, 51, 234, 0.2);
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
+}
+.btn-secondary {
+  background: #F1F5F9;
+  color: var(--text-primary);
+  border: 1px solid var(--border-slate);
+}
+.btn-secondary:hover {
+  background: #E2E8F0;
+}
+.form-status {
+  margin-top: 16px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.92em;
+  font-weight: 500;
+}
+.form-status.success {
+  background: rgba(34, 197, 94, 0.1);
+  color: #15803D;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+.form-status.error {
+  background: rgba(239, 68, 68, 0.1);
+  color: #B91C1C;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+.form-status.info {
+  background: rgba(59, 130, 246, 0.1);
+  color: #1D4ED8;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+@media (max-width: 640px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .form-actions { flex-direction: column; }
+  .form-actions .btn { width: 100%; justify-content: center; }
+}
+
+/* === Footer === */
+.footer {
+  text-align: center;
+  color: var(--text-mute);
+  font-size: 0.78em;
+  margin-top: 16px;
+  padding: 12px;
+}
+.footer a { color: var(--c3-blue); text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+
+/* === Responsive === */
+@media (max-width: 1200px) {
+  .sidebar { width: 240px; }
+  .main-view { padding: 16px; }
+  .top-header { padding: 0 16px; }
+  .kpi-grid { grid-template-columns: 1fr; }
+  .lg-table { font-size: 0.72em; }
+  .lg-table th, .lg-table td { padding: 6px 4px; }
+}
+</style>
+
+<!-- ⭐ EMBEDDED FALLBACK DATA: PKGemployee 481 รายการ (auto-fill) -->
+<script>
+// === PKGemployee Embedded Fallback (ดึงจาก Sheet gid=572791880 เมื่อ 2026-06-20) ===
+const EMPLOYEE_EMBEDDED_CSV = "\"รหัสสมาชิก \",\"ชื่อ \",\"นามสกุล \"\n\"6407049\",\"ปวีร์\",\"ผ่องโสภา\"\n\"6407047\",\"ปภาวี\",\"ผ่องโสภา\"\n\"6407048\",\"นันท์นลิน\",\"โพธิ์นทีไท\"\n\"6406045\",\"วิไลรัตน์\",\"รัตนะมงคลกุล\"\n\"6607239\",\"ธนภูมิ\",\"เมืองแก้ว\"\n\"9005905\",\"เขมิกา\",\"หัตถวิจิตรกุล\"\n\"6604216\",\"สลักจิตร\",\"บัวแก้ว\"\n\"4902003\",\"นัฐฐาศิริ\",\"ศรีภักดี\"\n\"5004066\",\"ศักรินทร์\",\"ป้องหมู่\"\n\"5707120\",\"จันทร์มีนา\",\"พรหมณรงค์\"\n\"6103025\",\"เต็มสิริ\",\"ยินดี\"\n\"6408063\",\"ศรตุลา\",\"กลิ่นแย้ม\"\n\"9307002\",\"ศิริสรร\",\"กลิ่นแย้ม\"\n\"6007105\",\"รมณีย์\",\"แสงโรจน์\"\n\"5704072\",\"วิภาวี\",\"คามมะวรรณ์\"\n\"5409130\",\"สุภาภรณ์\",\"ประสพเนตร\"\n\"2204003\",\"จันทกานต์\",\"วัฒนกิจ\"\n\"4806050\",\"เอกสิทธิ์\",\"วรรณสุข\"\n\"5211040\",\"จันทรรัตน์\",\"เหมือนเหลา\"\n\"9606001\",\"กนิษฐา\",\"ศรีธรรมชาติ\"\n\"9916013\",\"สุนิษา\",\"ภาคสะอาด\"\n\"6601012\",\"ชูชาติ\",\"อัตโน\"\n\"6903009\",\"สุพิชฌาย์\",\"ยินดีทรัพย์\"\n\"5212045\",\"ศรัญญา\",\"จันทรังษี\"\n\"6803012\",\"สกล\",\"ก้องโสตร\"\n\"5205006\",\"สรินญา\",\"ขยันงาน\"\n\"5503030\",\"อรกัญญา\",\"เคล้าคล่อง\"\n\"5704071\",\"นิตยา\",\"เสียงเสนาะ\"\n\"5508106\",\"วิลาวัลย์\",\"มังคลา\"\n\"5703047\",\"มาลัยทิพย์\",\"วงษ์เล็ก\"\n\"9604903\",\"เบญจมาส\",\"คุ้มนุ่น\"\n\"9906004\",\"ชรีย์พร\",\"นาคจรูญ\"\n\"6601047\",\"พัชรี\",\"อุทัยรัศมี\"\n\"6902005\",\"สุกัญญา\",\"ธิติพาณิชย์\"\n\"5503036\",\"นิตยา\",\"สมบัติทวี\"\n\"5609241\",\"สุธาสินี\",\"หวานเสนาะ\"\n\"5710158\",\"ชลดา\",\"สาลีผล\"\n\"6206031\",\"เสาวนิตย์\",\"บรรจง\"\n\"6207038\",\"พลอยจันทร์\",\"ชำนาญชล\"\n\"6601002\",\"ปาริชาติ\",\"เกิดลาภ\"\n\"4705038\",\"นิภา\",\"สำอางค์\"\n\"9603003\",\"ปานเลขา\",\"ศุภเนตร\"\n\"6012176\",\"ปาริฉัตร\",\"พงษ์สระพัง\"\n\"6006073\",\"เขมิกา\",\"สุ่มสม\"\n\"5007112\",\"ศิริธร\",\"รักษ์ประทุม\"\n\"5702024\",\"ชญาภา\",\"สนิทวงศ์\"\n\"6101007\",\"สุภาภรณ์\",\"รัชคง\"\n\"4709067\",\"สลักจิตร\",\"แก้วกระจ่าง\"\n\"5704060\",\"พัชราพรรณ\",\"วรจินา\"\n\"6009144\",\"ณัฐฐาพร\",\"สารรูป\"\n\"6601202\",\"อรวรรณ\",\"สังข์คำ\"\n\"6507065\",\"รัชฎาภรณ์\",\"พรหมสุภา\"\n\"6009145\",\"ศศิวิมล\",\"อ่อนตา\"\n\"6106059\",\"สิริวิมล\",\"เพียรดี\"\n\"5804021\",\"รัตนาภรณ์\",\"ทวาเรศเรืองคาม\"\n\"6312096\",\"รุ่งอรุณ\",\"สุทธิวารี\"\n\"5804036\",\"พิศาล\",\"บุญหลัง\"\n\"6607240\",\"ธัญวรัตน์\",\"พัฒนพันธ์\"\n\"6705019\",\"ชฎาพร\",\"ทุมนาหาด\"\n\"4702019\",\"นฤมล\",\"สิทธิวงษ์\"\n\"5604039\",\"จรรธมณฑน์\",\"เกตุจวน\"\n\"6012170\",\"ดวงใจ\",\"ต้นคำ\"\n\"6210049\",\"นรินทร์พร\",\"เครือวัลย์\"\n\"6301003\",\"วรรณภาพร\",\"ปลีนารัมย์\"\n\"4906036\",\"ปรวรรณ\",\"จันมานะสกุล\"\n\"6803009\",\"สุธาสินี\",\"ริ้วกระโทก\"\n\"6803010\",\"รัชนก\",\"บัวเปื่อย\"\n\"6601100\",\"อภิชาติ\",\"ภิลัยวัลย์\"\n\"5804026\",\"ปัทมา\",\"ทองอินทร์\"\n\"6512102\",\"อัครเดช\",\"วงษ์รัตน์\"\n\"6805025\",\"ขวัญฤดี\",\"สว่างอารมณ์\"\n\"4905032\",\"นภา\",\"ชาวบล\"\n\"5009126\",\"พรพันธ์\",\"สีในกอง\"\n\"5108036\",\"สมคิด\",\"อ้มชาติ\"\n\"4712090\",\"ปิยมาพร\",\"เลื่อมสี\"\n\"5905040\",\"อดิเรก\",\"นวนไธสงค์\"\n\"6101005\",\"ศุณิชชา\",\"ผลจีน\"\n\"6508076\",\"เมรี\",\"คนสะอาด\"\n\"6510088\",\"ศุภวรรณ\",\"ดิสสมศรี\"\n\"6009146\",\"ฉัตรสุดา\",\"ฉัตรฉิมพลี\"\n\"4709071\",\"สุวิษา\",\"กองแก้ว\"\n\"4709072\",\"คำรณ\",\"ศรีเกษม\"\n\"5310104\",\"จักรินทร์\",\"อุ่นจังหัน\"\n\"6607238\",\"นิชาภัทร\",\"ไพบูลย์\"\n\"6009130\",\"สรัญญพัชร์\",\"พู่สกุลโชติ\"\n\"6611258\",\"สุมาลี\",\"กิจสา\"\n\"5605049\",\"สาวิกา\",\"หะยีมาแน\"\n\"5811118\",\"กิตติวัฒน์\",\"สุวรรณรัตน์\"\n\"6701002\",\"ศิริประภา\",\"คงสุวรรณ\"\n\"6101003\",\"ทิพยสุดา\",\"ใบชา\"\n\"6312098\",\"ณัฐชา\",\"ขุนไชย\"\n\"6601009\",\"อรัญชัย\",\"ชาดงบัง\"\n\"5007105\",\"วิภารัตน์\",\"ตรีผล\"\n\"5908069\",\"ภรัญญา\",\"โอวาท\"\n\"6306027\",\"กมลรัตน์\",\"หมั่นเรียน\"\n\"5605050\",\"วัลลีย์\",\"สมภักดี\"\n\"6704011\",\"ณปภัช\",\"ฉัตรจิรธนากร\"\n\"5210037\",\"ศศิวิมล\",\"สนธิพงษ์\"\n\"4604033\",\"กัลรณัฎฐ์\",\"คงดี\"\n\"5605051\",\"วนัญญา\",\"เกษแจ้ง\"\n\"5507093\",\"นันทนัช\",\"หมู่ผึ้ง\"\n\"6601057\",\"ทัศมาลี\",\"แสงพิทักษ์\"\n\"6007094\",\"ปทุมวดี\",\"ชวดชัยภูมิ\"\n\"6603209\",\"นพัฒชา\",\"ทำนา\"\n\"5604041\",\"ธิชาภัทร\",\"สาวรีย์\"\n\"5808082\",\"กมลชนก\",\"สิงห์หาร\"\n\"6004030\",\"ภารดา\",\"สกูลนัย\"\n\"6008117\",\"ระพีพร\",\"คำมุงคุณ\"\n\"5811115\",\"นุชจิรา\",\"นาโสก\"\n\"6012167\",\"วชิราภรณ์\",\"หาญมนตรี\"\n\"5711163\",\"อรุณี\",\"ด้วงเงิน\"\n\"6511095\",\"จิราพร\",\"นันทะ\"\n\"6603210\",\"นพมาศ\",\"อภัย\"\n\"5811116\",\"กาญจนา\",\"สมสวัสดิ์\"\n\"6006078\",\"วรรณวิสา\",\"พังแสงสุ\"\n\"6401005\",\"นลิตา\",\"เฉลิมฉัตรมงคล\"\n\"6706024\",\"เจนจิรา\",\"ทวีจันทร์\"\n\"6805022\",\"นฤมล\",\"กงแก่นทา\"\n\"3304002\",\"รนกร\",\"ณัทศศิร์\"\n\"6601005\",\"สุกัญญา\",\"แซ่เลียง\"\n\"6601023\",\"รัตนา\",\"สมภักดี\"\n\"3302006\",\"อารีลักษณ์\",\"ปุระณะ\"\n\"6505033\",\"เขตตะวัน\",\"บุญยั่งยืน\"\n\"5706109\",\"อรรถชัย\",\"ทินภูมิ์\"\n\"6710034\",\"พงษ์เพชร\",\"พูดเพราะ\"\n\"6710036\",\"ศิวัช\",\"มุ่งกลาง\"\n\"6811054\",\"พงศธร\",\"สุทธิธรรม\"\n\"6403020\",\"ปุญญพัฒน์\",\"สนั่นพานิชกุล\"\n\"6901003\",\"นิติภูมิ\",\"สัมปัญนัง\"\n\"6503020\",\"สุวัฒน์\",\"สวยงาม\"\n\"6508074\",\"ศุภนิตย์\",\"มิตรสรภาพ\"\n\"6509080\",\"จิตราวดี\",\"วานิชผล\"\n\"6609247\",\"สุรชัช\",\"เรืองธารา\"\n\"6805018\",\"วิชัย\",\"วงค์ฟู\"\n\"6808042\",\"ชาลิณี\",\"เสาวรส\"\n\"6512100\",\"ศุภวิชญ์\",\"นุชวงษ์\"\n\"6810051\",\"ภัทรพล\",\"จันทเกษร\"\n\"6310081\",\"ธนวันต์\",\"พวงบานชื่น\"\n\"5006082\",\"สมศักดิ์\",\"วัฒโน\"\n\"5006083\",\"สุพัฒน์\",\"คีรีแรง\"\n\"6212053\",\"พชร\",\"มีรัตน์\"\n\"5210038\",\"อุษา\",\"แก้วอินทร์\"\n\"6007096\",\"ศุภริดา\",\"สมพงษ์ไชย\"\n\"6210046\",\"นรวิชญ์\",\"เชื่อมรัมย์\"\n\"6501007\",\"อาทิตย์\",\"เหล่าวงษา\"\n\"6506047\",\"จันทิมาธร\",\"จันทะวงษ์\"\n\"6507060\",\"สุภาวดี\",\"วงศ์พิทักษ์\"\n\"6503021\",\"อนุชิดา\",\"ถือสัตย์\"\n\"6710035\",\"โสธิดา\",\"โชคชัย\"\n\"6805019\",\"ปริพรรห์\",\"วิวัฒน์นิธิกร\"\n\"6810050\",\"วันชนะ\",\"เจริญทรัพย์\"\n\"5805040\",\"นฤณพร\",\"หวังในธรรม\"\n\"5402016\",\"รัชนี\",\"พุ่มทอง\"\n\"5008119\",\"อารยา\",\"เนียมทอง\"\n\"5009121\",\"มัทนา\",\"กันทาดี\"\n\"5102012\",\"รัฐพร\",\"คะชาแก้ว\"\n\"6006083\",\"ณัฐฑริณี\",\"คำนึง\"\n\"5604030\",\"คณิศร\",\"ฉัยยา\"\n\"4802020\",\"วรรณวิภา\",\"ปอศิริ\"\n\"6305020\",\"พัชรญา\",\"รัตนสร้อย\"\n\"5702018\",\"ไชยา\",\"เงื้อมผา\"\n\"6904010\",\"นันท์ทัต\",\"ขุนจิตต์\"\n\"4912109\",\"สันติภาพ\",\"วิสัยจร\"\n\"5909083\",\"อัญชลี\",\"หาญหมื่น\"\n\"4806048\",\"ศิริวรรณ\",\"ส่งศรี\"\n\"9705003\",\"ภีรุวัส\",\"อภิบาลศรี\"\n\"2205008\",\"ศุภสิทธิ์\",\"ผ่องโสภา\"\n\"3305001\",\"ขวัญฤทัย\",\"ใจหาญ\"\n\"9601008\",\"อรุณี\",\"เลิศวศะ\"\n\"9909011\",\"โกวิทย์\",\"สีเผือก\"\n\"5001026\",\"อารีย์\",\"เขาจารี\"\n\"9611001\",\"ปกรณ์\",\"โชติบัญชา\"\n\"9917007\",\"แสงจันทร์\",\"ลูกสม\"\n\"5409132\",\"ณรงค์ชัย\",\"มงคลสวัสดิ์\"\n\"5803019\",\"เสาวลักษณ์\",\"น้อยถนอม\"\n\"6112108\",\"อ่อน\",\"บุญมิ่ง\"\n\"5501003\",\"ประวิทย์\",\"ผ่องโสภา\"\n\"9410001\",\"กาญจนา\",\"ขุนจิตต์\"\n\"9511002\",\"พัชนี\",\"สุขสำราญ\"\n\"9611904\",\"วรพินิจ\",\"ศิริโชติ\"\n\"9703010\",\"ชุติมา\",\"สิทธิบุศย์\"\n\"9906010\",\"สมศักดิ์\",\"ธัมมะปาละ\"\n\"4611148\",\"โสภณ\",\"มุกดาสนิท\"\n\"5407108\",\"ภาคินัย\",\"ภูทอง\"\n\"9107002\",\"พัลลภ\",\"โพธิมินทร์\"\n\"1101003\",\"กิตติ\",\"ปริ่มผล\"\n\"5505075\",\"อธิรุทธ์\",\"อินทโชติ\"\n\"6506046\",\"อธิชา\",\"ดารมาก\"\n\"9607020\",\"อนุกูล\",\"หล่อปิ่นมณี\"\n\"6311093\",\"ธนากร\",\"รื่นภิรมย์\"\n\"5606071\",\"พิศาล\",\"วงศ์กำปั่น\"\n\"6401008\",\"จาตุรนต์\",\"มีบ่อทรัพย์\"\n\"6507061\",\"ชัชนันท์\",\"คงชุ่ม\"\n\"6507067\",\"สุทิน\",\"อำนวย\"\n\"5410143\",\"เอกพงศ์\",\"ใจดี\"\n\"6406042\",\"ปฏิภาณ\",\"พิศวงศ์\"\n\"6507062\",\"อภิสิทธิ์\",\"พันธ์ศรี\"\n\"6704012\",\"วรพล\",\"รัตนไชย\"\n\"4702028\",\"มนูญ\",\"จันทะภา\"\n\"6308043\",\"พรชัย\",\"ขนุนทอง\"\n\"6412085\",\"ภัคธร\",\"อวยพรสวัสดิ์\"\n\"6704013\",\"ชินพัทธ์\",\"เห็ดตูม\"\n\"5705081\",\"พีรวัส\",\"เซี่ยงว่อง\"\n\"6904011\",\"ธนากร\",\"นิยมศิลป์\"\n\"6507066\",\"อนุพันธ์\",\"วุฒิ\"\n\"6805024\",\"ณัฐกิตต์\",\"พวงภู่\"\n\"5409131\",\"มานิตร\",\"ทองเงิน\"\n\"6103027\",\"อนุวัฒน์\",\"เนื่องน้อย\"\n\"6104036\",\"ภานุพัฒน์\",\"เหมวัฒ\"\n\"6310080\",\"อธิพงศ์\",\"ห่อนร้าง\"\n\"6505026\",\"ฉัตรชัย\",\"สัตยา\"\n\"6508073\",\"จักรพรรดิ์\",\"โภคพิบูลย์\"\n\"5704067\",\"วิทยา\",\"ช้างชาญรบ\"\n\"6004037\",\"เกรียงไกร\",\"ประสิ่งชอบ\"\n\"6310084\",\"สิริโรจน์\",\"ชำนาญศิลป์\"\n\"6407053\",\"ปฏิพัทธ์\",\"กิจอุดม\"\n\"6505028\",\"สหศวรรษ\",\"ฤกษ์เวียง\"\n\"5404033\",\"มนตรี\",\"กรมแสง\"\n\"6612260\",\"วีรยุทธ\",\"ริเริ่ม\"\n\"6612262\",\"อรุณ\",\"เค้าทอง\"\n\"6612264\",\"สิทธิศักดิ์\",\"พิมพ์ทอง\"\n\"4709078\",\"สุชาติ\",\"แก้วประเสริฐ\"\n\"5601006\",\"ประณต\",\"คุณศรี\"\n\"5905028\",\"หัสชัย\",\"ศุภสี\"\n\"5905029\",\"จักรพรรค์\",\"พลอยธนวัฒน์\"\n\"5407098\",\"เฉลิมชัย\",\"คงสุข\"\n\"9607903\",\"กำพล\",\"สอนลี\"\n\"9715005\",\"เชน\",\"ซ่อนกลิ่น\"\n\"5311109\",\"วัชรา\",\"พันธษา\"\n\"6510090\",\"สอมเอื้อน\",\"คูณ\"\n\"6707029\",\"สิทธิพร\",\"สำราญรื่น\"\n\"6612263\",\"อนุวัฒน์\",\"แก้วรอด\"\n\"6705017\",\"วัชรพล\",\"อาสาชาติ\"\n\"6612265\",\"นรากร\",\"วาปีโก\"\n\"5704056\",\"ศักดิ์สิทธิ์\",\"เห็ดตุม\"\n\"6511097\",\"วชิรวิทย์\",\"โภชาดม\"\n\"6607232\",\"สรวิชญ์\",\"ตั้งเกียรติพิพัฒน์\"\n\"6902004\",\"วันชัย\",\"ดวงพิลา\"\n\"5906048\",\"ณัฐพล\",\"ตาตะ\"\n\"5907059\",\"ศุภกฤต\",\"สาระพันธ์\"\n\"6312102\",\"ธนวัฒน์\",\"โชติสังข์\"\n\"6607237\",\"ชัยศักดิ์\",\"สีอ่อง\"\n\"5705076\",\"สิทธิชล\",\"ป้องหมู่\"\n\"6509087\",\"มณฑล\",\"บำบัดโศรก\"\n\"6904012\",\"พชร\",\"เจริญรัตน์\"\n\"1101006\",\"นพดล\",\"จันทรังษี\"\n\"6301002\",\"วันชนะ\",\"จันทกิจ\"\n\"6311092\",\"ชินภัทร\",\"รำพึงวงศ์\"\n\"6412084\",\"ดิเรก\",\"แหลมหลัก\"\n\"6704014\",\"อัษฎา\",\"วิลัย\"\n\"6805020\",\"เจษฎา\",\"วิหกโต\"\n\"6809047\",\"ภคนันท์\",\"จันทโกวิท\"\n\"6809048\",\"วิภาวี\",\"พูลเพิ่ม\"\n\"5603024\",\"สุวารีย์\",\"สรรพวงศ์\"\n\"5709133\",\"ศศิพงษ์\",\"บุญเปี่ยม\"\n\"6905013\",\"ธรรมรัตน์\",\"บุญล้อม\"\n\"6905015\",\"นนทวัฒน์\",\"กิจพิบูลย์\"\n\"5912120\",\"ธราเทพ\",\"สุขคง\"\n\"1106014\",\"นิสิตา\",\"หอมนาม\"\n\"6006082\",\"กิตติศักดิ์\",\"สุวรรณวงศ์\"\n\"9916014\",\"อัจฉรา\",\"คชพันธุ์\"\n\"5411170\",\"รชยา\",\"สุวรรณโนภาส\"\n\"5306039\",\"อุษณา\",\"บำรุงศิลป์\"\n\"9603005\",\"บุษราพร\",\"สิงห์ปาน\"\n\"5405057\",\"ณัฐธยาน์\",\"ภูมี\"\n\"6105055\",\"สุภัทตรา\",\"วังสงคราม\"\n\"6312100\",\"อารยา\",\"คำชมพู\"\n\"6309060\",\"ฉัตรชัย\",\"สวัสดิไชย\"\n\"6408060\",\"กนกเนตร\",\"ทิพย์แสง\"\n\"6609246\",\"สุโกมล\",\"บุญญนรังษี\"\n\"4703031\",\"กมลรัตน์\",\"เวชกุล\"\n\"5411167\",\"พีรพัฒน์\",\"สารศักดิ์\"\n\"5608217\",\"ณัชชาญา\",\"รำพึงวงศ์\"\n\"6105047\",\"พิเชฐ\",\"จิตรัตน์\"\n\"6407055\",\"อรรถพล\",\"ต้นน้อย\"\n\"6508071\",\"ธนธัช\",\"ธัญญาหาร\"\n\"6711037\",\"วุฒิภัทร\",\"มาสำโรง\"\n\"4703033\",\"ขวัญเรือน\",\"คณะดี\"\n\"5608213\",\"ศักดิ์สิทธิ์\",\"แก้วดก\"\n\"6305018\",\"สาธิต\",\"ปุริวงศ์\"\n\"6607241\",\"ณัฐภัทร\",\"ขุนจิตต์\"\n\"6903007\",\"กัญญาพัชร\",\"นาคสกุล\"\n\"4708062\",\"กรณ์รัฐฌา\",\"วิสิทธิ์ธราสกุล\"\n\"9903001\",\"สุทธินันท์\",\"ไกยสิทธิ์\"\n\"5512141\",\"พัชรินทร์\",\"ไชยราช\"\n\"5007107\",\"พลอยปภัส\",\"บุตรโยจันโท\"\n\"6412079\",\"พัชรพร\",\"ใฝคำ\"\n\"6806033\",\"ธีรภัทร\",\"งามกิจ\"\n\"6704015\",\"ตริญาภรณ์\",\"ศรีพงษ์\"\n\"6312101\",\"ปณิดา\",\"ศรียันต์\"\n\"6809046\",\"ณัฐชนน\",\"มั่นศรี\"\n\"6102019\",\"วาสิตา\",\"ชิงชม\"\n\"6411074\",\"ปภัสสร\",\"หงษ์ชาติ\"\n\"6509086\",\"อริศรา\",\"มุจรินทร์\"\n\"6706027\",\"อัจฉรา\",\"ดวงพิลา\"\n\"9610905\",\"ฉัตรชัย\",\"ชาญกิจ\"\n\"6605221\",\"ทนงศักดิ์\",\"ศักดิ์หงษ์\"\n\"6806034\",\"ประพันธ์\",\"วิชัยกตัญญูกุล\"\n\"9910019\",\"ยุพดี\",\"เธียรธรรมธาดา\"\n\"6401010\",\"ศศิวิมล\",\"สุรศัพย์\"\n\"4606080\",\"ศรอนงค์\",\"สว่างเนตร\"\n\"5003047\",\"ชนิตา\",\"ภูวกิตติภูมิ\"\n\"5603023\",\"กิติพงษ์\",\"กวินสกุลรัตน์\"\n\"5609230\",\"อภิเดช\",\"นาวัลย์\"\n\"9711001\",\"กรกต\",\"คงประเสริฐ\"\n\"9601009\",\"โกมล\",\"ไชยประสูตร\"\n\"5604028\",\"จุฑามณี\",\"จั่นจินดา\"\n\"4605067\",\"โฆษิต\",\"กิจวิรัตน์\"\n\"5604032\",\"สราวุธ\",\"วงศ์อยู่\"\n\"6004040\",\"นราวุฒิ\",\"จันทเกษร\"\n\"6605220\",\"โสภิตา\",\"จันทรเทพ\"\n\"6701005\",\"บุษบา\",\"ชนะสิทธิ์\"\n\"6807036\",\"อรอมล\",\"ชุมพล\"\n\"5203001\",\"เรวดี\",\"หนองริมบ้าน\"\n\"5402021\",\"ไพลิน\",\"แซ่ลิ้ม\"\n\"6006086\",\"ชนกวรรณ\",\"เกิดสุข\"\n\"6309057\",\"ชนาธิป\",\"โภชาดม\"\n\"6807035\",\"ธิติมา\",\"พุ่มพวง\"\n\"6809045\",\"สหรัถ\",\"ตะพาบน้ำ\"\n\"6411077\",\"สันติภาพ\",\"พิมพ์วงษ์\"\n\"6603212\",\"สุมลรัตน์\",\"ปิติกุลวณิชย์\"\n\"4708056\",\"สุรพงศ์\",\"แต่ผู้เจริญ\"\n\"6002007\",\"สิทธิชัย\",\"รัตนาคะ\"\n\"5609231\",\"กฤตติกา\",\"ใจกัน\"\n\"5609232\",\"วราวุธ\",\"สมัครพันธ์\"\n\"6706021\",\"ศรัญญา\",\"เย็นใจ\"\n\"5702017\",\"ชัชฤทธิ์\",\"สุกใส\"\n\"6302008\",\"สนอง\",\"จันทร์มา\"\n\"6408062\",\"ขวัญจิรัชยา\",\"มีมาก\"\n\"6505024\",\"นาตยากรณ์\",\"จันทะมา\"\n\"9607010\",\"อรนุช\",\"คำชมพู\"\n\"6901001\",\"กฤตนัย\",\"ธงไชย\"\n\"3305002\",\"นพรัตน์\",\"คงรอด\"\n\"6509082\",\"เกณิกา\",\"เว้นบาป\"\n\"6509084\",\"ฉัตร\",\"วงศ์ฉัตร\"\n\"6604215\",\"สันสนีย์\",\"เมฆอุดม\"\n\"6701003\",\"ตรีวลัญชน์\",\"อักษร\"\n\"6010150\",\"อภิสิทธิ์\",\"หมายสุภาพ\"\n\"6808038\",\"กุลรัตน์\",\"พรหมมา\"\n\"6903006\",\"จิราภรณ์\",\"โสดาศรี\"\n\"5811122\",\"ชุติมา\",\"มาลา\"\n\"1107002\",\"กำไร\",\"จรวิรัตน์\"\n\"6411072\",\"สุลีพร\",\"สุนันท์\"\n\"6705020\",\"ลักษมน\",\"ม้าจีน\"\n\"6309077\",\"เสงี่ยม\",\"เจริญยิ่ง\"\n\"6302007\",\"วาสนา\",\"นามพันธ์\"\n\"4611150\",\"อรวรรณ\",\"วาโน\"\n\"4807056\",\"ขนิษฐา\",\"อนาพร\"\n\"5002030\",\"นภาภรณ์\",\"มีสมศักดิ์\"\n\"5306059\",\"ศิริรัตน์\",\"วงษ์สารสิน\"\n\"6309064\",\"ชิโนรส\",\"สำราญฤทุกข์\"\n\"6608245\",\"เปี่ยมศักดิ์\",\"ธัญญา\"\n\"6808039\",\"จุลเจน\",\"แรงพิมาย\"\n\"4606086\",\"บรรลุ\",\"เจริญใจ\"\n\"6802006\",\"ลักขณา\",\"ด้วงพรม\"\n\"6810049\",\"ศศิชา\",\"โชติสุวรรณ์\"\n\"3304004\",\"กัลยา\",\"อุดมเจริญ\"\n\"4403006\",\"วนิดา\",\"ธรรมสุทธิ์\"\n\"6608242\",\"ขวัญฤทัย\",\"โชคเจริญวงศ์\"\n\"9901010\",\"ราตรี\",\"เต็มศิริพันธุ์\"\n\"6511099\",\"ธารทิพย์\",\"เผื่อนทิม\"\n\"6308047\",\"สุธาสินี\",\"พิจารณ์\"\n\"6604218\",\"สโรชา\",\"ศรีคงรักษ์\"\n\"6702009\",\"พัชรา\",\"ประมวล\"\n\"5607091\",\"วลัยภรณ์\",\"ฟูพงศ์\"\n\"6406044\",\"วิภานี\",\"สิงห์คาร\"\n\"6604219\",\"ช่อลดา\",\"ตองอ่อน\"\n\"6502012\",\"สิริลักษณ์\",\"สุขสอาด\"\n\"5904021\",\"วลัยลักษณ์\",\"มะปรางอ่อน\"\n\"6404028\",\"พิมพรรณ\",\"แสงอรุณ\"\n\"5009123\",\"นุชนภา\",\"โกมลสุทธิ์\"\n\"6412083\",\"กิตติยา\",\"ตรงกลาง\"\n\"5606065\",\"สุดฤทัย\",\"วานิชล\"\n\"6409068\",\"ยุทธภูมิ\",\"มหาพันธ์\"\n\"5307055\",\"จตุพร\",\"ลายศรีเงิน\"\n\"6505025\",\"อาทิตย์\",\"โพธิพัฒน์\"\n\"6105046\",\"ผดุงเดช\",\"ธัญญาทิพย์\"\n\"4910101\",\"ลำดวน\",\"สุขรุ่งเรือง\"\n\"6012179\",\"อภิวัฒน์\",\"โกมลกุล\"\n\"6402016\",\"อุษา\",\"ลีละทีป\"\n\"6405039\",\"อภิวัฒน์\",\"ปั่นศิริ\"\n\"6405038\",\"วีรพล\",\"ประจงใจ\"\n\"5807076\",\"นราธิป\",\"แสงจันทร์\"\n\"6107075\",\"จารุมน\",\"แก้วขาว\"\n\"6610251\",\"กิติพร\",\"ใจบุญ\"\n\"6811052\",\"นงนภัส\",\"จันทร์รุ่งกระจ่าง\"\n\"6607235\",\"จิรฐา\",\"เวทการ\"\n\"5408116\",\"นิลเนตร\",\"มโนรังสีมรกต\"\n\"5609223\",\"โสภา\",\"สร้อยระย้า\"\n\"5609226\",\"ลัทธพร\",\"แซ่จึง\"\n\"5609227\",\"จันทรา\",\"ฐิตสิริ\"\n\"5903016\",\"ปัทมา\",\"กาฬภักดี\"\n\"6005062\",\"นลิตา\",\"คล้ายหาญ\"\n\"6301005\",\"วิภาวี\",\"ศุภพร\"\n\"6307037\",\"ชนิดา\",\"ทองจุลเจือ\"\n\"5412172\",\"มัญชีระ\",\"เนินโพธิ์\"\n\"6701004\",\"เฉลิมศักดิ์\",\"ลีละทีป\"\n\"6802007\",\"สุพรชัย\",\"ทองอาน\"\n\"5012141\",\"วิษณุ\",\"มงคลรัตน์\"\n\"6808040\",\"สิริพงศ์\",\"แก้วกูล\"\n\"5907057\",\"อดิศักดิ์\",\"หล้าที\"\n\"6501003\",\"วีรวัฒน์\",\"ศรีเชียงสา\"\n\"6506048\",\"อาทิตย์\",\"วงษ์ท้าว\"\n\"6607234\",\"ปิยากร\",\"พิพัฒน์ชัยกิจ\"\n\"6708033\",\"ปิยทัศน์\",\"ศรีพรม\"\n\"6511098\",\"ณัฐชล\",\"พงศ์โกมล\"\n\"5608216\",\"อนุสสรา\",\"โตสุข\"\n\"5401013\",\"ยุวันดา\",\"ผสมทรัพย์\"\n\"5610242\",\"ปิยนุช\",\"กีรติเวชวรกุล\"\n\"6502010\",\"มาร์กาเร็ต\",\"สังข์มุ\"\n\"6411075\",\"ศิวภา\",\"เติมแต้ม\"\n\"6501004\",\"รัตนาภรณ์\",\"บุญธรรม\"\n\"6511093\",\"ชนนิกานต์\",\"ทรัพย์พล\"\n\"6905014\",\"สิริมา\",\"ผ่องมณี\"\n\"6007095\",\"อารีรัตน์\",\"ประหยัดการ\"\n\"5101011\",\"ศันสนีย์\",\"บ่อพลอย\"\n\"6406043\",\"สรัญญา\",\"มังคะตะ\"\n\"6606225\",\"กมลรัตน์\",\"ศรีม่วง\"\n\"6401011\",\"ภาณุทัตต์\",\"ปัญญะปูญ\"\n\"9705005\",\"ปิยวัฒน์\",\"มิตรประทาน\"\n\"5004055\",\"เอกชัย\",\"เบี้ยประเสริฐ\"\n\"6507057\",\"ภัสราภรณ์\",\"จเรินสัตย์\"\n\"6306034\",\"วันนิต\",\"สรือ\"\n\"6311087\",\"สมบัติ\",\"คม\"\n\"6503016\",\"วิจิตร\",\"จิบ\"\n\"6808037\",\"นิตา\",\"วี\"\n\"6805017\",\"สมนาง\",\"บอน\"\n\"6001005\",\"จันลี\",\"ซอย\"\n\"6205021\",\"สาม\",\"ซึม\"\n\"6305022\",\"บุญเทือน\",\"คัต\"\n\"6408058\",\"แสงทอง\",\"สุวรรณี\"\n\"6506044\",\"เพีย\",\"เทอญ\"\n\"6806029\",\"ชำนาญ\",\"ยอน\"\n\"6307039\",\"สาแก้ว\",\"ดารา\"\n\"6309054\",\"สุขเจีย\",\"หาต\"\n\"6505030\",\"บุญหก\",\"แปด\"\n\"6507063\",\"เรียม\",\"โครย\"\n\"6508070\",\"สารัตน์\",\"สวาย\"\n\"6204013\",\"เพียะตรา\",\"สวน\"\n\"6601019\",\"ภัควมินทร์\",\"มณีคำ\"\n\"6001004\",\"จันดารา\",\"อูจ\"\n\"5609238\",\"ปานิดา\",\"มะณีวง\"\n\"6401001\",\"ศรีใหม่\",\"วึง\"\n\"6002006\",\"วิเมียน\",\"โนว\"\n\"6205020\",\"ปรัล\",\"ปรอม\"\n\"6312095\",\"ไนหัว\",\"จัน\"\n\"6610254\",\"แก้ม\",\"เก้า\"\n\"5602011\",\"เกษมศักดิ์\",\"ศรีพรม\"\n\"5404044\",\"อานง\",\"สะเพาทอง\"\n\"6004044\",\"สันติ\",\"จันทะไพจิด\"\n\"6003015\",\"ลิน\",\"ชามุนตรี\"\n\"5411163\",\"สอนเพ็ด\",\"จันทะวง\"\n\"5510134\",\"จันคำ\",\"หอมสะหวัด\"\n\"6401003\",\"จันทะพอน\",\"แสงมะนี\"\n\"6811053\",\"ยอด\",\"เพัดวิไลสัก\"\n\"5404043\",\"เวียงคำ\",\"วงลัดสะหมี\"\n\"6308044\",\"ศิริกัญญา\",\"พลชา\"\n\"6806032\",\"หลิง\",\"พูมจินดา\"\n\"5703037\",\"สุกสะหวัน\",\"พมมะเสน\"\n\"5711169\",\"ไชยสะหมอน\",\"บัวคำสิด\"\n\"6003017\",\"วิมล\",\"จันทร์สุข\"\n\"6005068\",\"บุดสะกอน\",\"อาไพจิด\"\n\"5703036\",\"โนละวัน\",\"มะนีวัน\"\n\"6109087\",\"สุพัตรา\",\"ยืนยั่ง\"\n\"6511096\",\"อะนุชิด\",\"อ่อนสีทอง\"\n\"5411162\",\"บดินทร์\",\"ปราณีศรีสวัสดิ์\"\n\"5908068\",\"ลีน่า\",\"แสงมะนี\"\n\"5611277\",\"ดุสิต\",\"จิรพร\"\n\"6602208\",\"วันหล้า\",\"สีสะหวัน\"\n\"6812055\",\"มะลิสา\",\"แสนหลวง\"\n\"6005058\",\"ดาวเรือง\",\"สุวรกิม\"\n\"6111096\",\"บุนล้ำ\",\"ไชยะวง\"\n\"6511094\",\"คำหมั้น\",\"พอนสะหวัน\"\n\"4804030\",\"หฤทัย\",\"นามดี\"\n\"5703035\",\"ปานีพอน\",\"แก้วมีไช\"\n\"6004051\",\"เมสา\",\"เพัดดาวเรือง\"\n\"5110041\",\"อุทุมพร\",\"ศรีปัญญา\"\n\"6403021\",\"พิมพ์เพ็ชร\",\"ไชยผา\"\n\"5703038\",\"สุกพะขัน\",\"แก้วดวงสี\"\n\"5703039\",\"ปวีณา\",\"จันทนาค\"\n\"5706111\",\"พุดทะสัก\",\"เรือนมุงคุน\"";
+console.log('📦 Embedded employee data loaded:', EMPLOYEE_EMBEDDED_CSV.split('\n').length - 1, 'rows');
+</script>
+
+</head>
+<body>
+<div class="app">
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo-text">P5 ระบบพัฒนาบุคลากร PKG</div>
+    </div>
+    <div class="role-selector-wrap">
+      <span><i class="fa-solid fa-user-shield"></i> สิทธิ์:</span>
+      <select id="roleSelect" onchange="onRoleChange(this.value)">
+        <option value="admin">Admin (ทุกเมนู)</option>
+        <option value="manager">Manager (ไม่มี กำกับทุนองค์กร)</option>
+        <option value="member">Member (เฉพาะ Dashboard + Roleplay)</option>
+      </select>
+    </div>
+    <nav class="sidebar-menu" id="dynamicMenu"></nav>
+    <div class="sidebar-footer">&copy; 2026 PKG All Rights Reserved.</div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <header class="top-header">
+      <h2>Dashboard</h2>
+      <div class="user-info">
+        <p class="user-name">ผู้ดูแลระบบ (Admin)</p>
+        <p class="online-status"><span class="online-dot"></span> Online</p>
+      </div>
+    </header>
+
+    <section class="main-view">
+      <div id="routeContainer"></div>
+    </section>
+
+  </main>
+</div>
+    </section>
+  </main>
+</div>
+
+<!-- ============================================================ -->
+<!-- Page Templates — แต่ละ Route มี template แยก -->
+<!-- ============================================================ -->
+<template id="tpl-dashboard">      <!-- ส่วนที่ 1: PAD-02 Header -->
+      <div class="glow-card section-1" id="sec-header">
+        <div class="section-title">
+          <i class="fa-solid fa-file-lines"></i>
+          PAD-02 : รายงาน PP5 ระบบพัฒนาบุคลากร (PAD Team)
+        </div>
+        <div class="section-subtitle">
+          ประจำวันที่ <span id="timestamp">กำลังโหลด…</span>
+        </div>
+      </div>
+
+      <!-- ส่วนที่ 2: ยุทธศาสตร์ (Strategy) -->
+      <div class="glow-card section-2" id="sec-strategy">
+        <div class="section-title" style="margin-bottom: 14px;">
+          <i class="fa-solid fa-bullseye"></i>
+          ยุทธศาสตร์ (Strategy)
+        </div>
+
+        <div class="strategy-block">
+          <div class="strategy-label">🎯 จุดมุ่งหมาย</div>
+          <div class="strategy-text">พัฒนาสมาชิกตาม Core competency PKG</div>
+        </div>
+
+        <div class="strategy-block">
+          <div class="strategy-label">🌟 ภาพความสำเร็จที่อยากเห็น</div>
+          <div class="strategy-text">สมาชิก PKG มีทักษะที่เป็นเลิศ ตาม CC PKG และ AOE BU</div>
+        </div>
+
+        <div class="strategy-block">
+          <div class="strategy-label">📌 OKR</div>
+          <div class="strategy-text">สมาชิกมีแผนและได้รับการพัฒนาศักยภาพตามแผนครบทุกคน</div>
+        </div>
+
+        <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-slate);">
+          <div class="strategy-label" style="margin-bottom: 10px;">🎯 Key Results</div>
+
+          <div class="kr-item status-green">
+            <div class="kr-title"><span class="status-icon">✅</span><span>KR 1. ระบบอบรม</span></div>
+            <div class="kr-text">สมาชิกได้รับการฝึกอบรมตามแผนและสามารถนำความรู้ไปใช้ในการบรรลุเป้าหมายการทำงานที่ได้รับ 100%</div>
+          </div>
+
+          <div class="kr-item status-yellow">
+            <div class="kr-title"><span class="status-icon">🟡</span><span>KR 2. ระบบ Mentor</span></div>
+            <div class="kr-text">สมาชิกใหม่/สมาชิกจับคู่คนกับงานใหม่/สมาชิกปรับบทบาท/สมาชิกพัฒนาศักยภาพ ได้รับการดูแลจากพี่เลี้ยงแบบ 1:3 ครบ 100%</div>
+          </div>
+
+          <div class="kr-item status-red">
+            <div class="kr-title"><span class="status-icon">🔴</span><span>KR 3. ระบบ Coach</span></div>
+            <div class="kr-text">สมาชิกที่ได้รับมอบหมายบทบาทเป็นผู้ Coach ได้พัฒนาทักษะการ Coach ผู้อื่น</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ส่วนที่ 3: สรุปรายงานวัดผลสถานการณ์ฝึกอบรม ณ ปัจจุบัน -->
+      <div class="glow-card" id="sec-summary">
+        <div class="kpi-section">
+          <div class="section-title" style="margin-bottom: 4px;">
+            <i class="fa-solid fa-chart-line"></i>
+            สรุปรายงานวัดผลสถานการณ์ฝึกอบรม ณ ปัจจุบัน
+          </div>
+          <div class="section-subtitle">ข้อมูล 6 บริษัท: หน่วยกิต + GPA</div>
+        </div>
+        <div class="lg-wrap">
+          <table class="lg-table" id="summaryTable"></table>
+        </div>
+      </div>
+
+      <!-- ส่วนที่ 4: Training (ผ่านที่ 1) -->
+      <div class="glow-card" id="sec-training">
+        <div class="kpi-section">
+          <div class="section-title" style="margin-bottom: 4px;">
+            <i class="fa-solid fa-graduation-cap"></i>
+            Training (ผ่านที่ 1)
+          </div>
+          <div class="section-subtitle">แผนหลักสูตรที่เปิดอบรมประจำเดือน</div>
+        </div>
+        <div class="kpi-section">
+          <div class="kpi-grid" id="trainingGrid"></div>
+        </div>
+      </div>
+
+      <!-- ส่วนที่ 5: Roleplay -->
+      <div class="glow-card" id="sec-roleplay">
+        <div class="kpi-section">
+          <div class="section-title" style="margin-bottom: 4px;">
+            <i class="fa-solid fa-masks-theater"></i>
+            Roleplay
+          </div>
+          <div class="section-subtitle">จำนวนทีม Roleplay และผลการดำเนินงาน</div>
+        </div>
+        <div class="kpi-section">
+          <div class="kpi-grid" id="roleplayGrid"></div>
+        </div>
+      </div>
+
+      <!-- ส่วนที่ 6: Mentor -->
+      <div class="glow-card" id="sec-mentor">
+        <div class="kpi-section">
+          <div class="section-title" style="margin-bottom: 4px;">
+            <i class="fa-solid fa-user-group"></i>
+            Mentor
+          </div>
+          <div class="section-subtitle">สมาชิกในระบบ Mentor และวินัยการส่งรายงาน</div>
+        </div>
+        <div class="kpi-section">
+          <div class="kpi-grid" id="mentorGrid"></div>
+        </div>
+      </div>
+
+      <!-- ส่วนที่ 7: Coach -->
+      <div class="glow-card" id="sec-coach">
+        <div class="kpi-section">
+          <div class="section-title" style="margin-bottom: 4px;">
+            <i class="fa-solid fa-chalkboard-user"></i>
+            Coach
+          </div>
+          <div class="section-subtitle">สมาชิกที่ได้รับมอบหมายบทบาทผู้ Coach</div>
+        </div>
+        <div class="kpi-section">
+          <div class="kpi-grid" id="coachGrid"></div>
+        </div>
+      </div>
+
+      <!-- ส่วนที่ 8: การเรียนรู้และการเติบโต (Learning & Growth) -->
+      <div class="glow-card" id="sec-orgcap">
+        <div class="kpi-section">
+          <div class="section-title" style="margin-bottom: 4px;">
+            <i class="fa-solid fa-seedling"></i>
+            การเรียนรู้และการเติบโต (Learning & Growth)
+          </div>
+          <div class="section-subtitle">ทุนมนุษย์/สารสนเทศ/องค์กร แยกตามบริษัท</div>
+        </div>
+        <div class="lg-wrap">
+          <table class="lg-table" id="lgTable"></table>
+        </div>
+      </div>
+</template>
+
+<template id="tpl-page">
+  <div class="glow-card">
+    <div class="kpi-section">
+      <div class="section-title" style="margin-bottom: 4px;">
+        <i class="fa-solid fa-folder-open"></i>
+        <span id="pageTitle">หน้านี้</span>
+      </div>
+      <div class="section-subtitle" id="pageSubtitle"></div>
+    </div>
+  </div>
+</template>
+
+<!-- ============================================================ -->
+<!-- Template: 2.1 ลงทะเบียนหลักสูตร (Form) -->
+<!-- ============================================================ -->
+<template id="tpl-form-2-1">
+  <div class="glow-card">
+    <div class="kpi-section">
+      <div class="section-title" style="margin-bottom: 4px;">
+        <i class="fa-solid fa-clipboard-list"></i>
+        <span>2.1 ลงทะเบียนหลักสูตร</span>
+      </div>
+      <div class="section-subtitle">กรอกข้อมูลหลักสูตรเพื่อลงทะเบียน — * = จำเป็นต้องกรอก</div>
+    </div>
+
+    <form class="form-section" id="formTrainingRegister" onsubmit="submitForm(event, 'training-register')">
+      <div class="form-grid">
+        <!-- 1. ชื่อหลักสูตร -->
+        <div class="form-field form-field-full">
+          <label>ชื่อหลักสูตร <span class="req">*</span></label>
+          <input type="text" name="courseName" placeholder="ชื่อหลักสูตร" required>
+        </div>
+
+        <!-- 2. ผู้ผลิตหลักสูตร (ใส่เฉพาะรหัสสมาชิก) -->
+        <div class="form-field form-field-full">
+          <label>ผู้ผลิตหลักสูตร (ใส่เฉพาะรหัสสมาชิก) <span class="req">*</span></label>
+          <input type="text" name="producerId" id="producerId" placeholder="รหัสสมาชิก เช่น M-00123" required>
+        </div>
+
+        <!-- 3. ชื่อ (auto-fill) -->
+        <div class="form-field">
+          <label>ชื่อ <span class="auto-tag">(ดึงอัตโนมัติจาก PKGemployee)</span></label>
+          <input type="text" name="firstName" id="firstName" placeholder="กรอกรหัสสมาชิกก่อน" readonly style="background:#f0f9ff;cursor:not-allowed;">
+        </div>
+
+        <!-- 4. นามสกุล (auto-fill) -->
+        <div class="form-field">
+          <label>นามสกุล <span class="auto-tag">(ดึงอัตโนมัติจาก PKGemployee)</span></label>
+          <input type="text" name="lastName" id="lastName" placeholder="กรอกรหัสสมาชิกก่อน" readonly style="background:#f0f9ff;cursor:not-allowed;">
+        </div>
+
+        <!-- 5. หลักสูตร ประจำธุรกิจ -->
+        <div class="form-field form-field-full">
+          <label>หลักสูตร ประจำธุรกิจ <span class="req">*</span></label>
+          <select name="businessCourse" required>
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="PGHg">PGHg</option>
+            <option value="PMSg">PMSg</option>
+            <option value="AAMg">AAMg</option>
+            <option value="RPLCg">RPLCg</option>
+            <option value="RAFCOg">RAFCOg</option>
+            <option value="CPDg">CPDg</option>
+            <option value="PKG">PKG</option>
+          </select>
+        </div>
+
+        <!-- 6. กลุ่มหลักสูตร -->
+        <div class="form-field form-field-full">
+          <label>กลุ่มหลักสูตร <span class="req">*</span></label>
+          <select name="courseGroup" required>
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="หลักสูตรบังคับ">หลักสูตรบังคับ</option>
+            <option value="หลักสูตรหลัก">หลักสูตรหลัก</option>
+            <option value="หลักสูตรเลือก">หลักสูตรเลือก</option>
+          </select>
+        </div>
+
+        <!-- 7. ประเภทของหลักสูตร (มี onchange auto-คำนวณหน่วยกิต) -->
+        <div class="form-field form-field-full">
+          <label>ประเภทของหลักสูตร <span class="req">*</span></label>
+          <select name="courseType" id="courseType" required onchange="autoCredit()">
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="AOE (ทุนมนุษย์ BU/FU )">AOE (ทุนมนุษย์ BU/FU )</option>
+            <option value="ทุนสารสนเทศ">ทุนสารสนเทศ</option>
+            <option value="Core competency (ทุนองค์กร SMC)">Core competency (ทุนองค์กร SMC)</option>
+            <option value="หลักสูตรเลือก(PAD)">หลักสูตรเลือก(PAD)</option>
+          </select>
+        </div>
+
+        <!-- 8. 3 ผ่าน (AUTO) -->
+        <div class="form-field">
+          <label>3 ผ่าน <span class="auto-tag">(ขึ้นออโต้)</span></label>
+          <input type="text" name="threePass" value="ไม่ใช่" disabled>
+        </div>
+
+        <!-- 9. หน่วยกิต (AUTO - คำนวณจากประเภท) -->
+        <div class="form-field">
+          <label>หน่วยกิต <span class="auto-tag">(ขึ้นออโต้)</span></label>
+          <input type="text" name="credit" id="credit" value="" disabled placeholder="-">
+        </div>
+
+        <!-- 10. แหล่งที่มาของการผลิตหลักสูตร -->
+        <div class="form-field form-field-full">
+          <label>แหล่งที่มาของการผลิตหลักสูตร <span class="req">*</span></label>
+          <select name="courseSource" required>
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="Core Competency PKG">Core Competency PKG</option>
+            <option value="Competeney">Competeney</option>
+            <option value="Area of Excellent AOE ( CC BU )">Area of Excellent AOE ( CC BU )</option>
+            <option value="PM/WI">PM/WI</option>
+            <option value="บทบาท">บทบาท</option>
+            <option value="Tools">Tools</option>
+          </select>
+        </div>
+
+        <!-- 11. รูปแบบการฝึกอบรม -->
+        <div class="form-field">
+          <label>รูปแบบการฝึกอบรม <span class="req">*</span></label>
+          <select name="trainingStyle" required>
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="Classroom Offline">Classroom Offline</option>
+            <option value="Classroom online">Classroom online</option>
+            <option value="Self lerning">Self lerning</option>
+            <option value="On the job training">On the job training</option>
+            <option value="Rolo play">Rolo play</option>
+          </select>
+        </div>
+
+        <!-- 12. รูปแบบการวัดผล -->
+        <div class="form-field">
+          <label>รูปแบบการวัดผล <span class="req">*</span></label>
+          <select name="evalStyle" required>
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="Rolo play">Rolo play</option>
+            <option value="ข้อเขียน">ข้อเขียน</option>
+          </select>
+        </div>
+
+        <!-- 13. ช่วงอายุงานผู้เข้าอบรม -->
+        <div class="form-field form-field-full">
+          <label>ช่วงอายุงานผู้เข้าอบรม <span class="req">*</span></label>
+          <select name="ageRange" required>
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="0 เดือน - 1 เดือน">0 เดือน - 1 เดือน</option>
+            <option value="0 เดือน - 3 เดือน">0 เดือน - 3 เดือน</option>
+            <option value="0 เดือน - 6 เดือน">0 เดือน - 6 เดือน</option>
+            <option value="6 เดือน - 1 ปี">6 เดือน - 1 ปี</option>
+            <option value="1 ปี - 3 ปี">1 ปี - 3 ปี</option>
+            <option value="0 ปี - 30 ปี">0 ปี - 30 ปี</option>
+          </select>
+        </div>
+
+        <!-- 14. Competency (ความสามารถ) - 20 options -->
+        <div class="form-field form-field-full">
+          <label>Competency (ความสามารถ) <span class="req">*</span></label>
+          <select name="competency" required>
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="เก่งพัฒนาภาวะผู้นำ">เก่งพัฒนาภาวะผู้นำ</option>
+            <option value="เก่่งสร้างวัฒนธรรมองค์กรณ์">เก่่งสร้างวัฒนธรรมองค์กรณ์</option>
+            <option value="เก่งเรื่องการรู้สึกตัว">เก่งเรื่องการรู้สึกตัว</option>
+            <option value="เก่งสร้างบรรยากาศ">เก่งสร้างบรรยากาศ</option>
+            <option value="เก่งทำงานเป็นทีม">เก่งทำงานเป็นทีม</option>
+            <option value="เก่งสร้างความสัมพันธ์">เก่งสร้างความสัมพันธ์</option>
+            <option value="เก่งเรื่องการรับใช้ผู้อื่น">เก่งเรื่องการรับใช้ผู้อื่น</option>
+            <option value="เก่งการใช้เทคโนโลยี">เก่งการใช้เทคโนโลยี</option>
+            <option value="เก่งเรื่องการเรียนรู้">เก่งเรื่องการเรียนรู้</option>
+            <option value="เก่งเรื่องการใช้ 'ท่าที'">เก่งเรื่องการใช้ 'ท่าที'</option>
+            <option value="เก่งเพิ่มผลผลิต">เก่งเพิ่มผลผลิต</option>
+            <option value="เก่งเเสวงหาลูกค้า">เก่งเเสวงหาลูกค้า</option>
+            <option value="การสอนเเนะ (Coaching)">การสอนเเนะ (Coaching)</option>
+            <option value="การนำความเปลี่ยนเเปลง">การนำความเปลี่ยนเเปลง</option>
+            <option value="การติดต่อสื่อสาร (Communication)">การติดต่อสื่อสาร (Communication)</option>
+            <option value="การปรับปรุงอย่างต่อเนื่อง (Continuous lmprovement)">การปรับปรุงอย่างต่อเนื่อง (Continuous lmprovement)</option>
+            <option value="การตัดสินใจ (Decision Making)">การตัดสินใจ (Decision Making)</option>
+            <option value="การมอบหมายงาน (Delegation)">การมอบหมายงาน (Delegation)</option>
+            <option value="การสร้างเเรงจูงใจ(Motivation)">การสร้างเเรงจูงใจ(Motivation)</option>
+          </select>
+        </div>
+
+        <!-- 15. สถานะหลักสูตร -->
+        <div class="form-field form-field-full">
+          <label>สถานะหลักสูตร <span class="req">*</span></label>
+          <select name="courseStatus" required>
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="หลักสูตรเปิดใหม่">หลักสูตรเปิดใหม่</option>
+            <option value="หลักสููตรเดิม นำมาเปิดอีกครั้ง (ไม่มีการเปลี่ยนเเปลงเนื้อหาเเละข้อสอบ)">หลักสููตรเดิม นำมาเปิดอีกครั้ง (ไม่มีการเปลี่ยนเเปลงเนื้อหาเเละข้อสอบ)</option>
+            <option value="หลักสูตรเปิลี่ยนแปลง (มีการเปลี่ยนแปลงเนื้อหาเเละคำตอบ)">หลักสูตรเปิลี่ยนแปลง (มีการเปลี่ยนแปลงเนื้อหาเเละคำตอบ)</option>
+          </select>
+        </div>
+
+        <!-- 16. วัดเป้าประจำปี -->
+        <div class="form-field">
+          <label>วัดเป้าประจำปี <span class="req">*</span></label>
+          <select name="yearlyTarget" required>
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+
+        <!-- 17. คอร์สอบรม -->
+        <div class="form-field">
+          <label>คอร์สอบรม <span class="req">*</span></label>
+          <select name="courseType2" required>
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="หลักสูตรภายใน">หลักสูตรภายใน</option>
+            <option value="หลักสูตรภายนอก">หลักสูตรภายนอก</option>
+          </select>
+        </div>
+
+        <!-- 18. ผลลัพท์และผลผลิตที่ได้รับจากการอบรม (ประสิทธิภาพและประสิทธิผล) -->
+        <div class="form-field form-field-full">
+          <label>ผลลัพท์และผลผลิตที่ได้รับจากการอบรม (ประสิทธิภาพและประสิทธิผล) <span class="req">*</span></label>
+          <textarea name="resultOverall" rows="3" placeholder="ระบุผลลัพท์ภาพรวม" required></textarea>
+        </div>
+
+        <!-- 19-20. ผลลัพท์ฯ 1 + KPI 1 -->
+        <div class="form-field">
+          <label>ผลลัพท์และผลผลิตที่ได้รับ (1) <span class="req">*</span></label>
+          <input type="text" name="result1" placeholder="ผลลัพท์ที่ 1" required>
+        </div>
+        <div class="form-field">
+          <label>KPI (1) <span class="req">*</span></label>
+          <input type="text" name="kpi1" placeholder="KPI ที่ 1" required>
+        </div>
+
+        <!-- 21-22. ผลลัพท์ฯ 2 + KPI 2 -->
+        <div class="form-field">
+          <label>ผลลัพท์และผลผลิตที่ได้รับ (2)</label>
+          <input type="text" name="result2" placeholder="ผลลัพท์ที่ 2 (ถ้ามี)">
+        </div>
+        <div class="form-field">
+          <label>KPI (2)</label>
+          <input type="text" name="kpi2" placeholder="KPI ที่ 2 (ถ้ามี)">
+        </div>
+
+        <!-- 23-24. ผลลัพท์ฯ 3 + KPI 3 -->
+        <div class="form-field">
+          <label>ผลลัพท์และผลผลิตที่ได้รับ (3)</label>
+          <input type="text" name="result3" placeholder="ผลลัพท์ที่ 3 (ถ้ามี)">
+        </div>
+        <div class="form-field">
+          <label>KPI (3)</label>
+          <input type="text" name="kpi3" placeholder="KPI ที่ 3 (ถ้ามี)">
+        </div>
+
+        <!-- 25. เนื้อหา 1 -->
+        <div class="form-field form-field-full">
+          <label>เนื้อหา 1 <span class="req">*</span></label>
+          <textarea name="content1" rows="2" placeholder="เนื้อหาบทที่ 1" required></textarea>
+        </div>
+
+        <!-- 26. เนื้อหา 2 -->
+        <div class="form-field form-field-full">
+          <label>เนื้อหา 2</label>
+          <textarea name="content2" rows="2" placeholder="เนื้อหาบทที่ 2 (ถ้ามี)"></textarea>
+        </div>
+
+        <!-- 27. เนื้อหา 3 -->
+        <div class="form-field form-field-full">
+          <label>เนื้อหา 3</label>
+          <textarea name="content3" rows="2" placeholder="เนื้อหาบทที่ 3 (ถ้ามี)"></textarea>
+        </div>
+
+        <!-- 28. ข้อสอบ -->
+        <div class="form-field form-field-full">
+          <label>ข้อสอบ</label>
+          <textarea name="exam" rows="3" placeholder="ระบุข้อสอบ (ถ้ามี)"></textarea>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="resetForm('formTrainingRegister')">
+          <i class="fa-solid fa-rotate-left"></i> ล้างข้อมูล
+        </button>
+        <button type="submit" class="btn btn-primary">
+          <i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูล
+        </button>
+      </div>
+
+      <div id="formStatus" class="form-status" style="display: none;"></div>
+    </form>
+  </div>
+</template>
+
+<!-- ============================================================ -->
+<!-- Dynamic Menu Config + Permissions -->
+<!-- ============================================================ -->
+<script>
+// ============================================================
+// Embedded Data (self-contained — ไม่ต้อง fetch)
+// ============================================================
+const EMBEDDED_DATA = {
+  "timestamp": "17 มิถุนายน 2026 เวลา 17:27 น.",
+  "last_updated_iso": "2026-06-17T09:27:15Z",
+  "sheet_url": "https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/edit?usp=sharing",
+  "summary": {
+    "rows": [
+      {
+        "name": "PGHg",
+        "members": 0,
+        "credit_done": 0,
+        "credit_remain": 0,
+        "credit_pct": 0.0,
+        "gpa_pass": 0,
+        "gpa_fail": 0,
+        "gpa_pct": 0.0
+      },
+      {
+        "name": "PMSg",
+        "members": 173,
+        "credit_done": 172,
+        "credit_remain": 1,
+        "credit_pct": 99.42,
+        "gpa_pass": 165,
+        "gpa_fail": 8,
+        "gpa_pct": 95.38
+      },
+      {
+        "name": "AAMg",
+        "members": 100,
+        "credit_done": 98,
+        "credit_remain": 2,
+        "credit_pct": 98.0,
+        "gpa_pass": 100,
+        "gpa_fail": 0,
+        "gpa_pct": 100.0
+      },
+      {
+        "name": "RPLCg",
+        "members": 31,
+        "credit_done": 13,
+        "credit_remain": 18,
+        "credit_pct": 41.94,
+        "gpa_pass": 31,
+        "gpa_fail": 0,
+        "gpa_pct": 100.0
+      },
+      {
+        "name": "RAFCOg",
+        "members": 22,
+        "credit_done": 3,
+        "credit_remain": 19,
+        "credit_pct": 13.64,
+        "gpa_pass": 20,
+        "gpa_fail": 2,
+        "gpa_pct": 90.91
+      },
+      {
+        "name": "CPDg",
+        "members": 33,
+        "credit_done": 15,
+        "credit_remain": 18,
+        "credit_pct": 45.45,
+        "gpa_pass": 26,
+        "gpa_fail": 7,
+        "gpa_pct": 78.79
+      }
+    ]
+  },
+  "training": [
+    {
+      "label": "แผนหลักสูตรที่เปิดอบรมประจำเดือน จำนวน",
+      "value": "9",
+      "value_num": 9.0,
+      "unit": "หลักสูตร"
+    },
+    {
+      "label": "เปิดอบรมตามแผน",
+      "value": "1",
+      "value_num": 1.0,
+      "unit": "หลักสูตร"
+    },
+    {
+      "label": "รอส่งผลอบรม",
+      "value": "9",
+      "value_num": 9.0,
+      "unit": "หลักสูตร"
+    },
+    {
+      "label": "จำนวนสมาชิกที่เข้าอบรมแต่ละหลักสูตรประจำเดือนปัจจุบัน",
+      "value": "604",
+      "value_num": 604.0,
+      "unit": "คน"
+    },
+    {
+      "label": "จำนวนสมาชิกที่ได้รับการฝึกอบรมประจำเดือนปัจจุบัน",
+      "value": "0",
+      "value_num": 0.0,
+      "unit": "คน"
+    },
+    {
+      "label": "จำนวนสมาชิกที่ยังไม่บรรลุเป้าหมายการฝึกอบรม",
+      "value": "0",
+      "value_num": 0.0,
+      "unit": "คน"
+    },
+    {
+      "label": "จำนวนหลักสูตรที่ส่งผลแล้ว คิดเป็น",
+      "value": "11.11%",
+      "value_num": 11.11,
+      "unit": ""
+    }
+  ],
+  "roleplay": [
+    {
+      "label": "ทีม Roleplay",
+      "value": "55",
+      "value_num": 55.0,
+      "unit": "ทีม"
+    },
+    {
+      "label": "ทีมที่ Roleplay ผ่าน",
+      "value": "2",
+      "value_num": 2.0,
+      "unit": "ทีม"
+    },
+    {
+      "label": "ทีมที่ยังไม่ส่ง Roleplay",
+      "value": "53",
+      "value_num": 53.0,
+      "unit": "ทีม"
+    },
+    {
+      "label": "ทีมบรรลุเป้าหมายการ Roleplay คิดเป็น",
+      "value": "3.64",
+      "value_num": 3.64,
+      "unit": "%"
+    }
+  ],
+  "mentor": [
+    {
+      "label": "สมาชิกที่อยู่ในระบบ Mentor",
+      "value": "30",
+      "value_num": 30.0,
+      "unit": "คน"
+    },
+    {
+      "label": "สมาชิกที่มีวินัยการส่งรายงาน มากกว่า 90%",
+      "value": "8",
+      "value_num": 8.0,
+      "unit": "คน"
+    },
+    {
+      "label": "สมาชิกที่มีวินัยการส่งรายงาน น้อยกว่า 90%",
+      "value": "22",
+      "value_num": 22.0,
+      "unit": "คน"
+    },
+    {
+      "label": "สมาชิกที่มีวินัยการส่งรายงาน มากกว่า 90%",
+      "value": "26.67",
+      "value_num": 26.67,
+      "unit": "%"
+    }
+  ],
+  "coach": [
+    {
+      "label": "สมาชิกที่อยู่ในระบบมอบหมายบทบาทผู้ Coach",
+      "value": "58",
+      "value_num": 58.0,
+      "unit": "คน"
+    },
+    {
+      "label": "สมาชิกที่มีวินัยการ Coach ตามเป้าหมาย",
+      "value": "58",
+      "value_num": 58.0,
+      "unit": "คน"
+    },
+    {
+      "label": "สมาชิกที่มีวินัยการ Coach น้อยกว่าเป้าหมาย",
+      "value": "0",
+      "value_num": 0.0,
+      "unit": "คน"
+    },
+    {
+      "label": "พี่เลี้ยงที่ยังไม่ได้โค้ชน้องเลี้ยง คิดเป็น",
+      "value": "100",
+      "value_num": 100.0,
+      "unit": "%"
+    }
+  ],
+  "lg": {
+    "headers": [
+      "Capital",
+      "PKG",
+      "PGHg",
+      "PMSg",
+      "AAMg",
+      "RPLCg",
+      "RAFCOg",
+      "CPDg",
+      "รวม",
+      "อ้างอิงสถานะ"
+    ],
+    "rows": [
+      {
+        "name": "ทุนมนุษย์ (Human Capital)",
+        "PKG": 5,
+        "PGHg": 1,
+        "PMSg": 12,
+        "AAMg": 37,
+        "RPLCg": 5,
+        "RAFCOg": 1,
+        "CPDg": 1,
+        "total": 62,
+        "reference": "AOE (ทุนมนุษย์ BU/FU )"
+      },
+      {
+        "name": "ทุนสารสนเทศ (Information Capital)",
+        "PKG": 21,
+        "PGHg": 1,
+        "PMSg": 21,
+        "AAMg": 1,
+        "RPLCg": 1,
+        "RAFCOg": 1,
+        "CPDg": 6,
+        "total": 52,
+        "reference": "ทุนสารสนเทศ"
+      },
+      {
+        "name": "ทุนองค์กร (Organizational Capital)",
+        "PKG": 7,
+        "PGHg": 1,
+        "PMSg": 2,
+        "AAMg": 1,
+        "RPLCg": 1,
+        "RAFCOg": 1,
+        "CPDg": 1,
+        "total": 14,
+        "reference": "Core competency (ทุนองค์กร SMC)"
+      },
+      {
+        "name": "ทุนองค์กร PKG",
+        "PKG": 5,
+        "PGHg": 1,
+        "PMSg": 1,
+        "AAMg": 1,
+        "RPLCg": 1,
+        "RAFCOg": 1,
+        "CPDg": 1,
+        "total": 11,
+        "reference": "หลักสูตรเลือก(PAD)"
+      },
+      {
+        "name": "รวม",
+        "PKG": 38,
+        "PGHg": 4,
+        "PMSg": 36,
+        "AAMg": 40,
+        "RPLCg": 8,
+        "RAFCOg": 4,
+        "CPDg": 9,
+        "total": 0,
+        "reference": ""
+      }
+    ]
+  }
+};
+
+// ============================================================
+// Render Functions
+// ============================================================
+function classifyKpi(label) {
+  const l = label.toLowerCase();
+  if (l.includes('ครบ') || l.includes('ผ่าน') || l.includes('บรรลุ')) return 'good';
+  if (l.includes('รอ') || l.includes('ไม่บรรลุ') || l.includes('น้อยกว่า')) return 'warn';
+  if (l.includes('วิกฤต') || l.includes('ยังไม่บรรลุ')) return 'bad';
+  return 'info';
+}
+
+function renderKpiGrid(elementId, items) {
+  const grid = document.getElementById(elementId);
+  if (!grid) return;
+  grid.innerHTML = items.map(item => {
+    const cls = classifyKpi(item.label);
+    return `<div class="kpi-item ${cls}">
+      <div class="k-label">${item.label}</div>
+      <div class="k-value">${item.value}</div>
+      <div class="k-unit">${item.unit || ''}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderSummaryTable(data) {
+  const table = document.getElementById('summaryTable');
+  if (!table || !data || !data.rows || data.rows.length === 0) {
+    table.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-mute);">ไม่มีข้อมูล</td></tr>';
+    return;
+  }
+  const sorted = [...data.rows].sort((a, b) => (b.credit_pct || 0) - (a.credit_pct || 0));
+  let html = '<thead><tr>';
+  html += '<th class="cname">บริษัท</th>';
+  html += '<th class="num">สมาชิก</th>';
+  html += '<th class="num">ครบ 44 หน่วย</th>';
+  html += '<th class="num">ยังไม่ครบ</th>';
+  html += '<th class="num">% ครบ</th>';
+  html += '<th class="num">GPA ผ่าน</th>';
+  html += '<th class="num">GPA ไม่ผ่าน</th>';
+  html += '<th class="num">% GPA</th>';
+  html += '</tr></thead><tbody>';
+  sorted.forEach(c => {
+    html += `<tr>
+      <td class="cname">${c.name || ''}</td>
+      <td class="num">${c.members || 0}</td>
+      <td class="num">${c.credit_done || 0}</td>
+      <td class="num">${c.credit_remain || 0}</td>
+      <td class="num"><strong>${(c.credit_pct || 0).toFixed(2)}%</strong></td>
+      <td class="num">${c.gpa_pass || 0}</td>
+      <td class="num">${c.gpa_fail || 0}</td>
+      <td class="num">${(c.gpa_pct || 0).toFixed(2)}%</td>
+    </tr>`;
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+}
+
+function renderLgTable(data) {
+  const table = document.getElementById('lgTable');
+  if (!table || !data || !data.rows || data.rows.length === 0) {
+    table.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:20px;color:var(--text-mute);">ไม่มีข้อมูล</td></tr>';
+    return;
+  }
+  const headers = data.headers;
+  const companyCols = headers.slice(1, -2);
+  const hasTotal = headers.includes('รวม');
+  const hasRef = headers.includes('อ้างอิงสถานะ');
+  let html = '<thead><tr><th class="cname">Capital</th>';
+  companyCols.forEach(c => html += `<th class="num">${c}</th>`);
+  if (hasTotal) html += '<th class="num">รวม</th>';
+  if (hasRef) html += '<th>อ้างอิงสถานะ</th>';
+  html += '</tr></thead><tbody>';
+  data.rows.forEach(row => {
+    html += '<tr>';
+    html += `<td class="cname">${row.name || ''}</td>`;
+    companyCols.forEach(c => {
+      const v = row[c] !== undefined ? row[c] : '-';
+      html += `<td class="num">${v}</td>`;
+    });
+    if (hasTotal) html += `<td class="num">${row.total !== undefined ? row.total : '-'}</td>`;
+    if (hasRef) html += `<td style="font-size:0.78em;color:var(--text-mute);">${row.reference || ''}</td>`;
+    html += '</tr>';
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+}
+
+// ============================================================
+// Load Embedded Data
+// ============================================================
+function loadData() {
+  const data = EMBEDDED_DATA;
+  renderSummaryTable(data.summary || {});
+  renderKpiGrid('trainingGrid', data.training || []);
+  renderKpiGrid('roleplayGrid', data.roleplay || []);
+  renderKpiGrid('mentorGrid', data.mentor || []);
+  renderKpiGrid('coachGrid', data.coach || []);
+  renderLgTable(data.lg || {});
+}
+
+// ============================================================
+// Real-time Clock (Asia/Bangkok)
+// ============================================================
+function updateRealtimeClock() {
+  const now = new Date();
+  const opts = {
+    timeZone: 'Asia/Bangkok',
+    year: 'numeric', month: 'long', day: 'numeric',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+    hour12: false
+  };
+  const fmt = new Intl.DateTimeFormat('th-TH', opts);
+  const parts = fmt.formatToParts(now);
+  const get = (type) => parts.find(p => p.type === type)?.value || '';
+  const day = get('day');
+  const month = get('month');
+  const year = get('year'); // th-TH locale แสดงเป็น พ.ศ. อยู่แล้ว (เช่น 2569)
+  const hour = get('hour');
+  const minute = get('minute');
+  const second = get('second');
+  const text = `${day} ${month} ${year} เวลา ${hour}:${minute}:${second} น.`;
+  const ts = document.getElementById('timestamp');
+  const ft = document.getElementById('footerTimestamp');
+  if (ts) ts.textContent = text;
+  if (ft) ft.textContent = text;
+}
+
+// ============================================================
+// Dynamic Menu System + Route + Permission
+// ============================================================
+
+// === Permissions: ใครเห็นเมนูอะไร (role-based) ===
+window.PERMISSIONS = {
+  admin:   ['dashboard', 'training-2-1', 'training-2-2', 'training-2-3', 'training-2-4',
+            'mentor-3-1', 'mentor-3-2', 'coach-4-1', 'coach-4-2',
+            'roleplay-5-1', 'roleplay-5-2', 'orgcap-6-1', 'orgcap-6-2'],
+  manager: ['dashboard', 'training-2-1', 'training-2-2', 'training-2-3', 'training-2-4',
+            'mentor-3-1', 'mentor-3-2', 'coach-4-1', 'coach-4-2',
+            'roleplay-5-1', 'roleplay-5-2'],
+  member:  ['dashboard', 'roleplay-5-1', 'roleplay-5-2']
+};
+
+// === Menu Config: เพิ่ม/ลด/แก้ที่นี่ที่เดียว ===
+// โครงสร้าง: { id, label, icon, parent, permissions: ['admin','manager','member'] }
+window.MENU_CONFIG = [
+  { id: 'dashboard', label: 'Dashboard', icon: 'fa-chart-pie', parent: null, permissions: ['admin','manager','member'] },
+  
+  { id: 'training', label: 'Training', icon: 'fa-graduation-cap', parent: null, permissions: ['admin','manager'] },
+  { id: 'training-2-1', label: '2.1 ลงทะเบียนหลักสูตร', parent: 'training', permissions: ['admin','manager'] },
+  { id: 'training-2-2', label: '2.2 ขอเปิดอบรม ภายใน/ภายนอก', parent: 'training', permissions: ['admin','manager'] },
+  { id: 'training-2-3', label: '2.3 ส่งผลอบรม ภายใน/ภายนอก', parent: 'training', permissions: ['admin','manager'] },
+  { id: 'training-2-4', label: '2.4 รายงานการอบรมภายนอก', parent: 'training', permissions: ['admin','manager'] },
+  
+  { id: 'mentor', label: 'Mentor', icon: 'fa-user-group', parent: null, permissions: ['admin','manager'] },
+  { id: 'mentor-3-1', label: '3.1 Set ระบบพี่เลี้ยงน้องเลี้ยง', parent: 'mentor', permissions: ['admin','manager'] },
+  { id: 'mentor-3-2', label: '3.2 แบบ From การส่งรายงานน้องเลี้ยง PKG', parent: 'mentor', permissions: ['admin','manager'] },
+  
+  { id: 'coach', label: 'Coach', icon: 'fa-chalkboard-user', parent: null, permissions: ['admin','manager'] },
+  { id: 'coach-4-1', label: '4.1 Menter Coach เชื่อมสมุดพก', parent: 'coach', permissions: ['admin','manager'] },
+  { id: 'coach-4-2', label: '4.2 อื่นๆ', parent: 'coach', permissions: ['admin','manager'] },
+  
+  { id: 'roleplay', label: 'Roleplay', icon: 'fa-masks-theater', parent: null, permissions: ['admin','manager','member'] },
+  { id: 'roleplay-5-1', label: '5.1 รายงานการ Roleplay', parent: 'roleplay', permissions: ['admin','manager','member'] },
+  { id: 'roleplay-5-2', label: '5.2 แบบ From ส่ง Roleplay', parent: 'roleplay', permissions: ['admin','manager','member'] },
+  
+  { id: 'orgcap', label: 'กำกับทุนองค์กร', icon: 'fa-sack-dollar', parent: null, permissions: ['admin'] },
+  { id: 'orgcap-6-1', label: '6.1 รายงานการอบรม', parent: 'orgcap', permissions: ['admin'] },
+  { id: 'orgcap-6-2', label: '6.2 อื่นๆ', parent: 'orgcap', permissions: ['admin'] }
+];
+
+// === State ===
+let currentUser = { role: 'admin', name: 'ผู้ดูแลระบบ (Admin)' };
+let currentRoute = 'dashboard';
+
+// === Render Menu (Dynamic) ===
+// โครงสร้างตามภาพตัวอย่าง:
+// - Dashboard = top-level button (กดได้)
+// - Training/Mentor/Coach/Roleplay/กำกับทุน = section header (ไม่กด, แค่ label)
+// - sub-items = button (กดได้)
+function renderMenu() {
+  const nav = document.getElementById('dynamicMenu');
+  if (!nav) return;
+  const allowed = window.PERMISSIONS[currentUser.role] || [];
+  const items = window.MENU_CONFIG.filter(m => allowed.includes(m.id));
+  
+  // หา parent menus ที่มีลูกใน allowed
+  const parentsNeeded = new Set();
+  items.forEach(m => { if (m.parent) parentsNeeded.add(m.parent); });
+  const parents = window.MENU_CONFIG.filter(m => parentsNeeded.has(m.id) && !m.parent);
+  
+  let html = '';
+  
+  // 1. Dashboard (top-level button)
+  const dashboard = window.MENU_CONFIG.find(m => m.id === 'dashboard');
+  if (dashboard && allowed.includes('dashboard')) {
+    html += `<button class="menu-item" data-menu-id="dashboard" onclick="navigateTo('dashboard')">
+      <i class="fa-solid ${dashboard.icon}"></i>
+      <span>${dashboard.label}</span>
+    </button>`;
+  }
+  
+  // 2. Parent sections + sub-items
+  parents.forEach(parent => {
+    // Section header (ไม่กด)
+    html += `<div class="menu-section-title">
+      <i class="fa-solid ${parent.icon}"></i> ${parent.label}
+    </div>`;
+    
+    // Sub-items (กดได้)
+    const children = items.filter(m => m.parent === parent.id);
+    children.forEach(child => {
+      html += `<button class="menu-subitem" data-menu-id="${child.id}" onclick="navigateTo('${child.id}')">
+        <span class="dot"></span><span>${child.label}</span>
+      </button>`;
+    });
+  });
+  
+  nav.innerHTML = html;
+}
+
+// === Navigate (Route change) ===
+function navigateTo(menuId) {
+  currentRoute = menuId;
+  
+  // Update active state (sub-items แสดงเสมอ ไม่ต้อง expand/collapse)
+  document.querySelectorAll('.menu-item, .menu-subitem').forEach(btn => btn.classList.remove('active'));
+  const activeBtn = document.querySelector(`[data-menu-id="${menuId}"]`);
+  if (activeBtn) activeBtn.classList.add('active');
+  
+  // Render page content
+  renderPage(menuId);
+  
+  // Update header
+  const menu = window.MENU_CONFIG.find(m => m.id === menuId);
+  if (menu) {
+    const h2 = document.querySelector('.top-header h2');
+    if (h2) h2.textContent = menu.label;
+  }
+}
+
+// === Render Page (Toggle route) ===
+function renderPage(menuId) {
+  const container = document.getElementById('routeContainer');
+  if (!container) return;
+  
+  // Dashboard: ใช้ template เดิม
+  if (menuId === 'dashboard') {
+    const tpl = document.getElementById('tpl-dashboard');
+    if (tpl) {
+      container.innerHTML = '';
+      container.appendChild(tpl.content.cloneNode(true));
+    }
+    return;
+  }
+  
+  // Sub-pages: เลือก template ตาม menuId
+  let tplId = 'tpl-page';
+  if (menuId === 'training-2-1') tplId = 'tpl-form-2-1';
+  // เพิ่ม form อื่นๆ ที่นี่
+
+  const tpl = document.getElementById(tplId);
+  if (tpl) {
+    container.innerHTML = '';
+    container.appendChild(tpl.content.cloneNode(true));
+    // ถ้าเป็น tpl-page (ไม่ใช่ form) ให้ fill dynamic data
+    if (tplId === 'tpl-page') {
+      const menu = window.MENU_CONFIG.find(m => m.id === menuId);
+      if (menu) {
+        const t = document.getElementById('pageTitle');
+        const s = document.getElementById('pageSubtitle');
+        if (t) t.textContent = menu.label;
+        if (s) s.textContent = menu.parent ? `เมนูย่อยของ ${menu.parent}` : 'เมนูหลัก';
+      }
+    }
+    // ⭐ Hook สำหรับ Form 2.1: เริ่มโหลด employee map ทันที และถ้ามีค่าใน input ให้ auto-fill
+    if (tplId === 'tpl-form-2-1') {
+      // โหลดข้อมูลล่วงหน้า (preload)
+      loadEmployeeMap();
+      // ถ้ามีค่าอยู่แล้ว ให้ auto-fill ทันที
+      const producerIdEl = document.getElementById('producerId');
+      if (producerIdEl && producerIdEl.value.trim()) {
+        autoFillName();
+      }
+    }
+  }
+}
+
+// === Form Submit (จำลอง - ยังไม่ได้เชื่อม Google Sheet) ===
+function submitForm(event, formId) {
+  event.preventDefault();
+  const form = document.getElementById(formId);
+  if (!form) return;
+  const status = document.getElementById('formStatus');
+  
+  // Collect form data
+  const formData = new FormData(form);
+  const data = {};
+  formData.forEach((value, key) => { data[key] = value; });
+  
+  // แสดง status
+  if (status) {
+    status.className = 'form-status info';
+    status.style.display = 'block';
+    status.innerHTML = '<i class="fa-solid fa-circle-info"></i> กำลังบันทึก...';
+  }
+  
+  // จำลองการบันทึก (เนื่องจากยังไม่ได้เชื่อม Google Apps Script)
+  setTimeout(() => {
+    if (status) {
+      status.className = 'form-status success';
+      status.innerHTML = `
+        <i class="fa-solid fa-circle-check"></i> 
+        <strong>บันทึกสำเร็จ!</strong><br>
+        <small>📋 ข้อมูล: ${JSON.stringify(data, null, 2)}</small><br>
+        <small>⚠️ โหมดจำลอง — ยังไม่ได้เชื่อมต่อ Google Sheet จริง (ติดต่อตี๋เพื่อเปิดใช้งานจริง)</small>
+      `;
+    }
+    console.log('Form data:', data);
+  }, 800);
+}
+
+// === Form Reset ===
+function resetForm(formId) {
+  const form = document.getElementById(formId);
+  if (form) {
+    form.reset();
+    // Reset auto-fill fields
+    const firstName = document.getElementById('firstName');
+    const lastName = document.getElementById('lastName');
+    const credit = document.getElementById('credit');
+    if (firstName) firstName.value = '';
+    if (lastName) lastName.value = '';
+    if (credit) credit.value = '';
+    const status = document.getElementById('formStatus');
+    if (status) status.style.display = 'none';
+  }
+}
+
+// === Auto-คำนวณหน่วยกิต (ตามเงื่อนไข Sheet) ===
+// เงื่อนไข: AOE = 4, ทุนสารสนเทศ = 3, Core = 2, PAD = 1
+const CREDIT_MAP = {
+  'AOE (ทุนมนุษย์ BU/FU )': 4,
+  'ทุนสารสนเทศ': 3,
+  'Core competency (ทุนองค์กร SMC)': 2,
+  'หลักสูตรเลือก(PAD)': 1
+};
+function autoCredit() {
+  const courseType = document.getElementById('courseType');
+  const credit = document.getElementById('credit');
+  if (!courseType || !credit) return;
+  const val = courseType.value;
+  credit.value = CREDIT_MAP[val] !== undefined ? CREDIT_MAP[val] : '-';
+}
+
+// === Auto-fill ชื่อ-นามสกุล (ดึงจาก PKGemployee gid=572791880) ===
+// v7.3: Preload ทันทีตอน load + Auto-fill ขณะพิมพ์ (input event) + Fallback URL
+const EMPLOYEE_SHEET_CSV = 'https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=572791880&tq=select%20A%2CC%2CD';
+const EMPLOYEE_SHEET_CSV_FALLBACK = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=572791880&tq=select%20A%2CC%2CD');
+let employeeMap = null;     // Map: id -> { firstName, lastName }
+let employeeLoading = null;  // Promise (cache การโหลด)
+let employeeLoadingStatus = 'idle'; // idle | loading | ready | failed
+
+/** Parse CSV line — รองรับ comma ใน quoted fields */
+function parseCSVLine(line) {
+  const result = [];
+  let cur = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') { inQuotes = !inQuotes; continue; }
+    if (ch === ',' && !inQuotes) { result.push(cur); cur = ''; continue; }
+    cur += ch;
+  }
+  result.push(cur);
+  return result;
+}
+
+/** สร้าง Map จาก CSV text */
+function buildMapFromCSV(csv, source) {
+  const map = new Map();
+  const lines = csv.split('\n');
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+    const cols = parseCSVLine(line);
+    if (cols.length < 3) continue;
+    const id = cols[0].trim();
+    const firstName = (cols[1] || '').trim();
+    const lastName = (cols[2] || '').trim();
+    if (id && (firstName || lastName)) {
+      map.set(id, { firstName, lastName });
+      if (/^\d+$/.test(id)) map.set('M-' + id.padStart(5, '0'), { firstName, lastName });
+    }
+  }
+  console.log(`✅ โหลดสมาชิกจาก ${source}: ${map.size} รายการ`);
+  return map;
+}
+
+async function loadEmployeeMap(forceReload = false) {
+  if (!forceReload && employeeMap && employeeMap.size > 0) return employeeMap;
+  if (!forceReload && employeeLoading) return employeeLoading;
+  employeeLoadingStatus = 'loading';
+  employeeLoading = (async () => {
+    // Helper: try fetch URL
+    async function tryFetch(url, source) {
+      const res = await fetch(url, { method: 'GET', cache: 'no-cache' });
+      if (!res.ok) throw new Error(source + ' HTTP ' + res.status);
+      const csv = await res.text();
+      if (!csv || csv.length < 100) throw new Error(source + ' empty (' + csv.length + ' bytes)');
+      return csv;
+    }
+    // ⭐ Level 1: Primary (gviz/tq)
+    try {
+      const csv = await tryFetch(EMPLOYEE_SHEET_CSV, 'gviz/tq');
+      employeeMap = buildMapFromCSV(csv, 'gviz/tq');
+      employeeLoadingStatus = 'ready';
+      console.log('🔍 6006083 →', employeeMap.get('6006083'));
+      console.log('✅ Auto-fill ใช้งานได้ — ข้อมูลสดจาก Sheet');
+      return employeeMap;
+    } catch (e1) {
+      console.warn('⚠️ Primary failed:', e1.message);
+      // ⭐ Level 2: Fallback (allorigins.win)
+      try {
+        const csv = await tryFetch(EMPLOYEE_SHEET_CSV_FALLBACK, 'allorigins.win');
+        employeeMap = buildMapFromCSV(csv, 'allorigins.win');
+        employeeLoadingStatus = 'ready';
+        console.log('🔍 6006083 (fallback) →', employeeMap.get('6006083'));
+        console.log('✅ Auto-fill ใช้งานได้ — ผ่าน proxy');
+        return employeeMap;
+      } catch (e2) {
+        console.warn('⚠️ Fallback failed:', e2.message);
+        // ⭐ Level 3: Embedded (always works — last resort)
+        try {
+          if (typeof EMPLOYEE_EMBEDDED_CSV === 'string' && EMPLOYEE_EMBEDDED_CSV.length > 100) {
+            employeeMap = buildMapFromCSV(EMPLOYEE_EMBEDDED_CSV, 'embedded');
+            employeeLoadingStatus = 'ready';
+            console.log('🔍 6006083 (embedded) →', employeeMap.get('6006083'));
+            console.log('✅ Auto-fill ใช้งานได้ — embedded data (' + employeeMap.size + ' รายการ)');
+            return employeeMap;
+          }
+          throw new Error('No embedded data');
+        } catch (e3) {
+          console.error('❌ โหลดข้อมูลสมาชิกล้มเหลวทั้ง 3 วิธี:', e1.message, '/', e2.message, '/', e3.message);
+          employeeLoadingStatus = 'failed';
+          employeeMap = new Map();
+          return employeeMap;
+        }
+      }
+    }
+  })();
+  return employeeLoading;
+}
+
+// ⭐ Preload map ทันทีตอนหน้า load (ไม่ต้องรอ user เปิดฟอร์ม)
+window.addEventListener('DOMContentLoaded', () => {
+  console.log('🚀 Preload employee map...');
+  loadEmployeeMap();
+});
+
+
+// ⭐ Retry function — เรียกจาก UI ถ้า user กดปุ่ม "ลองใหม่"
+async function retryLoadEmployeeMap() {
+  employeeMap = null;
+  employeeLoading = null;
+  employeeLoadingStatus = 'idle';
+  console.log('🔄 Retry loading employee map...');
+  const map = await loadEmployeeMap(true);
+  if (map && map.size > 0) {
+    // Re-trigger auto-fill ถ้ามีค่าอยู่ใน producerId
+    autoFillName();
+    return true;
+  }
+  return false;
+}
+
+// ⭐ Expose to window for console debugging
+window.retryLoadEmployeeMap = retryLoadEmployeeMap;
+window.loadEmployeeMap = loadEmployeeMap;
+
+async function autoFillName() {
+  const producerId = document.getElementById('producerId');
+  const firstName = document.getElementById('firstName');
+  const lastName = document.getElementById('lastName');
+  if (!producerId || !firstName || !lastName) return;
+  const id = producerId.value.trim();
+  if (!id) {
+    firstName.value = '';
+    lastName.value = '';
+    firstName.placeholder = 'กรอกรหัสสมาชิกก่อน';
+    lastName.placeholder = 'กรอกรหัสสมาชิกก่อน';
+    firstName.style.background = '#f0f9ff';
+    lastName.style.background = '#f0f9ff';
+    return;
+  }
+  // แสดงสถานะกำลังโหลด
+  firstName.placeholder = '⏳ กำลังค้นหา...';
+  lastName.placeholder = '⏳ กำลังค้นหา...';
+  const map = await loadEmployeeMap();
+  // ลองหาแบบตรงๆ ก่อน, ถ้าไม่เจอลอง strip non-digit
+  let emp = map.get(id);
+  if (!emp) {
+    const digits = id.replace(/\D/g, '');
+    if (digits) {
+      emp = map.get(digits) || map.get('M-' + digits.padStart(5, '0'));
+    }
+  }
+  console.log('🔍 ค้นหา ID:', id, '→', emp ? `เจอ: ${emp.firstName} ${emp.lastName}` : 'ไม่เจอ (map size=' + map.size + ', status=' + employeeLoadingStatus + ')');
+  if (emp) {
+    firstName.value = emp.firstName;
+    lastName.value = emp.lastName;
+    firstName.placeholder = '';
+    lastName.placeholder = '';
+    // ⭐ Visual feedback: highlight + pulse
+    firstName.style.background = '#d1fae5';
+    lastName.style.background = '#d1fae5';
+    firstName.style.color = '#065f46';
+    lastName.style.color = '#065f46';
+    firstName.style.fontWeight = '600';
+    lastName.style.fontWeight = '600';
+    setTimeout(() => {
+      firstName.style.background = '#f0f9ff';
+      lastName.style.background = '#f0f9ff';
+    }, 1500);
+  } else {
+    firstName.value = '';
+    lastName.value = '';
+    if (employeeLoadingStatus === 'loading') {
+      firstName.placeholder = '⏳ กำลังโหลดข้อมูล...';
+      lastName.placeholder = '⏳ กำลังโหลดข้อมูล...';
+    } else if (employeeLoadingStatus === 'failed') {
+      firstName.placeholder = '❌ โหลดข้อมูลล้มเหลว — ติดต่อตี๋';
+      lastName.placeholder = '❌ โหลดข้อมูลล้มเหลว — ติดต่อตี๋';
+    } else {
+      firstName.placeholder = '❌ ไม่พบรหัส ' + id;
+      lastName.placeholder = '❌ ไม่พบรหัส ' + id;
+    }
+    firstName.style.background = '#fee2e2';
+    lastName.style.background = '#fee2e2';
+  }
+}
+
+// === Event: ผูกกับ document เพื่อจับทุก event (รวม input ขณะพิมพ์) ===
+document.addEventListener('input', (e) => {
+  if (e.target && e.target.id === 'producerId') autoFillName();
+});
+document.addEventListener('change', (e) => {
+  if (e.target && e.target.id === 'producerId') autoFillName();
+});
+document.addEventListener('blur', (e) => {
+  if (e.target && e.target.id === 'producerId') autoFillName();
+}, true);
+// Backward-compat: ผูกตอน DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+  const producerId = document.getElementById('producerId');
+  if (producerId) {
+    producerId.addEventListener('blur', autoFillName);
+    producerId.addEventListener('change', autoFillName);
+  }
+});
+
+// === Role Change ===
+function onRoleChange(role) {
+  currentUser.role = role;
+  const roleNames = { admin: 'ผู้ดูแลระบบ (Admin)', manager: 'ผู้จัดการ (Manager)', member: 'สมาชิก (Member)' };
+  currentUser.name = roleNames[role] || role;
+  const userName = document.querySelector('.user-name');
+  if (userName) userName.textContent = currentUser.name;
+  renderMenu();
+  // กลับไปหน้า dashboard เมื่อเปลี่ยนสิทธิ์
+  navigateTo('dashboard');
+}
+
+// === Init Menu on Load ===
+renderMenu();
+navigateTo('dashboard');
+
+loadData();
+updateRealtimeClock();
+setInterval(updateRealtimeClock, 1000);
+</script>
+</body>
+</html>

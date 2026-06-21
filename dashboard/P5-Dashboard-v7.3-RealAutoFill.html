@@ -79,7 +79,7 @@ body::after {
 
 /* === Sidebar (Dark Rainbow) === */
 .sidebar {
-  width: 288px;
+  width: 240px;
   background: linear-gradient(180deg, #1E1B4B 0%, #0F0A2E 100%);
   border-right: 1px solid var(--border-slate);
   box-shadow: 4px 0 30px rgba(0, 0, 0, 0.15);
@@ -203,7 +203,9 @@ body::after {
   margin-right: 4px; animation: pulse 2s infinite;
 }
 
-.main-view { flex: 1; padding: 20px; overflow-y: auto; position: relative; z-index: 1; }
+.main-view { flex: 1; padding: 20px 8px; overflow-y: auto; position: relative; z-index: 1; }
+#routeContainer { width: 1200px; max-width: 100%; margin: 0 auto; box-sizing: border-box; padding: 0 8px; }
+#routeContainer .glow-card { margin-left: auto; margin-right: auto; max-width: 100%; }
 .main-view::-webkit-scrollbar { width: 8px; }
 .main-view::-webkit-scrollbar-track { background: var(--bg-main); }
 .main-view::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.2); border-radius: 4px; }
@@ -356,6 +358,152 @@ body::after {
   font-weight: 700;
 }
 
+/* === Form Styles (สำหรับ 2.1, 2.2, 2.3, ...) === */
+.form-section {
+  padding: 0 24px 24px;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.form-field-full { grid-column: 1 / -1; }
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.form-field label {
+  font-size: 0.82em;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex; align-items: center; gap: 4px;
+}
+.form-field .req {
+  color: #EF4444;
+  font-weight: 700;
+}
+.form-field .auto-tag {
+  color: #94A3B8;
+  font-size: 0.85em;
+  font-weight: 500;
+  font-style: italic;
+}
+.form-field input,
+.form-field select,
+.form-field textarea {
+  font-family: inherit;
+  font-size: 0.92em;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border-slate);
+  border-radius: 8px;
+  background: #FFFFFF;
+  color: var(--text-primary);
+  outline: none;
+  transition: all 0.2s ease;
+}
+/* Placeholder สีเทา (เห็นเฉพาะตอน input ว่าง) */
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+  color: #94A3B8;
+  opacity: 1;
+  font-style: italic;
+}
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  border-color: var(--c4-purple);
+  box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.12);
+  background: #FAFBFF;
+}
+/* Disabled input style (สำหรับ fields auto-fill) */
+.form-field input:disabled,
+.form-field select:disabled {
+  background: #F1F5F9;
+  color: #94A3B8;
+  cursor: not-allowed;
+  font-style: italic;
+}
+/* Select placeholder style (ตอน disabled selected) */
+.form-field select:invalid {
+  color: #94A3B8;
+  font-style: italic;
+}
+.form-field select option {
+  color: var(--text-primary);
+  font-style: normal;
+}
+.form-field select option[disabled]:first-child {
+  color: #94A3B8;
+  font-style: italic;
+}
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-slate);
+}
+.btn {
+  font-family: inherit;
+  font-size: 0.92em;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+.btn-primary {
+  background: linear-gradient(90deg, var(--c1-orange), var(--c4-purple));
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(147, 51, 234, 0.2);
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
+}
+.btn-secondary {
+  background: #F1F5F9;
+  color: var(--text-primary);
+  border: 1px solid var(--border-slate);
+}
+.btn-secondary:hover {
+  background: #E2E8F0;
+}
+.form-status {
+  margin-top: 16px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.92em;
+  font-weight: 500;
+}
+.form-status.success {
+  background: rgba(34, 197, 94, 0.1);
+  color: #15803D;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+.form-status.error {
+  background: rgba(239, 68, 68, 0.1);
+  color: #B91C1C;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+.form-status.info {
+  background: rgba(59, 130, 246, 0.1);
+  color: #1D4ED8;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+@media (max-width: 640px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .form-actions { flex-direction: column; }
+  .form-actions .btn { width: 100%; justify-content: center; }
+}
+
 /* === Footer === */
 .footer {
   text-align: center;
@@ -368,7 +516,7 @@ body::after {
 .footer a:hover { text-decoration: underline; }
 
 /* === Responsive === */
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
   .sidebar { width: 240px; }
   .main-view { padding: 16px; }
   .top-header { padding: 0 16px; }
@@ -569,6 +717,280 @@ body::after {
       </div>
       <div class="section-subtitle" id="pageSubtitle"></div>
     </div>
+  </div>
+</template>
+
+<!-- ============================================================ -->
+<!-- Template: 2.1 ลงทะเบียนหลักสูตร (Form) -->
+<!-- ============================================================ -->
+<template id="tpl-form-2-1">
+  <div class="glow-card">
+    <div class="kpi-section">
+      <div class="section-title" style="margin-bottom: 4px;">
+        <i class="fa-solid fa-clipboard-list"></i>
+        <span>2.1 ลงทะเบียนหลักสูตร</span>
+      </div>
+      <div class="section-subtitle">กรอกข้อมูลหลักสูตรเพื่อลงทะเบียน — * = จำเป็นต้องกรอก</div>
+    </div>
+
+    <form class="form-section" id="formTrainingRegister" onsubmit="submitForm(event, 'training-register')">
+      <div class="form-grid">
+        <!-- 1. ชื่อหลักสูตร -->
+        <div class="form-field form-field-full">
+          <label>ชื่อหลักสูตร <span class="req">*</span></label>
+          <input type="text" name="courseName" placeholder="ชื่อหลักสูตร" required>
+        </div>
+
+        <!-- 2. ผู้ผลิตหลักสูตร (ใส่เฉพาะรหัสสมาชิก) -->
+        <div class="form-field form-field-full">
+          <label>ผู้ผลิตหลักสูตร (ใส่เฉพาะรหัสสมาชิก) <span class="req">*</span></label>
+          <input type="text" name="producerId" id="producerId" placeholder="รหัสสมาชิก เช่น M-00123" required>
+        </div>
+
+        <!-- 3. ชื่อ (auto-fill) -->
+        <div class="form-field">
+          <label>ชื่อ <span class="auto-tag">(ดึงอัตโนมัติจาก PKGemployee)</span></label>
+          <input type="text" name="firstName" id="firstName" placeholder="กรอกรหัสสมาชิกก่อน" readonly style="background:#f0f9ff;cursor:not-allowed;">
+        </div>
+
+        <!-- 4. นามสกุล (auto-fill) -->
+        <div class="form-field">
+          <label>นามสกุล <span class="auto-tag">(ดึงอัตโนมัติจาก PKGemployee)</span></label>
+          <input type="text" name="lastName" id="lastName" placeholder="กรอกรหัสสมาชิกก่อน" readonly style="background:#f0f9ff;cursor:not-allowed;">
+        </div>
+
+        <!-- 5. หลักสูตร ประจำธุรกิจ -->
+        <div class="form-field form-field-full">
+          <label>หลักสูตร ประจำธุรกิจ <span class="req">*</span></label>
+          <select name="businessCourse" required>
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="PGHg">PGHg</option>
+            <option value="PMSg">PMSg</option>
+            <option value="AAMg">AAMg</option>
+            <option value="RPLCg">RPLCg</option>
+            <option value="RAFCOg">RAFCOg</option>
+            <option value="CPDg">CPDg</option>
+            <option value="PKG">PKG</option>
+          </select>
+        </div>
+
+        <!-- 6. กลุ่มหลักสูตร -->
+        <div class="form-field form-field-full">
+          <label>กลุ่มหลักสูตร <span class="req">*</span></label>
+          <select name="courseGroup" required>
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="หลักสูตรบังคับ">หลักสูตรบังคับ</option>
+            <option value="หลักสูตรหลัก">หลักสูตรหลัก</option>
+            <option value="หลักสูตรเลือก">หลักสูตรเลือก</option>
+          </select>
+        </div>
+
+        <!-- 7. ประเภทของหลักสูตร (มี onchange auto-คำนวณหน่วยกิต) -->
+        <div class="form-field form-field-full">
+          <label>ประเภทของหลักสูตร <span class="req">*</span></label>
+          <select name="courseType" id="courseType" required onchange="autoCredit()">
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="AOE (ทุนมนุษย์ BU/FU )">AOE (ทุนมนุษย์ BU/FU )</option>
+            <option value="ทุนสารสนเทศ">ทุนสารสนเทศ</option>
+            <option value="Core competency (ทุนองค์กร SMC)">Core competency (ทุนองค์กร SMC)</option>
+            <option value="หลักสูตรเลือก(PAD)">หลักสูตรเลือก(PAD)</option>
+          </select>
+        </div>
+
+        <!-- 8. 3 ผ่าน (AUTO) -->
+        <div class="form-field">
+          <label>3 ผ่าน <span class="auto-tag">(ขึ้นออโต้)</span></label>
+          <input type="text" name="threePass" value="ไม่ใช่" disabled>
+        </div>
+
+        <!-- 9. หน่วยกิต (AUTO - คำนวณจากประเภท) -->
+        <div class="form-field">
+          <label>หน่วยกิต <span class="auto-tag">(ขึ้นออโต้)</span></label>
+          <input type="text" name="credit" id="credit" value="" disabled placeholder="-">
+        </div>
+
+        <!-- 10. แหล่งที่มาของการผลิตหลักสูตร -->
+        <div class="form-field form-field-full">
+          <label>แหล่งที่มาของการผลิตหลักสูตร <span class="req">*</span></label>
+          <select name="courseSource" required>
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="Core Competency PKG">Core Competency PKG</option>
+            <option value="Competeney">Competeney</option>
+            <option value="Area of Excellent AOE ( CC BU )">Area of Excellent AOE ( CC BU )</option>
+            <option value="PM/WI">PM/WI</option>
+            <option value="บทบาท">บทบาท</option>
+            <option value="Tools">Tools</option>
+          </select>
+        </div>
+
+        <!-- 11. รูปแบบการฝึกอบรม -->
+        <div class="form-field">
+          <label>รูปแบบการฝึกอบรม <span class="req">*</span></label>
+          <select name="trainingStyle" required>
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="Classroom Offline">Classroom Offline</option>
+            <option value="Classroom online">Classroom online</option>
+            <option value="Self lerning">Self lerning</option>
+            <option value="On the job training">On the job training</option>
+            <option value="Rolo play">Rolo play</option>
+          </select>
+        </div>
+
+        <!-- 12. รูปแบบการวัดผล -->
+        <div class="form-field">
+          <label>รูปแบบการวัดผล <span class="req">*</span></label>
+          <select name="evalStyle" required>
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="Rolo play">Rolo play</option>
+            <option value="ข้อเขียน">ข้อเขียน</option>
+          </select>
+        </div>
+
+        <!-- 13. ช่วงอายุงานผู้เข้าอบรม -->
+        <div class="form-field form-field-full">
+          <label>ช่วงอายุงานผู้เข้าอบรม <span class="req">*</span></label>
+          <select name="ageRange" required>
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="0 เดือน - 1 เดือน">0 เดือน - 1 เดือน</option>
+            <option value="0 เดือน - 3 เดือน">0 เดือน - 3 เดือน</option>
+            <option value="0 เดือน - 6 เดือน">0 เดือน - 6 เดือน</option>
+            <option value="6 เดือน - 1 ปี">6 เดือน - 1 ปี</option>
+            <option value="1 ปี - 3 ปี">1 ปี - 3 ปี</option>
+            <option value="0 ปี - 30 ปี">0 ปี - 30 ปี</option>
+          </select>
+        </div>
+
+        <!-- 14. Competency (ความสามารถ) - 20 options -->
+        <div class="form-field form-field-full">
+          <label>Competency (ความสามารถ) <span class="req">*</span></label>
+          <select name="competency" required>
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="เก่งพัฒนาภาวะผู้นำ">เก่งพัฒนาภาวะผู้นำ</option>
+            <option value="เก่่งสร้างวัฒนธรรมองค์กรณ์">เก่่งสร้างวัฒนธรรมองค์กรณ์</option>
+            <option value="เก่งเรื่องการรู้สึกตัว">เก่งเรื่องการรู้สึกตัว</option>
+            <option value="เก่งสร้างบรรยากาศ">เก่งสร้างบรรยากาศ</option>
+            <option value="เก่งทำงานเป็นทีม">เก่งทำงานเป็นทีม</option>
+            <option value="เก่งสร้างความสัมพันธ์">เก่งสร้างความสัมพันธ์</option>
+            <option value="เก่งเรื่องการรับใช้ผู้อื่น">เก่งเรื่องการรับใช้ผู้อื่น</option>
+            <option value="เก่งการใช้เทคโนโลยี">เก่งการใช้เทคโนโลยี</option>
+            <option value="เก่งเรื่องการเรียนรู้">เก่งเรื่องการเรียนรู้</option>
+            <option value="เก่งเรื่องการใช้ 'ท่าที'">เก่งเรื่องการใช้ 'ท่าที'</option>
+            <option value="เก่งเพิ่มผลผลิต">เก่งเพิ่มผลผลิต</option>
+            <option value="เก่งเเสวงหาลูกค้า">เก่งเเสวงหาลูกค้า</option>
+            <option value="การสอนเเนะ (Coaching)">การสอนเเนะ (Coaching)</option>
+            <option value="การนำความเปลี่ยนเเปลง">การนำความเปลี่ยนเเปลง</option>
+            <option value="การติดต่อสื่อสาร (Communication)">การติดต่อสื่อสาร (Communication)</option>
+            <option value="การปรับปรุงอย่างต่อเนื่อง (Continuous lmprovement)">การปรับปรุงอย่างต่อเนื่อง (Continuous lmprovement)</option>
+            <option value="การตัดสินใจ (Decision Making)">การตัดสินใจ (Decision Making)</option>
+            <option value="การมอบหมายงาน (Delegation)">การมอบหมายงาน (Delegation)</option>
+            <option value="การสร้างเเรงจูงใจ(Motivation)">การสร้างเเรงจูงใจ(Motivation)</option>
+          </select>
+        </div>
+
+        <!-- 15. สถานะหลักสูตร -->
+        <div class="form-field form-field-full">
+          <label>สถานะหลักสูตร <span class="req">*</span></label>
+          <select name="courseStatus" required>
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="หลักสูตรเปิดใหม่">หลักสูตรเปิดใหม่</option>
+            <option value="หลักสููตรเดิม นำมาเปิดอีกครั้ง (ไม่มีการเปลี่ยนเเปลงเนื้อหาเเละข้อสอบ)">หลักสููตรเดิม นำมาเปิดอีกครั้ง (ไม่มีการเปลี่ยนเเปลงเนื้อหาเเละข้อสอบ)</option>
+            <option value="หลักสูตรเปิลี่ยนแปลง (มีการเปลี่ยนแปลงเนื้อหาเเละคำตอบ)">หลักสูตรเปิลี่ยนแปลง (มีการเปลี่ยนแปลงเนื้อหาเเละคำตอบ)</option>
+          </select>
+        </div>
+
+        <!-- 16. วัดเป้าประจำปี -->
+        <div class="form-field">
+          <label>วัดเป้าประจำปี <span class="req">*</span></label>
+          <select name="yearlyTarget" required>
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+
+        <!-- 17. คอร์สอบรม -->
+        <div class="form-field">
+          <label>คอร์สอบรม <span class="req">*</span></label>
+          <select name="courseType2" required>
+            <option value="" disabled selected hidden>-- เลือกข้อมูล --</option>
+            <option value="หลักสูตรภายใน">หลักสูตรภายใน</option>
+            <option value="หลักสูตรภายนอก">หลักสูตรภายนอก</option>
+          </select>
+        </div>
+
+        <!-- 18. ผลลัพท์และผลผลิตที่ได้รับจากการอบรม (ประสิทธิภาพและประสิทธิผล) -->
+        <div class="form-field form-field-full">
+          <label>ผลลัพท์และผลผลิตที่ได้รับจากการอบรม (ประสิทธิภาพและประสิทธิผล) <span class="req">*</span></label>
+          <textarea name="resultOverall" rows="3" placeholder="ระบุผลลัพท์ภาพรวม" required></textarea>
+        </div>
+
+        <!-- 19-20. ผลลัพท์ฯ 1 + KPI 1 -->
+        <div class="form-field">
+          <label>ผลลัพท์และผลผลิตที่ได้รับ (1) <span class="req">*</span></label>
+          <input type="text" name="result1" placeholder="ผลลัพท์ที่ 1" required>
+        </div>
+        <div class="form-field">
+          <label>KPI (1) <span class="req">*</span></label>
+          <input type="text" name="kpi1" placeholder="KPI ที่ 1" required>
+        </div>
+
+        <!-- 21-22. ผลลัพท์ฯ 2 + KPI 2 -->
+        <div class="form-field">
+          <label>ผลลัพท์และผลผลิตที่ได้รับ (2)</label>
+          <input type="text" name="result2" placeholder="ผลลัพท์ที่ 2 (ถ้ามี)">
+        </div>
+        <div class="form-field">
+          <label>KPI (2)</label>
+          <input type="text" name="kpi2" placeholder="KPI ที่ 2 (ถ้ามี)">
+        </div>
+
+        <!-- 23-24. ผลลัพท์ฯ 3 + KPI 3 -->
+        <div class="form-field">
+          <label>ผลลัพท์และผลผลิตที่ได้รับ (3)</label>
+          <input type="text" name="result3" placeholder="ผลลัพท์ที่ 3 (ถ้ามี)">
+        </div>
+        <div class="form-field">
+          <label>KPI (3)</label>
+          <input type="text" name="kpi3" placeholder="KPI ที่ 3 (ถ้ามี)">
+        </div>
+
+        <!-- 25. เนื้อหา 1 -->
+        <div class="form-field form-field-full">
+          <label>เนื้อหา 1 <span class="req">*</span></label>
+          <textarea name="content1" rows="2" placeholder="เนื้อหาบทที่ 1" required></textarea>
+        </div>
+
+        <!-- 26. เนื้อหา 2 -->
+        <div class="form-field form-field-full">
+          <label>เนื้อหา 2</label>
+          <textarea name="content2" rows="2" placeholder="เนื้อหาบทที่ 2 (ถ้ามี)"></textarea>
+        </div>
+
+        <!-- 27. เนื้อหา 3 -->
+        <div class="form-field form-field-full">
+          <label>เนื้อหา 3</label>
+          <textarea name="content3" rows="2" placeholder="เนื้อหาบทที่ 3 (ถ้ามี)"></textarea>
+        </div>
+
+        <!-- 28. ข้อสอบ -->
+        <div class="form-field form-field-full">
+          <label>ข้อสอบ</label>
+          <textarea name="exam" rows="3" placeholder="ระบุข้อสอบ (ถ้ามี)"></textarea>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="resetForm('formTrainingRegister')">
+          <i class="fa-solid fa-rotate-left"></i> ล้างข้อมูล
+        </button>
+        <button type="submit" class="btn btn-primary">
+          <i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูล
+        </button>
+      </div>
+
+      <div id="formStatus" class="form-status" style="display: none;"></div>
+    </form>
   </div>
 </template>
 
@@ -1102,20 +1524,280 @@ function renderPage(menuId) {
     return;
   }
   
-  // Sub-pages: ใช้ tpl-page + fill dynamic data
-  const tpl = document.getElementById('tpl-page');
+  // Sub-pages: เลือก template ตาม menuId
+  let tplId = 'tpl-page';
+  if (menuId === 'training-2-1') tplId = 'tpl-form-2-1';
+  // เพิ่ม form อื่นๆ ที่นี่
+
+  const tpl = document.getElementById(tplId);
   if (tpl) {
     container.innerHTML = '';
     container.appendChild(tpl.content.cloneNode(true));
-    const menu = window.MENU_CONFIG.find(m => m.id === menuId);
-    if (menu) {
-      const t = document.getElementById('pageTitle');
-      const s = document.getElementById('pageSubtitle');
-      if (t) t.textContent = menu.label;
-      if (s) s.textContent = menu.parent ? `เมนูย่อยของ ${menu.parent}` : 'เมนูหลัก';
+    // ถ้าเป็น tpl-page (ไม่ใช่ form) ให้ fill dynamic data
+    if (tplId === 'tpl-page') {
+      const menu = window.MENU_CONFIG.find(m => m.id === menuId);
+      if (menu) {
+        const t = document.getElementById('pageTitle');
+        const s = document.getElementById('pageSubtitle');
+        if (t) t.textContent = menu.label;
+        if (s) s.textContent = menu.parent ? `เมนูย่อยของ ${menu.parent}` : 'เมนูหลัก';
+      }
+    }
+    // ⭐ Hook สำหรับ Form 2.1: เริ่มโหลด employee map ทันที และถ้ามีค่าใน input ให้ auto-fill
+    if (tplId === 'tpl-form-2-1') {
+      // โหลดข้อมูลล่วงหน้า (preload)
+      loadEmployeeMap();
+      // ถ้ามีค่าอยู่แล้ว ให้ auto-fill ทันที
+      const producerIdEl = document.getElementById('producerId');
+      if (producerIdEl && producerIdEl.value.trim()) {
+        autoFillName();
+      }
     }
   }
 }
+
+// === Form Submit (จำลอง - ยังไม่ได้เชื่อม Google Sheet) ===
+function submitForm(event, formId) {
+  event.preventDefault();
+  const form = document.getElementById(formId);
+  if (!form) return;
+  const status = document.getElementById('formStatus');
+  
+  // Collect form data
+  const formData = new FormData(form);
+  const data = {};
+  formData.forEach((value, key) => { data[key] = value; });
+  
+  // แสดง status
+  if (status) {
+    status.className = 'form-status info';
+    status.style.display = 'block';
+    status.innerHTML = '<i class="fa-solid fa-circle-info"></i> กำลังบันทึก...';
+  }
+  
+  // จำลองการบันทึก (เนื่องจากยังไม่ได้เชื่อม Google Apps Script)
+  setTimeout(() => {
+    if (status) {
+      status.className = 'form-status success';
+      status.innerHTML = `
+        <i class="fa-solid fa-circle-check"></i> 
+        <strong>บันทึกสำเร็จ!</strong><br>
+        <small>📋 ข้อมูล: ${JSON.stringify(data, null, 2)}</small><br>
+        <small>⚠️ โหมดจำลอง — ยังไม่ได้เชื่อมต่อ Google Sheet จริง (ติดต่อตี๋เพื่อเปิดใช้งานจริง)</small>
+      `;
+    }
+    console.log('Form data:', data);
+  }, 800);
+}
+
+// === Form Reset ===
+function resetForm(formId) {
+  const form = document.getElementById(formId);
+  if (form) {
+    form.reset();
+    // Reset auto-fill fields
+    const firstName = document.getElementById('firstName');
+    const lastName = document.getElementById('lastName');
+    const credit = document.getElementById('credit');
+    if (firstName) firstName.value = '';
+    if (lastName) lastName.value = '';
+    if (credit) credit.value = '';
+    const status = document.getElementById('formStatus');
+    if (status) status.style.display = 'none';
+  }
+}
+
+// === Auto-คำนวณหน่วยกิต (ตามเงื่อนไข Sheet) ===
+// เงื่อนไข: AOE = 4, ทุนสารสนเทศ = 3, Core = 2, PAD = 1
+const CREDIT_MAP = {
+  'AOE (ทุนมนุษย์ BU/FU )': 4,
+  'ทุนสารสนเทศ': 3,
+  'Core competency (ทุนองค์กร SMC)': 2,
+  'หลักสูตรเลือก(PAD)': 1
+};
+function autoCredit() {
+  const courseType = document.getElementById('courseType');
+  const credit = document.getElementById('credit');
+  if (!courseType || !credit) return;
+  const val = courseType.value;
+  credit.value = CREDIT_MAP[val] !== undefined ? CREDIT_MAP[val] : '-';
+}
+
+// === Auto-fill ชื่อ-นามสกุล (ดึงจาก PKGemployee gid=572791880) ===
+// v7.3: Preload ทันทีตอน load + Auto-fill ขณะพิมพ์ (input event) + Fallback URL
+const EMPLOYEE_SHEET_CSV = 'https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=572791880&tq=select%20A%2CC%2CD';
+const EMPLOYEE_SHEET_CSV_FALLBACK = 'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=572791880&tq=select%20A%2CC%2CD');
+let employeeMap = null;     // Map: id -> { firstName, lastName }
+let employeeLoading = null;  // Promise (cache การโหลด)
+let employeeLoadingStatus = 'idle'; // idle | loading | ready | failed
+
+/** Parse CSV line — รองรับ comma ใน quoted fields */
+function parseCSVLine(line) {
+  const result = [];
+  let cur = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') { inQuotes = !inQuotes; continue; }
+    if (ch === ',' && !inQuotes) { result.push(cur); cur = ''; continue; }
+    cur += ch;
+  }
+  result.push(cur);
+  return result;
+}
+
+/** สร้าง Map จาก CSV text */
+function buildMapFromCSV(csv, source) {
+  const map = new Map();
+  const lines = csv.split('\n');
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+    const cols = parseCSVLine(line);
+    if (cols.length < 3) continue;
+    const id = cols[0].trim();
+    const firstName = (cols[1] || '').trim();
+    const lastName = (cols[2] || '').trim();
+    if (id && (firstName || lastName)) {
+      map.set(id, { firstName, lastName });
+      if (/^\d+$/.test(id)) map.set('M-' + id.padStart(5, '0'), { firstName, lastName });
+    }
+  }
+  console.log(`✅ โหลดสมาชิกจาก ${source}: ${map.size} รายการ`);
+  return map;
+}
+
+async function loadEmployeeMap() {
+  if (employeeMap && employeeMap.size > 0) return employeeMap;
+  if (employeeLoading) return employeeLoading;
+  employeeLoadingStatus = 'loading';
+  employeeLoading = (async () => {
+    // ลอง primary ก่อน (gviz/tq — CORS-friendly)
+    try {
+      const res = await fetch(EMPLOYEE_SHEET_CSV, { method: 'GET' });
+      if (res.ok) {
+        const csv = await res.text();
+        if (csv && csv.length > 100) {
+          employeeMap = buildMapFromCSV(csv, 'gviz/tq');
+          employeeLoadingStatus = 'ready';
+          // Verify critical ID
+          console.log('🔍 6006083 →', employeeMap.get('6006083'));
+          return employeeMap;
+        }
+      }
+      throw new Error('Primary empty or failed');
+    } catch (e) {
+      console.warn('⚠️ Primary URL failed, trying fallback (allorigins.win):', e.message);
+      // Fallback: allorigins proxy
+      try {
+        const res2 = await fetch(EMPLOYEE_SHEET_CSV_FALLBACK, { method: 'GET' });
+        if (res2.ok) {
+          const csv = await res2.text();
+          if (csv && csv.length > 100) {
+            employeeMap = buildMapFromCSV(csv, 'allorigins.win');
+            employeeLoadingStatus = 'ready';
+            console.log('🔍 6006083 (fallback) →', employeeMap.get('6006083'));
+            return employeeMap;
+          }
+        }
+        throw new Error('Fallback empty or failed');
+      } catch (e2) {
+        console.error('❌ โหลดข้อมูลสมาชิกล้มเหลวทั้ง 2 วิธี:', e.message, '/', e2.message);
+        employeeLoadingStatus = 'failed';
+        employeeMap = new Map();
+        return employeeMap;
+      }
+    }
+  })();
+  return employeeLoading;
+}
+
+// ⭐ Preload map ทันทีตอนหน้า load (ไม่ต้องรอ user เปิดฟอร์ม)
+window.addEventListener('DOMContentLoaded', () => {
+  console.log('🚀 Preload employee map...');
+  loadEmployeeMap();
+});
+
+async function autoFillName() {
+  const producerId = document.getElementById('producerId');
+  const firstName = document.getElementById('firstName');
+  const lastName = document.getElementById('lastName');
+  if (!producerId || !firstName || !lastName) return;
+  const id = producerId.value.trim();
+  if (!id) {
+    firstName.value = '';
+    lastName.value = '';
+    firstName.placeholder = 'กรอกรหัสสมาชิกก่อน';
+    lastName.placeholder = 'กรอกรหัสสมาชิกก่อน';
+    firstName.style.background = '#f0f9ff';
+    lastName.style.background = '#f0f9ff';
+    return;
+  }
+  // แสดงสถานะกำลังโหลด
+  firstName.placeholder = '⏳ กำลังค้นหา...';
+  lastName.placeholder = '⏳ กำลังค้นหา...';
+  const map = await loadEmployeeMap();
+  // ลองหาแบบตรงๆ ก่อน, ถ้าไม่เจอลอง strip non-digit
+  let emp = map.get(id);
+  if (!emp) {
+    const digits = id.replace(/\D/g, '');
+    if (digits) {
+      emp = map.get(digits) || map.get('M-' + digits.padStart(5, '0'));
+    }
+  }
+  console.log('🔍 ค้นหา ID:', id, '→', emp ? `เจอ: ${emp.firstName} ${emp.lastName}` : 'ไม่เจอ (map size=' + map.size + ', status=' + employeeLoadingStatus + ')');
+  if (emp) {
+    firstName.value = emp.firstName;
+    lastName.value = emp.lastName;
+    firstName.placeholder = '';
+    lastName.placeholder = '';
+    // ⭐ Visual feedback: highlight + pulse
+    firstName.style.background = '#d1fae5';
+    lastName.style.background = '#d1fae5';
+    firstName.style.color = '#065f46';
+    lastName.style.color = '#065f46';
+    firstName.style.fontWeight = '600';
+    lastName.style.fontWeight = '600';
+    setTimeout(() => {
+      firstName.style.background = '#f0f9ff';
+      lastName.style.background = '#f0f9ff';
+    }, 1500);
+  } else {
+    firstName.value = '';
+    lastName.value = '';
+    if (employeeLoadingStatus === 'loading') {
+      firstName.placeholder = '⏳ กำลังโหลดข้อมูล...';
+      lastName.placeholder = '⏳ กำลังโหลดข้อมูล...';
+    } else if (employeeLoadingStatus === 'failed') {
+      firstName.placeholder = '❌ โหลดข้อมูลล้มเหลว — ติดต่อตี๋';
+      lastName.placeholder = '❌ โหลดข้อมูลล้มเหลว — ติดต่อตี๋';
+    } else {
+      firstName.placeholder = '❌ ไม่พบรหัส ' + id;
+      lastName.placeholder = '❌ ไม่พบรหัส ' + id;
+    }
+    firstName.style.background = '#fee2e2';
+    lastName.style.background = '#fee2e2';
+  }
+}
+
+// === Event: ผูกกับ document เพื่อจับทุก event (รวม input ขณะพิมพ์) ===
+document.addEventListener('input', (e) => {
+  if (e.target && e.target.id === 'producerId') autoFillName();
+});
+document.addEventListener('change', (e) => {
+  if (e.target && e.target.id === 'producerId') autoFillName();
+});
+document.addEventListener('blur', (e) => {
+  if (e.target && e.target.id === 'producerId') autoFillName();
+}, true);
+// Backward-compat: ผูกตอน DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+  const producerId = document.getElementById('producerId');
+  if (producerId) {
+    producerId.addEventListener('blur', autoFillName);
+    producerId.addEventListener('change', autoFillName);
+  }
+});
 
 // === Role Change ===
 function onRoleChange(role) {
