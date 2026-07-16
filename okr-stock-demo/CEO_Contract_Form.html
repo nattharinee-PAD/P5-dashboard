@@ -1481,41 +1481,75 @@ function doLogin() {
   var loginBtn = document.getElementById('loginBtn');
   var loginError = document.getElementById('loginError');
   var loginRateLimit = document.getElementById('loginRateLimit');
-  
+
   loginError.style.display = 'none';
   loginRateLimit.style.display = 'none';
-  
+
   if (!loginId) {
     loginError.textContent = 'กรุณากรอกรหัสสมาชิก';
     loginError.style.display = 'block';
     return;
   }
-  
+
   loginBtn.disabled = true;
   loginBtn.textContent = 'กำลังตรวจสอบ...';
-  
-  google.script.run.withSuccessHandler(function(result) {
+
+  // ===== DEMO MODE FAST-PATH (no async) =====
+  // Try sync demo check first - if mock DB has the member, log in immediately
+  try {
+    if (window.__OKR_DEMO__ && window.__OKR_DEMO__.members) {
+      var demoMember = window.__OKR_DEMO__.members[String(loginId).trim()];
+      if (demoMember) {
+        console.log('[OKR Login] Demo fast-path: ' + loginId);
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'เข้าสู่ระบบ 🔓';
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('mainForm').style.display = 'block';
+        try { initAC(); initExtraAC(); } catch(e) { console.warn('initAC skip:', e.message); }
+        document.getElementById('memberInput').value = loginId;
+        try { document.getElementById('memberInput').dispatchEvent(new Event('input')); } catch(e) {}
+        showToast('ยินดีต้อนรับ ' + demoMember.name + ' (DEMO)', 'success', 3000);
+        return; // <-- skip google.script.run entirely
+      }
+    }
+  } catch(e) {
+    console.warn('[OKR Login] Demo fast-path error:', e.message);
+  }
+
+  // ===== Production path (with 2s timeout fallback) =====
+  var timeoutFired = false;
+  var timeoutId = setTimeout(function() {
+    timeoutFired = true;
     loginBtn.disabled = false;
     loginBtn.textContent = 'เข้าสู่ระบบ 🔓';
-    
-    if (result.authenticated) {
-      // Auth success - show main form
+    loginError.textContent = '⏱️ หมดเวลาเชื่อมต่อ (2s) — ลองรหัส: 5102012, 6407049, 3305001, P5-001';
+    loginError.style.display = 'block';
+    console.warn('[OKR Login] Timeout — google.script.run not responding');
+  }, 2000);
+
+  google.script.run.withSuccessHandler(function(result) {
+    if (timeoutFired) return;
+    clearTimeout(timeoutId);
+    loginBtn.disabled = false;
+    loginBtn.textContent = 'เข้าสู่ระบบ 🔓';
+
+    if (result && result.authenticated) {
       document.getElementById('loginPage').style.display = 'none';
       document.getElementById('mainForm').style.display = 'block';
-      // v4.3 FIX: Initialize autocomplete AFTER showing mainForm (DOM ready)
-      try { initAC(); initExtraAC(); } catch(e) {}
-      // Auto-fill member ID
+      try { initAC(); initExtraAC(); } catch(e) { console.warn('initAC skip:', e.message); }
       document.getElementById('memberInput').value = loginId;
-      document.getElementById('memberInput').dispatchEvent(new Event('input'));
-      showToast('ยินดีต้อนรับ ' + result.member.name, 'success', 3000);
+      try { document.getElementById('memberInput').dispatchEvent(new Event('input')); } catch(e) {}
+      showToast('ยินดีต้อนรับ ' + (result.member ? result.member.name : loginId), 'success', 3000);
     } else {
-      loginError.textContent = result.message;
+      loginError.textContent = (result && result.message) ? result.message : 'ไม่พบรหัสสมาชิก ลอง: 5102012, 6407049, 3305001, P5-001';
       loginError.style.display = 'block';
     }
   }).withFailureHandler(function(e) {
+    if (timeoutFired) return;
+    clearTimeout(timeoutId);
     loginBtn.disabled = false;
     loginBtn.textContent = 'เข้าสู่ระบบ 🔓';
-    loginError.textContent = 'เกิดข้อผิดพลาด: ' + e.message;
+    loginError.textContent = 'เกิดข้อผิดพลาด: ' + (e && e.message ? e.message : 'unknown');
     loginError.style.display = 'block';
   }).authenticateMember(loginId);
 }
