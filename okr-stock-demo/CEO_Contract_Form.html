@@ -5,23 +5,86 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- OKR Stock Demo Patch: bypass google.script.run when deployed as static HTML -->
 <script>
+  // ===== MOCK DATABASE (Demo Mode) =====
+  window.__OKR_DEMO__ = {
+    members: {
+      '5102012': { id: '5102012', name: 'รัฐพร ใจดี', nickname: 'แนน', bu: 'LDC', team: 'CEO', tier: 'gold', role: 'PM' },
+      '6407049': { id: '6407049', name: 'สมชาย ใจกล้า', nickname: 'ชาย', bu: 'LDC', team: 'Sales', tier: 'silver', role: 'Member' },
+      '3305001': { id: '3305001', name: 'สมหญิง รักไทย', nickname: 'หญิง', bu: 'LDC', team: 'Marketing', tier: 'platinum', role: 'PM' },
+      'P5-001':  { id: 'P5-001',  name: 'ทดสอบ PM หนึ่ง', nickname: 'PM1', bu: 'LDC', team: 'PMO', tier: 'gold', role: 'PM' }
+    }
+  };
+
   // If running outside Apps Script, create a mock google.script.run
   if (typeof google === 'undefined' || !google.script) {
+    var __mockHandlers = {};
     window.google = {
       script: {
         run: new Proxy({}, {
-          get: function() {
+          get: function(target, methodName) {
             return function() {
+              __mockHandlers.args = Array.prototype.slice.call(arguments);
+              __mockHandlers.method = methodName;
               return {
-                withSuccessHandler: function(fn) { setTimeout(function() { fn({ ok: false, error: 'Static HTML mode - google.script.run not available' }); }, 100); return this; },
-                withFailureHandler: function() { return this; }
+                withSuccessHandler: function(fn) { __mockHandlers.success = fn; return this; },
+                withFailureHandler: function(fn) { __mockHandlers.failure = fn; return this; },
+                __respond: function(payload) {
+                  setTimeout(function() {
+                    if (__mockHandlers.success) __mockHandlers.success(payload);
+                  }, 80);
+                }
               };
             };
           }
         })
       }
     };
-    console.log('[OKR Stock Demo] Static HTML mode — google.script.run mocked');
+
+    // ===== Auto-respond based on method name =====
+    var __origRun = window.google.script.run;
+    var __handlerProxy = new Proxy({}, {
+      get: function(target, methodName) {
+        return function() {
+          var args = Array.prototype.slice.call(arguments);
+          var resp = {
+            withSuccessHandler: function(fn) { this._success = fn; return this; },
+            withFailureHandler: function(fn) { this._failure = fn; return this; },
+            _fire: function(payload) { var self = this; setTimeout(function() { if (self._success) self._success(payload); }, 80); }
+          };
+
+          // ===== AUTHENTICATE MEMBER =====
+          if (methodName === 'authenticateMember') {
+            var memberId = String(args[0] || '').trim();
+            var member = window.__OKR_DEMO__.members[memberId];
+            setTimeout(function() {
+              if (member) {
+                resp._success({ authenticated: true, member: member });
+              } else {
+                resp._success({ authenticated: false, message: 'ไม่พบรหัสสมาชิก "' + memberId + '" ในระบบ Demo (ลอง: 5102012, 6407049, 3305001, P5-001)' });
+              }
+            }, 100);
+            return resp;
+          }
+
+          // ===== GET MEMBERS LIST =====
+          if (methodName === 'getMembers' || methodName === 'getAllMembers') {
+            setTimeout(function() {
+              var arr = Object.values(window.__OKR_DEMO__.members);
+              resp._success(arr);
+            }, 100);
+            return resp;
+          }
+
+          // ===== GENERIC OK RESPONSE =====
+          setTimeout(function() {
+            resp._success({ ok: true, data: null, members: Object.values(window.__OKR_DEMO__.members) });
+          }, 100);
+          return resp;
+        };
+      }
+    });
+    window.google.script.run = __handlerProxy;
+    console.log('[OKR Stock Demo] Static HTML mode — google.script.run mocked with realistic responses');
   }
 </script>
 <!-- v4.4-emergency-fix 2026-06-01: never send undefined to google.script.run + emergency recovery -->
