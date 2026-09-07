@@ -753,7 +753,7 @@ console.log('📦 Embedded employee data loaded:', EMPLOYEE_EMBEDDED_CSV.split('
           <div class="section-subtitle">แผนหลักสูตรที่เปิดอบรมประจำเดือน</div>
         </div>
         <div class="kpi-section">
-          <div class="kpi-grid" id="trainingGrid"></div>
+          <div id="trainingLiveData"><div class="kpi-grid" id="trainingGrid"></div></div>
         </div>
       </div>
 
@@ -767,7 +767,7 @@ console.log('📦 Embedded employee data loaded:', EMPLOYEE_EMBEDDED_CSV.split('
           <div class="section-subtitle">จำนวนทีม Roleplay และผลการดำเนินงาน</div>
         </div>
         <div class="kpi-section">
-          <div class="kpi-grid" id="roleplayGrid"></div>
+          <div id="roleplayLiveData"><div class="kpi-grid" id="roleplayGrid"></div></div>
         </div>
       </div>
 
@@ -781,7 +781,7 @@ console.log('📦 Embedded employee data loaded:', EMPLOYEE_EMBEDDED_CSV.split('
           <div class="section-subtitle">สมาชิกในระบบ Mentor และวินัยการส่งรายงาน</div>
         </div>
         <div class="kpi-section">
-          <div class="kpi-grid" id="mentorGrid"></div>
+          <div id="mentorLiveData"><div class="kpi-grid" id="mentorGrid"></div></div>
         </div>
       </div>
 
@@ -795,7 +795,7 @@ console.log('📦 Embedded employee data loaded:', EMPLOYEE_EMBEDDED_CSV.split('
           <div class="section-subtitle">สมาชิกที่ได้รับมอบหมายบทบาทผู้ Coach</div>
         </div>
         <div class="kpi-section">
-          <div class="kpi-grid" id="coachGrid"></div>
+          <div id="coachLiveData"><div class="kpi-grid" id="coachGrid"></div></div>
         </div>
       </div>
 
@@ -809,7 +809,7 @@ console.log('📦 Embedded employee data loaded:', EMPLOYEE_EMBEDDED_CSV.split('
           <div class="section-subtitle">ทุนมนุษย์/สารสนเทศ/องค์กร แยกตาม BU</div>
         </div>
         <div class="lg-wrap">
-          <table class="lg-table" id="lgTable"></table>
+          <table class="lg-table" id="lgLiveTable"></table>
         </div>
       </div>
 </template>
@@ -1487,6 +1487,11 @@ function renderLgTable(data) {
 // Fetch from Google Sheet (v7.7+)
 // ============================================================
 const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=473614158';
+const TRAINING_URL = 'https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=1727556684';
+const ROLEPLAY_URL = 'https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=698361957';
+const MENTOR_URL = 'https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=283294680';
+const COACH_URL = 'https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=609300653';
+const LG_URL = 'https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=1597413003';
 
 function parseCsv(text) {
   const lines = text.trim().split('\n');
@@ -1619,25 +1624,230 @@ function renderSummaryKpi(companies) {
   `;
 }
 
+// ============================================================
+// Fetch Training Data (GID 1727556684)
+// ============================================================
+async function fetchTrainingData() {
+  try {
+    const res = await fetch(TRAINING_URL);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const csv = await res.text();
+    const rows = parseCsv(csv).slice(2); // skip header
+    return rows.map(r => ({
+      label: (r[0] || '').trim(),
+      value: parseFloat(r[1]) || 0,
+      unit: (r[2] || '').trim()
+    })).filter(r => r.label);
+  } catch (e) {
+    console.error('Training fetch failed:', e);
+    return null;
+  }
+}
+
+// ============================================================
+// Fetch Roleplay Data (GID 698361957)
+// ============================================================
+async function fetchRoleplayData() {
+  try {
+    const res = await fetch(ROLEPLAY_URL);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const csv = await res.text();
+    const rows = parseCsv(csv).slice(2);
+    return rows.map(r => ({
+      label: (r[0] || '').trim(),
+      value: parseFloat(r[1]) || 0,
+      unit: (r[2] || '').trim()
+    })).filter(r => r.label);
+  } catch (e) {
+    console.error('Roleplay fetch failed:', e);
+    return null;
+  }
+}
+
+// ============================================================
+// Fetch Mentor Data (GID 283294680)
+// ============================================================
+async function fetchMentorData() {
+  try {
+    const res = await fetch(MENTOR_URL);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const csv = await res.text();
+    const rows = parseCsv(csv).slice(2);
+    return rows.map(r => ({
+      label: (r[0] || '').trim(),
+      value: parseFloat(r[1]) || 0,
+      unit: (r[2] || '').trim()
+    })).filter(r => r.label);
+  } catch (e) {
+    console.error('Mentor fetch failed:', e);
+    return null;
+  }
+}
+
+// ============================================================
+// Fetch Coach Data (GID 609300653)
+// ============================================================
+async function fetchCoachData() {
+  try {
+    const res = await fetch(COACH_URL);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const csv = await res.text();
+    const rows = parseCsv(csv).slice(2);
+    return rows.map(r => ({
+      label: (r[0] || '').trim(),
+      value: parseFloat(r[1]) || 0,
+      unit: (r[2] || '').trim()
+    })).filter(r => r.label);
+  } catch (e) {
+    console.error('Coach fetch failed:', e);
+    return null;
+  }
+}
+
+// ============================================================
+// Fetch Learning & Growth Data (GID 1597413003)
+// ============================================================
+async function fetchLgData() {
+  try {
+    const res = await fetch(LG_URL);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const csv = await res.text();
+    const rows = parseCsv(csv);
+    const headers = rows[0]; // Capital, PKG, PGHgr, PMSgr, AAMgr, RPLCgr, RAFCOgr, CPDgr, รวม, อ้างอิง
+    const dataRows = rows.slice(1).filter(r => r[0] && r[0].trim() !== 'รวม');
+    return {
+      headers,
+      rows: dataRows.map(r => ({
+        capital: (r[0] || '').trim(),
+        values: r.slice(1, 9).map(c => parseInt(c) || 0), // PKG, PGHg..CPDg, รวม
+        ref: (r[9] || '').trim()
+      }))
+    };
+  } catch (e) {
+    console.error('LG fetch failed:', e);
+    return null;
+  }
+}
+
+// ============================================================
+// Render Functions for Each Section
+// ============================================================
+function renderTrainingLive(items) {
+  const el = document.getElementById('trainingLiveData');
+  if (!el || !items) return;
+  const grid = el.querySelector('.kpi-grid');
+  if (!grid) return;
+  const iconMap = { 'แผนหลักสูตร': 'fa-book-open', 'เปิดอบรม': 'fa-clipboard-check', 'รอส่งผล': 'fa-clock', 'จำนวนสมาชิก': 'fa-users' };
+  const colorMap = ['c1', 'c2', 'c3', 'c4'];
+  grid.className = 'kpi-grid';
+  grid.innerHTML = items.slice(0, 4).map((item, i) => {
+    const icon = Object.keys(iconMap).find(k => item.label.includes(k)) || 'fa-chart-bar';
+    return `<div class="kpi-card">
+      <div class="kpi-icon"><i class="fa-solid ${iconMap[icon] || 'fa-chart-bar'}"></i></div>
+      <div class="kpi-label">${item.label}</div>
+      <div class="kpi-value">${item.value}<span class="kpi-unit">${item.unit}</span></div>
+      <div class="kpi-trend trend-up"><i class="fa-solid fa-circle-check"></i> Live</div>
+    </div>`;
+  }).join('');
+}
+
+function renderRoleplayLive(items) {
+  const el = document.getElementById('roleplayLiveData');
+  if (!el || !items) return;
+  const grid = el.querySelector('.kpi-grid');
+  if (!grid) return;
+  const iconMap = { 'ทีม Roleplay': 'fa-people-group', 'ผ่าน': 'fa-user-check', 'ยังไม่บรรลุ': 'fa-circle-exclamation', 'Cheer': 'fa-heart' };
+  grid.innerHTML = items.slice(0, 4).map((item, i) => {
+    const icon = Object.keys(iconMap).find(k => item.label.includes(k)) || 'fa-masks-theater';
+    return `<div class="kpi-card">
+      <div class="kpi-icon"><i class="fa-solid ${icon}"></i></div>
+      <div class="kpi-label">${item.label}</div>
+      <div class="kpi-value">${item.value}<span class="kpi-unit">${item.unit}</span></div>
+      <div class="kpi-trend trend-up"><i class="fa-solid fa-circle-check"></i> Live</div>
+    </div>`;
+  }).join('');
+}
+
+function renderMentorLive(items) {
+  const el = document.getElementById('mentorLiveData');
+  if (!el || !items) return;
+  const grid = el.querySelector('.kpi-grid');
+  if (!grid) return;
+  grid.innerHTML = items.slice(0, 4).map((item, i) => {
+    return `<div class="kpi-card">
+      <div class="kpi-icon"><i class="fa-solid fa-user-group"></i></div>
+      <div class="kpi-label">${item.label}</div>
+      <div class="kpi-value">${item.value}<span class="kpi-unit">${item.unit}</span></div>
+      <div class="kpi-trend trend-up"><i class="fa-solid fa-circle-check"></i> Live</div>
+    </div>`;
+  }).join('');
+}
+
+function renderCoachLive(items) {
+  const el = document.getElementById('coachLiveData');
+  if (!el || !items) return;
+  const grid = el.querySelector('.kpi-grid');
+  if (!grid) return;
+  grid.innerHTML = items.slice(0, 4).map((item, i) => {
+    return `<div class="kpi-card">
+      <div class="kpi-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+      <div class="kpi-label">${item.label}</div>
+      <div class="kpi-value">${item.value}<span class="kpi-unit">${item.unit}</span></div>
+      <div class="kpi-trend trend-up"><i class="fa-solid fa-circle-check"></i> Live</div>
+    </div>`;
+  }).join('');
+}
+
+function renderLgLive(data) {
+  const table = document.getElementById('lgLiveTable');
+  if (!table || !data || !data.rows) return;
+  let html = '<thead><tr>';
+  html += '<th class="cname">Capital</th>';
+  data.headers.slice(1, 8).forEach(h => { html += `<th class="num">${h}</th>`; });
+  html += '<th class="num">รวม</th>';
+  html += '</tr></thead><tbody>';
+  data.rows.forEach(r => {
+    html += `<tr><td class="cname">${r.capital}</td>`;
+    r.values.slice(0, 7).forEach(v => { html += `<td class="num">${v}</td>`; });
+    html += `<td class="num"><strong>${r.values[7] || 0}</strong></td></tr>`;
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+}
+
 async function loadData() {
-  // Try fetching live data from Google Sheet
+  // Section 3: Summary (already live)
   const companies = await fetchSheetData();
   if (companies && companies.length > 0) {
     renderSummaryKpi(companies);
     renderSummaryTable({ rows: companies });
   } else {
-    // Fallback to EMBEDDED_DATA
     const data = EMBEDDED_DATA;
     renderSummaryTable(data.summary || {});
     if (data.summary && data.summary.rows) renderSummaryKpi(data.summary.rows);
   }
-  // Other sections still use EMBEDDED_DATA (Training/Roleplay/Mentor/Coach/LG)
-  const data = EMBEDDED_DATA;
-  renderKpiGrid('trainingGrid', data.training || []);
-  renderKpiGrid('roleplayGrid', data.roleplay || []);
-  renderKpiGrid('mentorGrid', data.mentor || []);
-  renderKpiGrid('coachGrid', data.coach || []);
-  renderLgTable(data.lg || {});
+
+  // Section 4-7: Training/Roleplay/Mentor/Coach — Live from Google Sheets
+  const [training, roleplay, mentor, coach, lg] = await Promise.all([
+    fetchTrainingData(),
+    fetchRoleplayData(),
+    fetchMentorData(),
+    fetchCoachData(),
+    fetchLgData()
+  ]);
+
+  if (training) renderTrainingLive(training); else renderKpiGrid('trainingGrid', EMBEDDED_DATA.training || []);
+  if (roleplay) renderRoleplayLive(roleplay); else renderKpiGrid('roleplayGrid', EMBEDDED_DATA.roleplay || []);
+  if (mentor) renderMentorLive(mentor); else renderKpiGrid('mentorGrid', EMBEDDED_DATA.mentor || []);
+  if (coach) renderCoachLive(coach); else renderKpiGrid('coachGrid', EMBEDDED_DATA.coach || []);
+  if (lg) renderLgLive(lg); else renderLgTable(EMBEDDED_DATA.lg || {});
+
+  // Update timestamp
+  const dataSource = document.getElementById('dataSource');
+  if (dataSource) {
+    const now = new Date().toLocaleTimeString('th-TH');
+    dataSource.innerHTML = `✅ Live · Google Sheet · โหลดเมื่อ ${now} · <strong>6 sections</strong>`;
+  }
 }
 
 // ============================================================
