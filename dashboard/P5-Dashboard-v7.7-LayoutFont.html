@@ -329,6 +329,61 @@ body::after {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 12px;
 }
+
+/* === Donut Chart Card (Section 3 Summary) === */
+.donut-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.donut-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  border: 1px solid var(--border-slate);
+  border-radius: 16px;
+  padding: 22px 18px 18px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  color: var(--c1-orange);
+}
+.donut-card:hover {
+  border-color: currentColor;
+  box-shadow: 0 8px 28px rgba(167, 139, 250, 0.20);
+  transform: translateY(-2px);
+}
+.donut-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, currentColor, transparent);
+  opacity: 0.7;
+}
+.donut-svg {
+  width: 130px; height: 130px;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25));
+}
+.donut-center {
+  font-size: 1.55em; font-weight: 800;
+  background: linear-gradient(90deg, currentColor, var(--c3-blue));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.donut-label {
+  font-size: 0.85em; color: var(--text-primary);
+  font-weight: 700;
+  text-align: center;
+}
+.donut-detail {
+  font-size: 0.7em; color: var(--text-mute);
+  text-align: center;
+  display: flex; align-items: center; gap: 4px; justify-content: center;
+}
+.donut-card.c1 { color: var(--c1-orange); }
+.donut-card.c2 { color: var(--c2-green); }
+.donut-card.c3 { color: var(--c3-blue); }
+.donut-card.c4 { color: var(--c4-purple); }
+
 .kpi-item {
   background: #FFFFFF;
   border: 1px solid var(--border-slate);
@@ -1499,30 +1554,56 @@ function renderSummaryKpi(companies) {
   const totalTrainingGoal = totalTrainingDone + companyOnly.reduce((s, c) => s + c.training_remain, 0);
   const overallTrainingPct = totalTrainingGoal > 0 ? (totalTrainingDone / totalTrainingGoal) * 100 : 0;
 
+  // Build 4 donut charts
+  const donutSize = 130;
+  const radius = 54;
+  const circumference = 2 * Math.PI * radius;
+
+  function donutSvg(pct, color1, color2, gid) {
+    const dash = (Math.min(pct, 100) / 100) * circumference;
+    return `
+      <svg class="donut-svg" viewBox="0 0 ${donutSize} ${donutSize}">
+        <defs>
+          <linearGradient id="grad-${gid}" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="${color1}"/>
+            <stop offset="100%" stop-color="${color2}"/>
+          </linearGradient>
+        </defs>
+        <circle cx="${donutSize/2}" cy="${donutSize/2}" r="${radius}" fill="none" stroke="rgba(148,163,184,0.18)" stroke-width="12"/>
+        <circle cx="${donutSize/2}" cy="${donutSize/2}" r="${radius}" fill="none"
+          stroke="url(#grad-${gid})" stroke-width="12"
+          stroke-dasharray="${dash} ${circumference}" stroke-linecap="round"
+          transform="rotate(-90 ${donutSize/2} ${donutSize/2})"/>
+      </svg>`;
+  }
+
+  const buCount = companyOnly.filter(c => c.members > 0).length;
+
+  grid.className = 'donut-grid';
   grid.innerHTML = `
-    <div class="kpi-card">
-      <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
-      <div class="kpi-label">สมาชิกทั้งหมด</div>
-      <div class="kpi-value">${totalMembers}<span class="kpi-unit">คน</span></div>
-      <div class="kpi-trend trend-up"><i class="fa-solid fa-building"></i> ${companyOnly.filter(c => c.members > 0).length} BU</div>
+    <div class="donut-card c1">
+      ${donutSvg(100, '#FF8C00', '#FBBF24', 'members')}
+      <div class="donut-center">${totalMembers}</div>
+      <div class="donut-label">สมาชิกทั้งหมด</div>
+      <div class="donut-detail"><i class="fa-solid fa-building"></i> ${buCount} BU</div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
-      <div class="kpi-label">ผ่านการอบรม</div>
-      <div class="kpi-value">${overallTrainingPct.toFixed(1)}<span class="kpi-unit">%</span></div>
-      <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> ${totalTrainingDone}/${totalTrainingGoal} หลักสูตร</div>
+    <div class="donut-card c2">
+      ${donutSvg(overallTrainingPct, '#22C55E', '#84CC16', 'training')}
+      <div class="donut-center">${overallTrainingPct.toFixed(1)}%</div>
+      <div class="donut-label">ผ่านการอบรม</div>
+      <div class="donut-detail"><i class="fa-solid fa-arrow-up"></i> ${totalTrainingDone}/${totalTrainingGoal} หลักสูตร</div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-icon"><i class="fa-solid fa-graduation-cap"></i></div>
-      <div class="kpi-label">ครบ 44 หน่วยกิต</div>
-      <div class="kpi-value">${overallCreditPct.toFixed(1)}<span class="kpi-unit">%</span></div>
-      <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> ${totalCreditDone}/${totalCreditGoal} คน</div>
+    <div class="donut-card c3">
+      ${donutSvg(overallCreditPct, '#3B82F6', '#06B6D4', 'credit')}
+      <div class="donut-center">${overallCreditPct.toFixed(1)}%</div>
+      <div class="donut-label">ครบ 44 หน่วยกิต</div>
+      <div class="donut-detail"><i class="fa-solid fa-arrow-up"></i> ${totalCreditDone}/${totalCreditGoal} คน</div>
     </div>
-    <div class="kpi-card">
-      <div class="kpi-icon"><i class="fa-solid fa-medal"></i></div>
-      <div class="kpi-label">GPA ผ่าน 3.5</div>
-      <div class="kpi-value">${overallGpaPct.toFixed(1)}<span class="kpi-unit">%</span></div>
-      <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> ${totalGpaPass}/${totalGpaGoal} คน</div>
+    <div class="donut-card c4">
+      ${donutSvg(overallGpaPct, '#9333EA', '#EC4899', 'gpa')}
+      <div class="donut-center">${overallGpaPct.toFixed(1)}%</div>
+      <div class="donut-label">GPA ผ่าน 3.5</div>
+      <div class="donut-detail"><i class="fa-solid fa-arrow-up"></i> ${totalGpaPass}/${totalGpaGoal} คน</div>
     </div>
   `;
 }
