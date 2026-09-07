@@ -1814,33 +1814,33 @@ const DONUT_COLORS = [
 function renderTrainingLive(items) {
   const el = document.getElementById('trainingLiveData');
   if (!el || !items) return;
-  const trainingItems = items.slice(0, 4);
-  const plan = trainingItems.find(i => i.label.includes('แผน'))?.value || 0;
-  const opened = trainingItems.find(i => i.label.includes('เปิด'))?.value || 0;
-  const waiting = trainingItems.find(i => i.label.includes('รอ'))?.value || 0;
-  const members = trainingItems.find(i => i.label.includes('จำนวนสมาชิก'))?.value || 0;
+  // Match exact labels from sheet
+  const plan = items.find(i => i.label.includes('แผนหลักสูตร') || i.label.includes('จำนวน'))?.value || 0;
+  const opened = items.find(i => i.label.includes('เปิดอบรม'))?.value || 0;
+  const waiting = items.find(i => i.label.includes('รอส่งผล'))?.value || 0;
+  const members = items.find(i => i.label.includes('สมาชิกที่เข้าอบรม'))?.value || 0;
 
   el.innerHTML = `
     <div class="donut-section-grid">
       <div class="donut-card-c">
         ${donutSvg(100, ...DONUT_COLORS[0], 't1')}
         <div class="donut-card-label">แผนหลักสูตร</div>
-        <div class="donut-card-detail">${plan} ${trainingItems.find(i => i.label.includes('แผน'))?.unit || 'หลักสูตร'}</div>
+        <div class="donut-card-detail">${plan} หลักสูตร</div>
       </div>
       <div class="donut-card-c">
         ${donutSvg(plan > 0 ? (opened/plan)*100 : 0, ...DONUT_COLORS[1], 't2')}
         <div class="donut-card-label">เปิดอบรมตามแผน</div>
-        <div class="donut-card-detail">${opened}/${plan} ${trainingItems.find(i => i.label.includes('เปิด'))?.unit || 'หลักสูตร'}</div>
+        <div class="donut-card-detail">${opened}/${plan} หลักสูตร</div>
       </div>
       <div class="donut-card-c">
         ${donutSvg(plan > 0 ? (waiting/plan)*100 : 0, ...DONUT_COLORS[2], 't3')}
         <div class="donut-card-label">รอส่งผลอบรม</div>
-        <div class="donut-card-detail">${waiting}/${plan} ${trainingItems.find(i => i.label.includes('รอ'))?.unit || 'หลักสูตร'}</div>
+        <div class="donut-card-detail">${waiting}/${plan} หลักสูตร</div>
       </div>
       <div class="donut-card-c">
         ${donutSvg(100, ...DONUT_COLORS[3], 't4')}
         <div class="donut-card-label">สมาชิกเข้าอบรม</div>
-        <div class="donut-card-detail">${members} ${trainingItems.find(i => i.label.includes('จำนวนสมาชิก'))?.unit || 'คน'}</div>
+        <div class="donut-card-detail">${members} คน</div>
       </div>
     </div>`;
 }
@@ -1848,10 +1848,11 @@ function renderTrainingLive(items) {
 function renderRoleplayLive(items) {
   const el = document.getElementById('roleplayLiveData');
   if (!el || !items) return;
-  const teams = items.find(i => i.label.includes('จำนวนทีม'))?.value || 0;
-  const passed = items.find(i => i.label.includes('ผ่าน'))?.value || 0;
+  // Match exact labels from sheet
+  const teams = items.find(i => i.label.includes('สรุปจำนวนทีม'))?.value || 0;
+  const passed = items.find(i => i.label.includes('Roleplay ผ่าน'))?.value || 0;
   const notPass = items.find(i => i.label.includes('ยังไม่บรรลุ'))?.value || 0;
-  const cheerPct = items.find(i => i.label.includes('Cheer'))?.value || 0;
+  const cheerPct = items.find(i => i.label.includes('Cheer up'))?.value || 0;
 
   el.innerHTML = `
     <div class="donut-section-grid">
@@ -1881,10 +1882,10 @@ function renderRoleplayLive(items) {
 function renderMentorLive(items) {
   const el = document.getElementById('mentorLiveData');
   if (!el || !items) return;
-  const total = items.find(i => i.label.includes('อยู่ในระบบ'))?.value || 0;
+  const total = items.find(i => i.label.includes('อยู่ในระบบ Mentor'))?.value || 0;
   const good = items.find(i => i.label.includes('มากกว่า 90'))?.value || 0;
   const bad = items.find(i => i.label.includes('น้อยกว่า 90'))?.value || 0;
-  const cheerPct = items.find(i => i.label.includes('Cheer'))?.value || 0;
+  const cheerPct = items.find(i => i.label.includes('Cheer up'))?.value || 0;
 
   el.innerHTML = `
     <div class="donut-section-grid">
@@ -1914,7 +1915,7 @@ function renderMentorLive(items) {
 function renderCoachLive(items) {
   const el = document.getElementById('coachLiveData');
   if (!el || !items) return;
-  const total = items.find(i => i.label.includes('อยู่ในระบบ'))?.value || 0;
+  const total = items.find(i => i.label.includes('อยู่ในระบบมอบหมาย'))?.value || 0;
   const good = items.find(i => i.label.includes('ตามเป้าหมาย'))?.value || 0;
   const bad = items.find(i => i.label.includes('น้อยกว่าเป้าหมาย'))?.value || 0;
   const cheerPct = items.find(i => i.label.includes('Cheer'))?.value || 0;
