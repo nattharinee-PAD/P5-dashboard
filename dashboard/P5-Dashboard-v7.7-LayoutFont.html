@@ -337,6 +337,42 @@ body::after {
   gap: 16px;
   margin-bottom: 14px;
 }
+
+/* === Donut Section Grid (Training/Roleplay/Mentor/Coach) === */
+.donut-section-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  padding: 4px;
+}
+.donut-card-c {
+  background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  border: 1px solid var(--border-slate);
+  border-radius: 12px;
+  padding: 14px 12px 12px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  transition: all 0.25s ease;
+}
+.donut-card-c:hover {
+  border-color: var(--border-glow);
+  box-shadow: 0 6px 20px rgba(167, 139, 250, 0.15);
+  transform: translateY(-1px);
+}
+.donut-chart {
+  width: 110px; height: 110px;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15));
+}
+.donut-card-label {
+  font-size: 0.78em; color: var(--text-primary);
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.3;
+}
+.donut-card-detail {
+  font-size: 0.7em; color: var(--text-mute);
+  text-align: center;
+  display: flex; align-items: center; gap: 4px; justify-content: center;
+}
 .pie-card {
   background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
   border: 1px solid var(--border-slate);
@@ -1730,72 +1766,182 @@ async function fetchLgData() {
 }
 
 // ============================================================
-// Render Functions for Each Section
+// Donut Chart SVG Helper (Multi-segment)
+// ============================================================
+const DONUT_SIZE = 110;
+const DONUT_RADIUS = 44;
+const DONUT_CX = DONUT_SIZE / 2, DONUT_CY = DONUT_SIZE / 2;
+const DONUT_STROKE = 18;
+const DONUT_CIRC = 2 * Math.PI * DONUT_RADIUS;
+
+function donutSvg(pct, color1, color2, gid) {
+  const filled = (Math.min(pct, 100) / 100) * DONUT_CIRC;
+  const empty = DONUT_CIRC - filled;
+  return `
+    <svg class="donut-chart" viewBox="0 0 ${DONUT_SIZE} ${DONUT_SIZE}">
+      <defs>
+        <linearGradient id="grad-${gid}" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="${color1}"/>
+          <stop offset="100%" stop-color="${color2}"/>
+        </linearGradient>
+      </defs>
+      <circle cx="${DONUT_CX}" cy="${DONUT_CY}" r="${DONUT_RADIUS}" fill="none"
+        stroke="url(#grad-${gid})" stroke-width="${DONUT_STROKE}"
+        stroke-dasharray="0 ${filled} ${empty}" stroke-dashoffset="${filled/2}"
+        opacity="0.2"
+        transform="rotate(90 ${DONUT_CX} ${DONUT_CY})"/>
+      <circle cx="${DONUT_CX}" cy="${DONUT_CY}" r="${DONUT_RADIUS}" fill="none"
+        stroke="url(#grad-${gid})" stroke-width="${DONUT_STROKE}"
+        stroke-dasharray="${filled} ${empty}" stroke-linecap="butt"
+        transform="rotate(-90 ${DONUT_CX} ${DONUT_CY})"/>
+      <text x="${DONUT_CX}" y="${DONUT_CY + 6}" text-anchor="middle" font-size="16" font-weight="800"
+        fill="${color1}" font-family="Inter, sans-serif">${pct.toFixed(0)}%</text>
+    </svg>`;
+}
+
+// Donut colors palette
+const DONUT_COLORS = [
+  ['#FF8C00', '#FBBF24'],  // orange
+  ['#22C55E', '#84CC16'],  // green
+  ['#3B82F6', '#06B6D4'],  // blue
+  ['#9333EA', '#EC4899'],  // purple
+  ['#F59E0B', '#EF4444']   // amber-red
+];
+
+// ============================================================
+// Render Functions for Each Section (Donut style)
 // ============================================================
 function renderTrainingLive(items) {
   const el = document.getElementById('trainingLiveData');
   if (!el || !items) return;
-  const grid = el.querySelector('.kpi-grid');
-  if (!grid) return;
-  const iconMap = { 'แผนหลักสูตร': 'fa-book-open', 'เปิดอบรม': 'fa-clipboard-check', 'รอส่งผล': 'fa-clock', 'จำนวนสมาชิก': 'fa-users' };
-  const colorMap = ['c1', 'c2', 'c3', 'c4'];
-  grid.className = 'kpi-grid';
-  grid.innerHTML = items.slice(0, 4).map((item, i) => {
-    const icon = Object.keys(iconMap).find(k => item.label.includes(k)) || 'fa-chart-bar';
-    return `<div class="kpi-card">
-      <div class="kpi-icon"><i class="fa-solid ${iconMap[icon] || 'fa-chart-bar'}"></i></div>
-      <div class="kpi-label">${item.label}</div>
-      <div class="kpi-value">${item.value}<span class="kpi-unit">${item.unit}</span></div>
-      <div class="kpi-trend trend-up"><i class="fa-solid fa-circle-check"></i> Live</div>
+  const trainingItems = items.slice(0, 4);
+  const plan = trainingItems.find(i => i.label.includes('แผน'))?.value || 0;
+  const opened = trainingItems.find(i => i.label.includes('เปิด'))?.value || 0;
+  const waiting = trainingItems.find(i => i.label.includes('รอ'))?.value || 0;
+  const members = trainingItems.find(i => i.label.includes('จำนวนสมาชิก'))?.value || 0;
+
+  el.innerHTML = `
+    <div class="donut-section-grid">
+      <div class="donut-card-c">
+        ${donutSvg(100, ...DONUT_COLORS[0], 't1')}
+        <div class="donut-card-label">แผนหลักสูตร</div>
+        <div class="donut-card-detail">${plan} ${trainingItems.find(i => i.label.includes('แผน'))?.unit || 'หลักสูตร'}</div>
+      </div>
+      <div class="donut-card-c">
+        ${donutSvg(plan > 0 ? (opened/plan)*100 : 0, ...DONUT_COLORS[1], 't2')}
+        <div class="donut-card-label">เปิดอบรมตามแผน</div>
+        <div class="donut-card-detail">${opened}/${plan} ${trainingItems.find(i => i.label.includes('เปิด'))?.unit || 'หลักสูตร'}</div>
+      </div>
+      <div class="donut-card-c">
+        ${donutSvg(plan > 0 ? (waiting/plan)*100 : 0, ...DONUT_COLORS[2], 't3')}
+        <div class="donut-card-label">รอส่งผลอบรม</div>
+        <div class="donut-card-detail">${waiting}/${plan} ${trainingItems.find(i => i.label.includes('รอ'))?.unit || 'หลักสูตร'}</div>
+      </div>
+      <div class="donut-card-c">
+        ${donutSvg(100, ...DONUT_COLORS[3], 't4')}
+        <div class="donut-card-label">สมาชิกเข้าอบรม</div>
+        <div class="donut-card-detail">${members} ${trainingItems.find(i => i.label.includes('จำนวนสมาชิก'))?.unit || 'คน'}</div>
+      </div>
     </div>`;
-  }).join('');
 }
 
 function renderRoleplayLive(items) {
   const el = document.getElementById('roleplayLiveData');
   if (!el || !items) return;
-  const grid = el.querySelector('.kpi-grid');
-  if (!grid) return;
-  const iconMap = { 'ทีม Roleplay': 'fa-people-group', 'ผ่าน': 'fa-user-check', 'ยังไม่บรรลุ': 'fa-circle-exclamation', 'Cheer': 'fa-heart' };
-  grid.innerHTML = items.slice(0, 4).map((item, i) => {
-    const icon = Object.keys(iconMap).find(k => item.label.includes(k)) || 'fa-masks-theater';
-    return `<div class="kpi-card">
-      <div class="kpi-icon"><i class="fa-solid ${icon}"></i></div>
-      <div class="kpi-label">${item.label}</div>
-      <div class="kpi-value">${item.value}<span class="kpi-unit">${item.unit}</span></div>
-      <div class="kpi-trend trend-up"><i class="fa-solid fa-circle-check"></i> Live</div>
+  const teams = items.find(i => i.label.includes('จำนวนทีม'))?.value || 0;
+  const passed = items.find(i => i.label.includes('ผ่าน'))?.value || 0;
+  const notPass = items.find(i => i.label.includes('ยังไม่บรรลุ'))?.value || 0;
+  const cheerPct = items.find(i => i.label.includes('Cheer'))?.value || 0;
+
+  el.innerHTML = `
+    <div class="donut-section-grid">
+      <div class="donut-card-c">
+        ${donutSvg(100, ...DONUT_COLORS[0], 'r1')}
+        <div class="donut-card-label">ทีม Roleplay</div>
+        <div class="donut-card-detail">${teams} ทีม</div>
+      </div>
+      <div class="donut-card-c">
+        ${donutSvg(teams > 0 ? (passed/teams)*100 : 0, ...DONUT_COLORS[1], 'r2')}
+        <div class="donut-card-label">ผ่านเกณฑ์</div>
+        <div class="donut-card-detail">${passed}/${teams} ทีม</div>
+      </div>
+      <div class="donut-card-c">
+        ${donutSvg(teams > 0 ? (notPass/teams)*100 : 0, ...DONUT_COLORS[2], 'r3')}
+        <div class="donut-card-label">ยังไม่บรรลุ</div>
+        <div class="donut-card-detail">${notPass}/${teams} ทีม</div>
+      </div>
+      <div class="donut-card-c">
+        ${donutSvg(cheerPct, ...DONUT_COLORS[3], 'r4')}
+        <div class="donut-card-label">Cheer up</div>
+        <div class="donut-card-detail">ยังไม่บรรลุเป้า ${cheerPct}%</div>
+      </div>
     </div>`;
-  }).join('');
 }
 
 function renderMentorLive(items) {
   const el = document.getElementById('mentorLiveData');
   if (!el || !items) return;
-  const grid = el.querySelector('.kpi-grid');
-  if (!grid) return;
-  grid.innerHTML = items.slice(0, 4).map((item, i) => {
-    return `<div class="kpi-card">
-      <div class="kpi-icon"><i class="fa-solid fa-user-group"></i></div>
-      <div class="kpi-label">${item.label}</div>
-      <div class="kpi-value">${item.value}<span class="kpi-unit">${item.unit}</span></div>
-      <div class="kpi-trend trend-up"><i class="fa-solid fa-circle-check"></i> Live</div>
+  const total = items.find(i => i.label.includes('อยู่ในระบบ'))?.value || 0;
+  const good = items.find(i => i.label.includes('มากกว่า 90'))?.value || 0;
+  const bad = items.find(i => i.label.includes('น้อยกว่า 90'))?.value || 0;
+  const cheerPct = items.find(i => i.label.includes('Cheer'))?.value || 0;
+
+  el.innerHTML = `
+    <div class="donut-section-grid">
+      <div class="donut-card-c">
+        ${donutSvg(100, ...DONUT_COLORS[0], 'm1')}
+        <div class="donut-card-label">สมาชิกในระบบ Mentor</div>
+        <div class="donut-card-detail">${total} คน</div>
+      </div>
+      <div class="donut-card-c">
+        ${donutSvg(total > 0 ? (good/total)*100 : 0, ...DONUT_COLORS[1], 'm2')}
+        <div class="donut-card-label">ส่งรายงาน > 90%</div>
+        <div class="donut-card-detail">${good}/${total} คน</div>
+      </div>
+      <div class="donut-card-c">
+        ${donutSvg(total > 0 ? (bad/total)*100 : 0, ...DONUT_COLORS[2], 'm3')}
+        <div class="donut-card-label">ส่งรายงาน < 90%</div>
+        <div class="donut-card-detail">${bad}/${total} คน</div>
+      </div>
+      <div class="donut-card-c">
+        ${donutSvg(cheerPct, ...DONUT_COLORS[3], 'm4')}
+        <div class="donut-card-label">Cheer up</div>
+        <div class="donut-card-detail">วินัย < 90% = ${cheerPct}%</div>
+      </div>
     </div>`;
-  }).join('');
 }
 
 function renderCoachLive(items) {
   const el = document.getElementById('coachLiveData');
   if (!el || !items) return;
-  const grid = el.querySelector('.kpi-grid');
-  if (!grid) return;
-  grid.innerHTML = items.slice(0, 4).map((item, i) => {
-    return `<div class="kpi-card">
-      <div class="kpi-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
-      <div class="kpi-label">${item.label}</div>
-      <div class="kpi-value">${item.value}<span class="kpi-unit">${item.unit}</span></div>
-      <div class="kpi-trend trend-up"><i class="fa-solid fa-circle-check"></i> Live</div>
+  const total = items.find(i => i.label.includes('อยู่ในระบบ'))?.value || 0;
+  const good = items.find(i => i.label.includes('ตามเป้าหมาย'))?.value || 0;
+  const bad = items.find(i => i.label.includes('น้อยกว่าเป้าหมาย'))?.value || 0;
+  const cheerPct = items.find(i => i.label.includes('Cheer'))?.value || 0;
+
+  el.innerHTML = `
+    <div class="donut-section-grid">
+      <div class="donut-card-c">
+        ${donutSvg(100, ...DONUT_COLORS[0], 'co1')}
+        <div class="donut-card-label">สมาชิกในระบบ Coach</div>
+        <div class="donut-card-detail">${total} คน</div>
+      </div>
+      <div class="donut-card-c">
+        ${donutSvg(total > 0 ? (good/total)*100 : 0, ...DONUT_COLORS[1], 'co2')}
+        <div class="donut-card-label">วินัยดี</div>
+        <div class="donut-card-detail">${good}/${total} คน</div>
+      </div>
+      <div class="donut-card-c">
+        ${donutSvg(total > 0 ? (bad/total)*100 : 0, ...DONUT_COLORS[2], 'co3')}
+        <div class="donut-card-label">ไม่ถึงเป้า</div>
+        <div class="donut-card-detail">${bad}/${total} คน</div>
+      </div>
+      <div class="donut-card-c">
+        ${donutSvg(cheerPct, ...DONUT_COLORS[3], 'co4')}
+        <div class="donut-card-label">Cheer up</div>
+        <div class="donut-card-detail">พี่เลี้ยงที่ยังไม่โค้ช ${cheerPct}%</div>
+      </div>
     </div>`;
-  }).join('');
 }
 
 function renderLgLive(data) {
