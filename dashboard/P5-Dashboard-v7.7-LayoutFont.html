@@ -1668,7 +1668,7 @@ async function fetchTrainingData() {
     const res = await fetch(TRAINING_URL);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const csv = await res.text();
-    const rows = parseCsv(csv).slice(2); // skip header
+    const rows = parseCsv(csv).slice(1); // skip header row
     return rows.map(r => ({
       label: (r[0] || '').trim(),
       value: parseFloat(r[1]) || 0,
@@ -1688,7 +1688,7 @@ async function fetchRoleplayData() {
     const res = await fetch(ROLEPLAY_URL);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const csv = await res.text();
-    const rows = parseCsv(csv).slice(2);
+    const rows = parseCsv(csv).slice(1);
     return rows.map(r => ({
       label: (r[0] || '').trim(),
       value: parseFloat(r[1]) || 0,
@@ -1708,7 +1708,7 @@ async function fetchMentorData() {
     const res = await fetch(MENTOR_URL);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const csv = await res.text();
-    const rows = parseCsv(csv).slice(2);
+    const rows = parseCsv(csv).slice(1);
     return rows.map(r => ({
       label: (r[0] || '').trim(),
       value: parseFloat(r[1]) || 0,
@@ -1728,7 +1728,7 @@ async function fetchCoachData() {
     const res = await fetch(COACH_URL);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const csv = await res.text();
-    const rows = parseCsv(csv).slice(2);
+    const rows = parseCsv(csv).slice(1);
     return rows.map(r => ({
       label: (r[0] || '').trim(),
       value: parseFloat(r[1]) || 0,
