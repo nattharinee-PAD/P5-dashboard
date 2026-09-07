@@ -1503,26 +1503,26 @@ function renderSummaryKpi(companies) {
     <div class="kpi-card">
       <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
       <div class="kpi-label">สมาชิกทั้งหมด</div>
-      <div class="kpi-value">${totalMembers}<span class="kpi-unit">หลักสูตร</span></div>
+      <div class="kpi-value">${totalMembers}<span class="kpi-unit">คน</span></div>
       <div class="kpi-trend trend-up"><i class="fa-solid fa-building"></i> ${companyOnly.filter(c => c.members > 0).length} BU</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
       <div class="kpi-label">ผ่านการอบรม</div>
       <div class="kpi-value">${overallTrainingPct.toFixed(1)}<span class="kpi-unit">%</span></div>
-      <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> ${totalTrainingDone}/${totalTrainingGoal} หลักสูตร</div>
+      <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> ${totalTrainingDone}/${totalTrainingGoal} คน</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-icon"><i class="fa-solid fa-graduation-cap"></i></div>
       <div class="kpi-label">ครบ 44 หน่วยกิต</div>
       <div class="kpi-value">${overallCreditPct.toFixed(1)}<span class="kpi-unit">%</span></div>
-      <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> ${totalCreditDone}/${totalCreditGoal} หลักสูตร</div>
+      <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> ${totalCreditDone}/${totalCreditGoal} คน</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-icon"><i class="fa-solid fa-medal"></i></div>
       <div class="kpi-label">GPA ผ่าน 3.5</div>
       <div class="kpi-value">${overallGpaPct.toFixed(1)}<span class="kpi-unit">%</span></div>
-      <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> ${totalGpaPass}/${totalGpaGoal} หลักสูตร</div>
+      <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> ${totalGpaPass}/${totalGpaGoal} คน</div>
     </div>
   `;
 }
