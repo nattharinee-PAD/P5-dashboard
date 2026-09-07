@@ -86,7 +86,7 @@ body::after {
 /* === Sidebar (Dark Glass) === */
 /* ============================================================ */
 .sidebar {
-  width: 264px;
+  width: 240px;
   background: linear-gradient(180deg, rgba(15, 23, 41, 0.95) 0%, rgba(10, 14, 31, 0.95) 100%);
   backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   border-right: 1px solid var(--border-slate);
@@ -418,7 +418,16 @@ body::after {
 }
 
 /* Layout */
-#routeContainer { width: 1200px; max-width: 100%; margin: 0 auto; box-sizing: border-box; padding: 0 8px; }
+#routeContainer { width: 1400px; max-width: 100%; margin: 0 auto; box-sizing: border-box; padding: 0 12px; }
+
+/* Layout 2-column: Header + Strategy */
+.layout-row {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 16px;
+  margin-bottom: 0;
+}
+.layout-row > .glow-card { margin-bottom: 16px; }
 
 /* Mockup Banner */
 .mockup-banner {
@@ -506,6 +515,9 @@ body::after {
           </div>
         </div>
 
+        <!-- Layout row 1: Header (ซ้าย) + Strategy (ขวา) -->
+        <div class="layout-row">
+
         <!-- ส่วนที่ 1: Header -->
         <div class="glow-card section-1">
           <div class="section-title">
@@ -514,6 +526,15 @@ body::after {
           </div>
           <div class="section-subtitle">
             ขึ้นออโต้ · ประจำวันที่ <span id="timestamp">กำลังโหลด…</span>
+          </div>
+          <div style="margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border-slate);">
+            <div class="strategy-label" style="margin-bottom: 10px;">📌 Quick Facts</div>
+            <div style="font-size: 0.85em; color: var(--text-secondary); line-height: 1.7;">
+              <div style="margin-bottom: 6px;"><i class="fa-solid fa-users" style="color: var(--neon-cyan); margin-right: 8px;"></i>สมาชิก 479 คน · 6 บริษัท</div>
+              <div style="margin-bottom: 6px;"><i class="fa-solid fa-graduation-cap" style="color: var(--neon-purple); margin-right: 8px;"></i>หน่วยกิตรวม 2,847</div>
+              <div style="margin-bottom: 6px;"><i class="fa-solid fa-medal" style="color: var(--neon-amber); margin-right: 8px;"></i>GPA เฉลี่ย 3.42</div>
+              <div><i class="fa-solid fa-percent" style="color: var(--neon-mint); margin-right: 8px;"></i>ผ่านแผน 76%</div>
+            </div>
           </div>
         </div>
 
@@ -558,6 +579,8 @@ body::after {
             </div>
           </div>
         </div>
+
+        </div><!-- /layout-row -->
 
         <!-- ส่วนที่ 3: KPI Summary (6 บริษัท) -->
         <div class="glow-card kpi-section">
