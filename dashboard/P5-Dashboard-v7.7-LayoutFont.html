@@ -1485,15 +1485,17 @@ async function fetchSheetData() {
 function renderSummaryKpi(companies) {
   const grid = document.getElementById('summaryKpiGrid');
   if (!grid || !companies) return;
-  const totalMembers = companies.reduce((s, c) => s + c.members, 0);
-  const totalCreditDone = companies.reduce((s, c) => s + c.credit_done, 0);
-  const totalCreditGoal = totalCreditDone + companies.reduce((s, c) => s + c.credit_remain, 0);
+  // Exclude "รวม" row from KPI calculation (avoid double-counting)
+  const companyOnly = companies.filter(c => (c.name || '').trim() !== 'รวม');
+  const totalMembers = companyOnly.reduce((s, c) => s + c.members, 0);
+  const totalCreditDone = companyOnly.reduce((s, c) => s + c.credit_done, 0);
+  const totalCreditGoal = totalCreditDone + companyOnly.reduce((s, c) => s + c.credit_remain, 0);
   const overallCreditPct = totalCreditGoal > 0 ? (totalCreditDone / totalCreditGoal) * 100 : 0;
-  const totalGpaPass = companies.reduce((s, c) => s + c.gpa_pass, 0);
-  const totalGpaGoal = totalGpaPass + companies.reduce((s, c) => s + c.gpa_fail, 0);
+  const totalGpaPass = companyOnly.reduce((s, c) => s + c.gpa_pass, 0);
+  const totalGpaGoal = totalGpaPass + companyOnly.reduce((s, c) => s + c.gpa_fail, 0);
   const overallGpaPct = totalGpaGoal > 0 ? (totalGpaPass / totalGpaGoal) * 100 : 0;
-  const totalTrainingDone = companies.reduce((s, c) => s + c.training_done, 0);
-  const totalTrainingGoal = totalTrainingDone + companies.reduce((s, c) => s + c.training_remain, 0);
+  const totalTrainingDone = companyOnly.reduce((s, c) => s + c.training_done, 0);
+  const totalTrainingGoal = totalTrainingDone + companyOnly.reduce((s, c) => s + c.training_remain, 0);
   const overallTrainingPct = totalTrainingGoal > 0 ? (totalTrainingDone / totalTrainingGoal) * 100 : 0;
 
   grid.innerHTML = `
@@ -1501,7 +1503,7 @@ function renderSummaryKpi(companies) {
       <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
       <div class="kpi-label">สมาชิกทั้งหมด</div>
       <div class="kpi-value">${totalMembers}<span class="kpi-unit">คน</span></div>
-      <div class="kpi-trend trend-up"><i class="fa-solid fa-building"></i> ${companies.filter(c => c.members > 0).length} บริษัท</div>
+      <div class="kpi-trend trend-up"><i class="fa-solid fa-building"></i> ${companyOnly.filter(c => c.members > 0).length} บริษัท</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
