@@ -1474,7 +1474,8 @@ async function fetchSheetData() {
       training_remain: parseInt(r[3]) || 0,           // D: รออบรม
       training_pct: pctToNum(r[4])                    // E: % อบรม
     }));
-    if (dataSource) dataSource.innerHTML = `✅ Live · Google Sheet (อัปเดตทุกวัน) · โหลดเมื่อ ${new Date().toLocaleTimeString('th-TH')} · <strong>${companies.length} บริษัท</strong>`;
+    const companyCount = companies.filter(c => (c.name || '').trim() !== 'รวม').length;
+    if (dataSource) dataSource.innerHTML = `✅ Live · Google Sheet (อัปเดตทุกวัน) · โหลดเมื่อ ${new Date().toLocaleTimeString('th-TH')} · <strong>${companyCount} บริษัท</strong>`;
     return companies;
   } catch (e) {
     if (dataSource) dataSource.innerHTML = `❌ โหลดไม่สำเร็จ — ใช้ข้อมูล fallback (${e.message})`;
