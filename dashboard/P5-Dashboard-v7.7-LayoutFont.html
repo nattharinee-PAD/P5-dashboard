@@ -102,10 +102,10 @@ body::after {
   white-space: nowrap; line-height: 1.2;
 }
 .role-selector-wrap {
-  padding: 12px 24px;
+  padding: 12px 18px;
   background: rgba(11, 17, 30, 0.6);
   border-bottom: 1px solid var(--border-slate);
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
   font-size: 0.78em;
 }
 .role-selector-wrap > span { color: var(--text-mute); }
@@ -113,8 +113,10 @@ body::after {
   background: rgba(22, 31, 48, 0.8);
   border: 1px solid var(--border-slate);
   color: #FFFFFF;
-  border-radius: 6px; padding: 4px 8px; outline: none;
-  font-size: 0.9em; font-family: inherit;
+  border-radius: 6px; padding: 4px 6px; outline: none;
+  font-size: 0.78em; font-family: inherit;
+  flex: 1; min-width: 0; max-width: 200px;
+  text-overflow: ellipsis;
 }
 .role-selector-wrap select option { background: #1E1B4B; color: #FFFFFF; font-weight: 500; }
 .role-selector-wrap select option:checked { background: linear-gradient(90deg, rgba(255,140,0,0.4), rgba(147,51,234,0.4)); color: #FFFFFF; }
