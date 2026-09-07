@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P5 Dashboard · v8 MOCKUP (Dark · Glass · Glow)</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+
+:root {
+  /* 🎨 Background น้ำเงินเข้ม + Glass + Glow */
+  --bg-deep: #0A0E1F;
+  --bg-base: #0F1729;
+  --bg-elevated: #131B33;
+
+  /* Glass surfaces */
+  --glass-1: rgba(255, 255, 255, 0.03);
+  --glass-2: rgba(255, 255, 255, 0.05);
+  --glass-3: rgba(255, 255, 255, 0.08);
+
+  /* Borders */
+  --border-slate: rgba(148, 163, 184, 0.12);
+  --border-glow: rgba(167, 139, 250, 0.45);
+
+  /* Text */
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-mute: #64748B;
+
+  /* Neon Glow palette */
+  --neon-purple: #A78BFA;
+  --neon-cyan: #60A5FA;
+  --neon-magenta: #F472B6;
+  --neon-mint: #34D399;
+  --neon-amber: #FBBF24;
+
+  /* Status */
+  --status-green: #34D399;
+  --status-yellow: #FBBF24;
+  --status-red: #F87171;
+}
+
+body {
+  font-family: 'Sarabun', 'Inter', sans-serif;
+  background-color: var(--bg-deep);
+  color: var(--text-secondary);
+  position: relative;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Glow Background Layers */
+body::before {
+  content: '';
+  position: fixed; top: -25%; left: -15%;
+  width: 75%; height: 75%;
+  background: radial-gradient(circle, rgba(167, 139, 250, 0.35), transparent 60%);
+  filter: blur(120px);
+  z-index: 0; pointer-events: none;
+  animation: float1 18s ease-in-out infinite;
+}
+body::after {
+  content: '';
+  position: fixed; bottom: -25%; right: -15%;
+  width: 75%; height: 75%;
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.30), transparent 60%);
+  filter: blur(120px);
+  z-index: 0; pointer-events: none;
+  animation: float2 22s ease-in-out infinite;
+}
+@keyframes float1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(6%, 5%); } }
+@keyframes float2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-5%, -4%); } }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.app { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+
+/* ============================================================ */
+/* === Sidebar (Dark Glass) === */
+/* ============================================================ */
+.sidebar {
+  width: 264px;
+  background: linear-gradient(180deg, rgba(15, 23, 41, 0.95) 0%, rgba(10, 14, 31, 0.95) 100%);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid var(--border-slate);
+  box-shadow: 4px 0 40px rgba(0, 0, 0, 0.5);
+  display: flex; flex-direction: column; flex-shrink: 0;
+  z-index: 10;
+}
+.sidebar-brand {
+  padding: 20px 22px;
+  background: linear-gradient(90deg, rgba(167, 139, 250, 0.10), rgba(96, 165, 250, 0.05), transparent);
+  border-bottom: 1px solid var(--border-slate);
+}
+.logo-text {
+  font-size: 1.05em; font-weight: 800; letter-spacing: 0.02em;
+  background: linear-gradient(90deg, #A78BFA 0%, #60A5FA 50%, #F472B6 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  text-shadow: 0 0 30px rgba(167, 139, 250, 0.4);
+  white-space: nowrap; line-height: 1.25;
+}
+.logo-sub {
+  font-size: 0.68em; color: var(--text-mute); margin-top: 4px; letter-spacing: 0.05em;
+}
+
+.role-selector-wrap {
+  padding: 14px 22px;
+  background: rgba(11, 17, 30, 0.6);
+  border-bottom: 1px solid var(--border-slate);
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 0.78em;
+}
+.role-selector-wrap > span { color: var(--text-mute); }
+.role-selector-wrap select {
+  background: rgba(22, 31, 48, 0.8);
+  border: 1px solid var(--border-slate);
+  color: var(--text-primary);
+  border-radius: 6px; padding: 5px 10px; outline: none;
+  font-size: 0.9em; font-family: inherit; cursor: pointer;
+}
+.role-selector-wrap select option { background: #0F1729; color: var(--text-primary); }
+
+.sidebar-menu { flex: 1; overflow-y: auto; padding: 12px 8px; }
+.sidebar-menu::-webkit-scrollbar { width: 6px; }
+.sidebar-menu::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.2); border-radius: 3px; }
+
+.menu-section-title {
+  color: var(--text-mute);
+  letter-spacing: 0.08em;
+  padding: 12px 14px 6px;
+  font-size: 0.68em; font-weight: 700;
+  text-transform: uppercase;
+  display: flex; align-items: center;
+}
+.menu-section-title i { margin-right: 8px; color: var(--neon-cyan); opacity: 0.7; }
+
+.menu-item {
+  width: 100%; background: transparent; border: none;
+  border-left: 3px solid transparent;
+  color: rgba(241, 245, 249, 0.7);
+  padding: 10px 14px; border-radius: 8px;
+  font-size: 0.9em; font-family: inherit;
+  text-align: left; cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex; align-items: center;
+}
+.menu-item i.fa-solid { width: 22px; text-align: center; margin-right: 10px; font-size: 1em; color: var(--neon-purple); }
+.menu-item:hover { background: rgba(167, 139, 250, 0.08); color: #FFFFFF; }
+.menu-item.active {
+  background: linear-gradient(90deg, rgba(167, 139, 250, 0.18), rgba(96, 165, 250, 0.08));
+  color: #FFFFFF;
+  border-left-color: var(--neon-purple);
+  font-weight: 600;
+  box-shadow: inset 0 0 20px rgba(167, 139, 250, 0.1);
+}
+
+.menu-subitem {
+  width: 100%; background: transparent; border: none;
+  color: rgba(148, 163, 184, 0.7);
+  padding: 7px 14px 7px 44px; border-radius: 6px;
+  font-size: 0.82em; font-family: inherit;
+  text-align: left; cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex; align-items: center;
+}
+.menu-subitem:hover { color: #FFFFFF; background: rgba(167, 139, 250, 0.06); }
+.menu-subitem .dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: currentColor; margin-right: 10px; opacity: 0.6;
+}
+
+.sidebar-footer {
+  padding: 14px 12px; text-align: center;
+  font-size: 0.7em; color: rgba(148, 163, 184, 0.5);
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid var(--border-slate);
+}
+
+/* ============================================================ */
+/* === Main === */
+/* ============================================================ */
+.main { flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+.top-header {
+  height: 60px;
+  background: rgba(15, 23, 41, 0.7);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-slate);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; flex-shrink: 0;
+}
+.top-header h2 {
+  font-size: 1.1em; font-weight: 700;
+  background: linear-gradient(90deg, #FFFFFF, #A78BFA);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.user-info { text-align: right; }
+.user-name { color: var(--text-primary); font-size: 0.82em; font-weight: 600; margin: 0; }
+.online-status {
+  color: var(--neon-mint); font-size: 0.7em;
+  display: flex; align-items: center; justify-content: flex-end; margin-top: 2px;
+}
+.online-dot {
+  display: inline-block; width: 7px; height: 7px;
+  border-radius: 50%; background: var(--neon-mint);
+  box-shadow: 0 0 8px var(--neon-mint);
+  margin-right: 4px; animation: pulse 2s infinite;
+}
+
+.main-view { flex: 1; padding: 20px 8px; overflow-y: auto; position: relative; z-index: 1; }
+.main-view::-webkit-scrollbar { width: 8px; }
+.main-view::-webkit-scrollbar-track { background: transparent; }
+.main-view::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.2); border-radius: 4px; }
+
+/* ============================================================ */
+/* === Glow Card (Glass) === */
+/* ============================================================ */
+.glow-card {
+  background: var(--glass-1);
+  backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+  border: 1px solid var(--border-slate);
+  border-radius: 16px;
+  position: relative; overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  margin-bottom: 16px;
+}
+.glow-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--neon-purple), transparent);
+  opacity: 0.4;
+}
+.glow-card:hover {
+  border-color: var(--border-glow);
+  box-shadow: 0 12px 40px rgba(167, 139, 250, 0.18);
+  transform: translateY(-1px);
+}
+
+.section-title {
+  font-size: 1.1em; font-weight: 700; color: var(--text-primary);
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 4px;
+}
+.section-title i { color: var(--neon-purple); }
+.section-subtitle {
+  font-size: 0.78em; color: var(--neon-cyan);
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.section-subtitle::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--neon-mint); box-shadow: 0 0 6px var(--neon-mint);
+  animation: pulse 2s infinite;
+}
+
+/* === Section 1: Header === */
+.section-1 { padding: 22px 26px; }
+
+/* === Section 2: Strategy === */
+.section-2 { padding: 22px 26px; }
+.strategy-block {
+  background: linear-gradient(90deg, rgba(167, 139, 250, 0.06), rgba(96, 165, 250, 0.04));
+  border-left: 3px solid var(--neon-purple);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+}
+.strategy-label {
+  font-size: 0.78em; font-weight: 700;
+  background: linear-gradient(90deg, var(--neon-purple), var(--neon-cyan));
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.strategy-text {
+  font-size: 0.88em; color: var(--text-primary);
+  line-height: 1.5;
+}
+
+/* === KR === */
+.kr-item {
+  margin-bottom: 10px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+  border-left: 3px solid transparent;
+  border-radius: 8px;
+  transition: all 0.25s ease;
+}
+.kr-item:hover { background: rgba(255, 255, 255, 0.04); }
+.kr-item.status-green { border-left-color: var(--status-green); }
+.kr-item.status-yellow { border-left-color: var(--status-yellow); }
+.kr-item.status-red { border-left-color: var(--status-red); }
+
+.kr-title {
+  font-size: 0.92em; font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  display: flex; align-items: center; gap: 8px;
+}
+.kr-text { font-size: 0.82em; color: var(--text-secondary); line-height: 1.55; }
+.status-icon { font-size: 1em; }
+.status-green .status-icon { color: var(--status-green); text-shadow: 0 0 8px rgba(52, 211, 153, 0.5); }
+.status-yellow .status-icon { color: var(--status-yellow); text-shadow: 0 0 8px rgba(251, 191, 36, 0.5); }
+.status-red .status-icon { color: var(--status-red); text-shadow: 0 0 8px rgba(248, 113, 113, 0.5); }
+
+/* === KPI Grid === */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.kpi-card {
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.08), rgba(96, 165, 250, 0.04));
+  border: 1px solid var(--border-slate);
+  border-radius: 12px;
+  padding: 14px 16px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+.kpi-card:hover {
+  border-color: var(--border-glow);
+  box-shadow: 0 6px 24px rgba(167, 139, 250, 0.15);
+}
+.kpi-icon {
+  position: absolute; top: 12px; right: 12px;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(167, 139, 250, 0.15);
+  border-radius: 8px;
+  color: var(--neon-purple);
+  font-size: 0.9em;
+}
+.kpi-label {
+  font-size: 0.72em; color: var(--text-mute);
+  text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;
+}
+.kpi-value {
+  font-size: 1.6em; font-weight: 800;
+  color: var(--text-primary);
+  margin-top: 4px;
+  background: linear-gradient(90deg, #FFFFFF, #A78BFA);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.kpi-unit {
+  font-size: 0.55em; color: var(--text-mute); margin-left: 4px;
+  -webkit-text-fill-color: var(--text-mute);
+}
+.kpi-trend {
+  font-size: 0.72em; margin-top: 4px;
+  display: flex; align-items: center; gap: 4px;
+}
+.trend-up { color: var(--status-green); }
+.trend-down { color: var(--status-red); }
+
+/* === Lg Table === */
+.lg-wrap { overflow-x: auto; padding: 4px 4px 4px 4px; }
+.lg-wrap::-webkit-scrollbar { height: 6px; }
+.lg-wrap::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.2); border-radius: 3px; }
+.lg-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 0.82em;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.lg-table thead th {
+  background: linear-gradient(180deg, rgba(167, 139, 250, 0.15), rgba(96, 165, 250, 0.10));
+  color: var(--text-primary);
+  font-weight: 700; text-align: left;
+  padding: 12px 14px;
+  font-size: 0.85em;
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid var(--border-slate);
+}
+.lg-table tbody td {
+  padding: 11px 14px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-slate);
+}
+.lg-table tbody tr:hover { background: rgba(167, 139, 250, 0.05); }
+.lg-table tbody tr:last-child td { border-bottom: none; }
+.lg-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.85em; font-weight: 600;
+}
+.lg-badge.green { background: rgba(52, 211, 153, 0.15); color: var(--status-green); border: 1px solid rgba(52, 211, 153, 0.3); }
+.lg-badge.yellow { background: rgba(251, 191, 36, 0.15); color: var(--status-yellow); border: 1px solid rgba(251, 191, 36, 0.3); }
+.lg-badge.red { background: rgba(248, 113, 113, 0.15); color: var(--status-red); border: 1px solid rgba(248, 113, 113, 0.3); }
+.lg-badge.cyan { background: rgba(96, 165, 250, 0.15); color: var(--neon-cyan); border: 1px solid rgba(96, 165, 250, 0.3); }
+
+.kpi-section { padding: 22px 26px; }
+
+/* Footer */
+.main-footer {
+  padding: 14px 24px;
+  font-size: 0.72em; color: var(--text-mute);
+  background: rgba(15, 23, 41, 0.7);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border-slate);
+  text-align: center;
+}
+
+/* Layout */
+#routeContainer { width: 1200px; max-width: 100%; margin: 0 auto; box-sizing: border-box; padding: 0 8px; }
+
+/* Mockup Banner */
+.mockup-banner {
+  background: linear-gradient(90deg, rgba(167, 139, 250, 0.15), rgba(96, 165, 250, 0.10));
+  border: 1px solid var(--border-glow);
+  border-radius: 12px;
+  padding: 12px 18px;
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 12px;
+  font-size: 0.85em;
+}
+.mockup-banner i {
+  color: var(--neon-purple);
+  font-size: 1.1em;
+}
+.mockup-banner-text {
+  color: var(--text-primary);
+  flex: 1;
+}
+.mockup-banner-text strong { color: var(--neon-purple); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ====== Sidebar ====== -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo-text">P5 ระบบพัฒนาบุคลากร PKG</div>
+      <div class="logo-sub">v8 MOCKUP · Dark · Glass · Glow</div>
+    </div>
+    <div class="role-selector-wrap">
+      <span><i class="fa-solid fa-user-shield"></i> สิทธิ์:</span>
+      <select>
+        <option>Admin</option>
+        <option>Manager</option>
+        <option>Member</option>
+      </select>
+    </div>
+    <nav class="sidebar-menu">
+      <button class="menu-item active">
+        <i class="fa-solid fa-chart-pie"></i>
+        <span>Dashboard</span>
+      </button>
+      <div class="menu-section-title"><i class="fa-solid fa-graduation-cap"></i> Training</div>
+      <button class="menu-subitem"><span class="dot"></span><span>2.1 ลงทะเบียนหลักสูตร</span></button>
+      <button class="menu-subitem"><span class="dot"></span><span>2.2 ขอเปิดอบรม ภายใน/ภายนอก</span></button>
+      <button class="menu-subitem"><span class="dot"></span><span>2.3 ส่งผลอบรม ภายใน/ภายนอก</span></button>
+      <button class="menu-subitem"><span class="dot"></span><span>2.4 รายงานการอบรมภายนอก</span></button>
+      <div class="menu-section-title"><i class="fa-solid fa-user-group"></i> Mentor</div>
+      <button class="menu-subitem"><span class="dot"></span><span>3.1 Set ระบบพี่เลี้ยงน้องเลี้ยง</span></button>
+      <button class="menu-subitem"><span class="dot"></span><span>3.2 แบบ From การส่งรายงานน้องเลี้ยง PKG</span></button>
+      <div class="menu-section-title"><i class="fa-solid fa-chalkboard-user"></i> Coach</div>
+      <button class="menu-subitem"><span class="dot"></span><span>4.1 Menter Coach เชื่อมสมุดพก</span></button>
+      <button class="menu-subitem"><span class="dot"></span><span>4.2 อื่นๆ</span></button>
+      <div class="menu-section-title"><i class="fa-solid fa-masks-theater"></i> Roleplay</div>
+      <button class="menu-subitem"><span class="dot"></span><span>5.1 รายงานการ Roleplay</span></button>
+      <button class="menu-subitem"><span class="dot"></span><span>5.2 แบบ From ส่ง Roleplay</span></button>
+      <div class="menu-section-title"><i class="fa-solid fa-sack-dollar"></i> กำกับทุนองค์กร</div>
+      <button class="menu-subitem"><span class="dot"></span><span>6.1 รายงานการอบรม</span></button>
+      <button class="menu-subitem"><span class="dot"></span><span>6.2 อื่นๆ</span></button>
+    </nav>
+    <div class="sidebar-footer">&copy; 2026 PKG All Rights Reserved.</div>
+  </aside>
+
+  <!-- ====== Main ====== -->
+  <main class="main">
+    <header class="top-header">
+      <h2>Dashboard</h2>
+      <div class="user-info">
+        <p class="user-name">ผู้ดูแลระบบ (Admin)</p>
+        <p class="online-status"><span class="online-dot"></span> Online</p>
+      </div>
+    </header>
+
+    <section class="main-view">
+      <div id="routeContainer">
+
+        <!-- Mockup Banner -->
+        <div class="mockup-banner">
+          <i class="fa-solid fa-palette"></i>
+          <div class="mockup-banner-text">
+            <strong>MOCKUP v8</strong> — ออกแบบใหม่หมด: BG น้ำเงินเข้ม + Glass + Glow (ตามที่ลูกหมีขอ)
+            โครงสร้างเมนู <strong>6 หลัก + 12 ย่อย</strong> ตามสเปคเดิม
+          </div>
+        </div>
+
+        <!-- ส่วนที่ 1: Header -->
+        <div class="glow-card section-1">
+          <div class="section-title">
+            <i class="fa-solid fa-file-lines"></i>
+            PAD-02 : รายงาน PP5 ระบบพัฒนาบุคลากร (PAD Team)
+          </div>
+          <div class="section-subtitle">
+            ขึ้นออโต้ · ประจำวันที่ <span id="timestamp">กำลังโหลด…</span>
+          </div>
+        </div>
+
+        <!-- ส่วนที่ 2: Strategy -->
+        <div class="glow-card section-2">
+          <div class="section-title" style="margin-bottom: 14px;">
+            <i class="fa-solid fa-bullseye"></i>
+            ยุทธศาสตร์ (Strategy)
+          </div>
+
+          <div class="strategy-block">
+            <div class="strategy-label">🎯 จุดมุ่งหมาย</div>
+            <div class="strategy-text">พัฒนาสมาชิกตาม Core competency PKG</div>
+          </div>
+
+          <div class="strategy-block">
+            <div class="strategy-label">🌟 ภาพความสำเร็จที่อยากเห็น</div>
+            <div class="strategy-text">สมาชิก PKG มีทักษะที่เป็นเลิศ ตาม CC PKG และ AOE BU</div>
+          </div>
+
+          <div class="strategy-block">
+            <div class="strategy-label">📌 OKR</div>
+            <div class="strategy-text">สมาชิกมีแผนและได้รับการพัฒนาศักยภาพตามแผนครบทุกคน</div>
+          </div>
+
+          <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-slate);">
+            <div class="strategy-label" style="margin-bottom: 10px;">🎯 Key Results</div>
+
+            <div class="kr-item status-green">
+              <div class="kr-title"><span class="status-icon">✅</span><span>KR 1. ระบบอบรม</span></div>
+              <div class="kr-text">สมาชิกได้รับการฝึกอบรมตามแผนและสามารถนำความรู้ไปใช้ในการบรรลุเป้าหมายการทำงานที่ได้รับ 100%</div>
+            </div>
+
+            <div class="kr-item status-yellow">
+              <div class="kr-title"><span class="status-icon">🟡</span><span>KR 2. ระบบ Mentor</span></div>
+              <div class="kr-text">สมาชิกใหม่/สมาชิกจับคู่คนกับงานใหม่/สมาชิกปรับบทบาท/สมาชิกพัฒนาศักยภาพ ได้รับการดูแลจากพี่เลี้ยงแบบ 1:3 ครบ 100%</div>
+            </div>
+
+            <div class="kr-item status-red">
+              <div class="kr-title"><span class="status-icon">🔴</span><span>KR 3. ระบบ Coach</span></div>
+              <div class="kr-text">สมาชิกที่ได้รับมอบหมายบทบาทเป็นผู้ Coach ได้พัฒนาทักษะการ Coach ผู้อื่น</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ส่วนที่ 3: KPI Summary (6 บริษัท) -->
+        <div class="glow-card kpi-section">
+          <div class="section-title" style="margin-bottom: 4px;">
+            <i class="fa-solid fa-chart-line"></i>
+            สรุปรายงานวัดผลสถานการณ์ฝึกอบรม ณ ปัจจุบัน
+          </div>
+          <div class="section-subtitle">ข้อมูล 6 บริษัท: หน่วยกิต + GPA</div>
+
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
+              <div class="kpi-label">สมาชิกทั้งหมด</div>
+              <div class="kpi-value">479<span class="kpi-unit">คน</span></div>
+              <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> +12 เดือนนี้</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+              <div class="kpi-label">หน่วยกิตรวม</div>
+              <div class="kpi-value">2,847<span class="kpi-unit">หน่วย</span></div>
+              <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> +8.2%</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-medal"></i></div>
+              <div class="kpi-label">GPA เฉลี่ย</div>
+              <div class="kpi-value">3.42</div>
+              <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> +0.08 จากเดือนก่อน</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-percent"></i></div>
+              <div class="kpi-label">ผ่านแผน 100%</div>
+              <div class="kpi-value">76<span class="kpi-unit">%</span></div>
+              <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> +4.1%</div>
+            </div>
+          </div>
+
+          <div class="lg-wrap" style="margin-top: 8px;">
+            <table class="lg-table">
+              <thead>
+                <tr>
+                  <th>บริษัท</th>
+                  <th>สมาชิก</th>
+                  <th>หน่วยกิต</th>
+                  <th>GPA</th>
+                  <th>สถานะ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>PKG Asset</td><td>96</td><td>580</td><td>3.51</td><td><span class="lg-badge green">✅ ผ่านเกณฑ์</span></td></tr>
+                <tr><td>AGS Platform</td><td>82</td><td>512</td><td>3.48</td><td><span class="lg-badge green">✅ ผ่านเกณฑ์</span></td></tr>
+                <tr><td>LikeFintech</td><td>78</td><td>476</td><td>3.39</td><td><span class="lg-badge yellow">🟡 ใกล้เกณฑ์</span></td></tr>
+                <tr><td>CPDG</td><td>75</td><td>438</td><td>3.32</td><td><span class="lg-badge yellow">🟡 ใกล้เกณฑ์</span></td></tr>
+                <tr><td>LikePoint</td><td>74</td><td>425</td><td>3.28</td><td><span class="lg-badge yellow">🟡 ใกล้เกณฑ์</span></td></tr>
+                <tr><td>PKG Insurance</td><td>74</td><td>416</td><td>3.21</td><td><span class="lg-badge red">🔴 ต้องเร่ง</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ส่วนที่ 4: Training (ผ่านที่ 1) -->
+        <div class="glow-card kpi-section">
+          <div class="section-title" style="margin-bottom: 4px;">
+            <i class="fa-solid fa-graduation-cap"></i>
+            Training (ผ่านที่ 1)
+          </div>
+          <div class="section-subtitle">แผนหลักสูตรที่เปิดอบรมประจำเดือน</div>
+
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-book-open"></i></div>
+              <div class="kpi-label">หลักสูตรเปิด</div>
+              <div class="kpi-value">12<span class="kpi-unit">วิชา</span></div>
+              <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> +2 จากเดือนก่อน</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+              <div class="kpi-label">ลงทะเบียนแล้ว</div>
+              <div class="kpi-value">348<span class="kpi-unit">คน</span></div>
+              <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> +18.6%</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-circle-check"></i></div>
+              <div class="kpi-label">ผ่านอบรม</div>
+              <div class="kpi-value">82<span class="kpi-unit">%</span></div>
+              <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> +5.3%</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-clock"></i></div>
+              <div class="kpi-label">ชม.อบรมเฉลี่ย/คน</div>
+              <div class="kpi-value">14.5<span class="kpi-unit">ชม.</span></div>
+              <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> +2.1 ชม.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ส่วนที่ 5: Roleplay -->
+        <div class="glow-card kpi-section">
+          <div class="section-title" style="margin-bottom: 4px;">
+            <i class="fa-solid fa-masks-theater"></i>
+            Roleplay
+          </div>
+          <div class="section-subtitle">จำนวนทีม Roleplay และผลการดำเนินงาน</div>
+
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-people-group"></i></div>
+              <div class="kpi-label">ทีม Roleplay</div>
+              <div class="kpi-value">24<span class="kpi-unit">ทีม</span></div>
+              <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> +3 ทีม</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-user-check"></i></div>
+              <div class="kpi-label">สมาชิกที่เข้าร่วม</div>
+              <div class="kpi-value">156<span class="kpi-unit">คน</span></div>
+              <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> +22 คน</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-trophy"></i></div>
+              <div class="kpi-label">ผ่านเกณฑ์ 80%+</div>
+              <div class="kpi-value">68<span class="kpi-unit">%</span></div>
+              <div class="kpi-trend trend-down"><i class="fa-solid fa-arrow-down"></i> -2.4%</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-star"></i></div>
+              <div class="kpi-label">คะแนนเฉลี่ย</div>
+              <div class="kpi-value">7.8<span class="kpi-unit">/10</span></div>
+              <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> +0.3</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ส่วนที่ 6: Mentor -->
+        <div class="glow-card kpi-section">
+          <div class="section-title" style="margin-bottom: 4px;">
+            <i class="fa-solid fa-user-group"></i>
+            Mentor
+          </div>
+          <div class="section-subtitle">สมาชิกในระบบ Mentor และวินัยการส่งรายงาน</div>
+
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-user-tie"></i></div>
+              <div class="kpi-label">พี่เลี้ยง (Mentor)</div>
+              <div class="kpi-value">68<span class="kpi-unit">คน</span></div>
+              <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> +5 คน</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-user-graduate"></i></div>
+              <div class="kpi-label">น้องเลี้ยง (Mentee)</div>
+              <div class="kpi-value">186<span class="kpi-unit">คน</span></div>
+              <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> +14 คน</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+              <div class="kpi-label">อัตราส่วน</div>
+              <div class="kpi-value">1:2.7</div>
+              <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> ดีขึ้น (เป้า 1:3)</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-file-circle-check"></i></div>
+              <div class="kpi-label">ส่งรายงานตรงเวลา</div>
+              <div class="kpi-value">91<span class="kpi-unit">%</span></div>
+              <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> +3.2%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ส่วนที่ 7: Coach -->
+        <div class="glow-card kpi-section">
+          <div class="section-title" style="margin-bottom: 4px;">
+            <i class="fa-solid fa-chalkboard-user"></i>
+            Coach
+          </div>
+          <div class="section-subtitle">สมาชิกที่ได้รับมอบหมายบทบาทผู้ Coach</div>
+
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+              <div class="kpi-label">ผู้ Coach ทั้งหมด</div>
+              <div class="kpi-value">42<span class="kpi-unit">คน</span></div>
+              <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> +3 คน</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-book-bookmark"></i></div>
+              <div class="kpi-label">สมุดพกเชื่อมแล้ว</div>
+              <div class="kpi-value">38<span class="kpi-unit">เล่ม</span></div>
+              <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> +6 เล่ม</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-comments"></i></div>
+              <div class="kpi-label">Session/เดือน</div>
+              <div class="kpi-value">126</div>
+              <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> +18 ครั้ง</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-icon"><i class="fa-solid fa-handshake"></i></div>
+              <div class="kpi-label">Coachee ที่ประเมินผ่าน</div>
+              <div class="kpi-value">74<span class="kpi-unit">%</span></div>
+              <div class="kpi-trend trend-down"><i class="fa-solid fa-arrow-down"></i> -1.8%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ส่วนที่ 8: Learning & Growth -->
+        <div class="glow-card kpi-section">
+          <div class="section-title" style="margin-bottom: 4px;">
+            <i class="fa-solid fa-seedling"></i>
+            การเรียนรู้และการเติบโต (Learning & Growth)
+          </div>
+          <div class="section-subtitle">ทุนมนุษย์/สารสนเทศ/องค์กร แยกตามบริษัท</div>
+
+          <div class="lg-wrap">
+            <table class="lg-table">
+              <thead>
+                <tr>
+                  <th>บริษัท</th>
+                  <th>ทุนมนุษย์</th>
+                  <th>สารสนเทศ</th>
+                  <th>องค์กร</th>
+                  <th>คะแนนรวม</th>
+                  <th>ระดับ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>PKG Asset</td><td>3.62</td><td>3.48</td><td>3.55</td><td>3.55</td><td><span class="lg-badge cyan">🏆 A</span></td></tr>
+                <tr><td>AGS Platform</td><td>3.51</td><td>3.44</td><td>3.49</td><td>3.48</td><td><span class="lg-badge cyan">🏆 A</span></td></tr>
+                <tr><td>LikeFintech</td><td>3.42</td><td>3.38</td><td>3.36</td><td>3.39</td><td><span class="lg-badge green">B+</span></td></tr>
+                <tr><td>CPDG</td><td>3.34</td><td>3.31</td><td>3.32</td><td>3.32</td><td><span class="lg-badge green">B</span></td></tr>
+                <tr><td>LikePoint</td><td>3.30</td><td>3.27</td><td>3.28</td><td>3.28</td><td><span class="lg-badge green">B</span></td></tr>
+                <tr><td>PKG Insurance</td><td>3.22</td><td>3.20</td><td>3.21</td><td>3.21</td><td><span class="lg-badge yellow">B-</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <footer class="main-footer">
+      © 2026 PKG · v8 MOCKUP · ประจำวันที่ <span id="footerTimestamp">กำลังโหลด…</span>
+    </footer>
+  </main>
+</div>
+
+<script>
+// === Live Timestamp ===
+function updateTimestamp() {
+  const fmt = new Intl.DateTimeFormat('th-TH', {
+    day: 'numeric', month: 'long', year: 'numeric',
+    hour: '2-digit', minute: '2-digit', second: '2-digit'
+  });
+  const parts = fmt.formatToParts(new Date());
+  const get = (type) => parts.find(p => p.type === type)?.value || '';
+  const text = `${get('day')} ${get('month')} ${get('year')} เวลา ${get('hour')}:${get('minute')}:${get('second')} น.`;
+  const ts = document.getElementById('timestamp');
+  const ft = document.getElementById('footerTimestamp');
+  if (ts) ts.textContent = text;
+  if (ft) ft.textContent = text;
+}
+updateTimestamp();
+setInterval(updateTimestamp, 1000);
+</script>
+</body>
+</html>
