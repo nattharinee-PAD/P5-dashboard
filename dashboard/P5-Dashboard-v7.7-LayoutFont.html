@@ -747,7 +747,7 @@ console.log('📦 Embedded employee data loaded:', EMPLOYEE_EMBEDDED_CSV.split('
             <i class="fa-solid fa-seedling"></i>
             การเรียนรู้และการเติบโต (Learning & Growth)
           </div>
-          <div class="section-subtitle">ทุนมนุษย์/สารสนเทศ/องค์กร แยกตามบริษัท</div>
+          <div class="section-subtitle">ทุนมนุษย์/สารสนเทศ/องค์กร แยกตาม BU</div>
         </div>
         <div class="lg-wrap">
           <table class="lg-table" id="lgTable"></table>
@@ -1475,7 +1475,7 @@ async function fetchSheetData() {
       training_pct: pctToNum(r[4])                    // E: % อบรม
     }));
     const companyCount = companies.filter(c => (c.name || '').trim() !== 'รวม').length;
-    if (dataSource) dataSource.innerHTML = `✅ Live · Google Sheet (อัปเดตทุกวัน) · โหลดเมื่อ ${new Date().toLocaleTimeString('th-TH')} · <strong>${companyCount} บริษัท</strong>`;
+    if (dataSource) dataSource.innerHTML = `✅ Live · Google Sheet (อัปเดตทุกวัน) · โหลดเมื่อ ${new Date().toLocaleTimeString('th-TH')} · <strong>${companyCount} BU</strong>`;
     return companies;
   } catch (e) {
     if (dataSource) dataSource.innerHTML = `❌ โหลดไม่สำเร็จ — ใช้ข้อมูล fallback (${e.message})`;
@@ -1504,7 +1504,7 @@ function renderSummaryKpi(companies) {
       <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
       <div class="kpi-label">สมาชิกทั้งหมด</div>
       <div class="kpi-value">${totalMembers}<span class="kpi-unit">คน</span></div>
-      <div class="kpi-trend trend-up"><i class="fa-solid fa-building"></i> ${companyOnly.filter(c => c.members > 0).length} บริษัท</div>
+      <div class="kpi-trend trend-up"><i class="fa-solid fa-building"></i> ${companyOnly.filter(c => c.members > 0).length} BU</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
