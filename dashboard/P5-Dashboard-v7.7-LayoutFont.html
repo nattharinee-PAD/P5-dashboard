@@ -671,7 +671,13 @@ console.log('📦 Embedded employee data loaded:', EMPLOYEE_EMBEDDED_CSV.split('
             <i class="fa-solid fa-chart-line"></i>
             สรุปรายงานวัดผลสถานการณ์ฝึกอบรม ณ ปัจจุบัน
           </div>
-          <div class="section-subtitle">ข้อมูล 6 บริษัท: หน่วยกิต + GPA</div>
+          <div class="section-subtitle">
+            <span id="dataSource">⏳ กำลังโหลดข้อมูลจาก Google Sheet...</span>
+          </div>
+        </div>
+        <!-- KPI Cards (auto-filled from sheet) -->
+        <div class="kpi-section">
+          <div class="kpi-grid" id="summaryKpiGrid"></div>
         </div>
         <div class="lg-wrap">
           <table class="lg-table" id="summaryTable"></table>
@@ -1400,9 +1406,109 @@ function renderLgTable(data) {
 // ============================================================
 // Load Embedded Data
 // ============================================================
-function loadData() {
+// ============================================================
+// Fetch from Google Sheet (v7.7+)
+// ============================================================
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=245123772';
+
+function parseCsv(text) {
+  const lines = text.trim().split('\n');
+  return lines.map(line => {
+    // Simple CSV parser (handle quoted fields with commas)
+    const result = []; let cur = ''; let inQuote = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') { inQuote = !inQuote; }
+      else if (c === ',' && !inQuote) { result.push(cur.trim()); cur = ''; }
+      else { cur += c; }
+    }
+    result.push(cur.trim());
+    return result;
+  });
+}
+
+function pctToNum(s) { return parseFloat(String(s).replace('%', '')) || 0; }
+
+async function fetchSheetData() {
+  const dataSource = document.getElementById('dataSource');
+  try {
+    const res = await fetch(SHEET_URL);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const csv = await res.text();
+    const rows = parseCsv(csv);
+    // Skip header row
+    const dataRows = rows.slice(1).filter(r => r[0] && r[0].length > 0);
+    const companies = dataRows.map(r => ({
+      name: r[0],
+      members: parseInt(r[1]) || 0,
+      credit_done: parseInt(r[2]) || 0,
+      credit_remain: parseInt(r[3]) || 0,
+      credit_pct: pctToNum(r[4]),
+      gpa_pass: parseInt(r[5]) || 0,
+      gpa_fail: parseInt(r[6]) || 0,
+      gpa_pct: pctToNum(r[7])
+    }));
+    if (dataSource) dataSource.innerHTML = `✅ Live · Google Sheet · อัปเดตเมื่อ ${new Date().toLocaleTimeString('th-TH')} · <strong>${companies.length} บริษัท</strong>`;
+    return companies;
+  } catch (e) {
+    if (dataSource) dataSource.innerHTML = `❌ โหลดไม่สำเร็จ — ใช้ข้อมูล fallback (${e.message})`;
+    return null;
+  }
+}
+
+function renderSummaryKpi(companies) {
+  const grid = document.getElementById('summaryKpiGrid');
+  if (!grid || !companies) return;
+  const totalMembers = companies.reduce((s, c) => s + c.members, 0);
+  const totalCreditDone = companies.reduce((s, c) => s + c.credit_done, 0);
+  const totalCreditGoal = totalCreditDone + companies.reduce((s, c) => s + c.credit_remain, 0);
+  const overallCreditPct = totalCreditGoal > 0 ? (totalCreditDone / totalCreditGoal) * 100 : 0;
+  const totalGpaPass = companies.reduce((s, c) => s + c.gpa_pass, 0);
+  const totalGpaGoal = totalGpaPass + companies.reduce((s, c) => s + c.gpa_fail, 0);
+  const overallGpaPct = totalGpaGoal > 0 ? (totalGpaPass / totalGpaGoal) * 100 : 0;
+
+  grid.innerHTML = `
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="fa-solid fa-users"></i></div>
+      <div class="kpi-label">สมาชิกทั้งหมด</div>
+      <div class="kpi-value">${totalMembers}<span class="kpi-unit">คน</span></div>
+      <div class="kpi-trend trend-up"><i class="fa-solid fa-building"></i> ${companies.filter(c => c.members > 0).length} บริษัท</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+      <div class="kpi-label">ครบ 44 หน่วยกิต</div>
+      <div class="kpi-value">${overallCreditPct.toFixed(1)}<span class="kpi-unit">%</span></div>
+      <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> ${totalCreditDone}/${totalCreditGoal} คน</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="fa-solid fa-medal"></i></div>
+      <div class="kpi-label">GPA ผ่าน 3.5</div>
+      <div class="kpi-value">${overallGpaPct.toFixed(1)}<span class="kpi-unit">%</span></div>
+      <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> ${totalGpaPass}/${totalGpaGoal} คน</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="fa-solid fa-percent"></i></div>
+      <div class="kpi-label">เฉลี่ยรวม</div>
+      <div class="kpi-value">${((overallCreditPct + overallGpaPct) / 2).toFixed(1)}<span class="kpi-unit">%</span></div>
+      <div class="kpi-trend trend-up"><i class="fa-solid fa-chart-line"></i> Credit + GPA</div>
+    </div>
+  `;
+}
+
+async function loadData() {
+  // Try fetching live data from Google Sheet
+  const companies = await fetchSheetData();
+  if (companies && companies.length > 0) {
+    renderSummaryKpi(companies);
+    renderSummaryTable({ rows: companies });
+  } else {
+    // Fallback to EMBEDDED_DATA
+    const data = EMBEDDED_DATA;
+    renderSummaryTable(data.summary || {});
+    if (data.summary && data.summary.rows) renderSummaryKpi(data.summary.rows);
+  }
+  // Other sections still use EMBEDDED_DATA (Training/Roleplay/Mentor/Coach/LG)
   const data = EMBEDDED_DATA;
-  renderSummaryTable(data.summary || {});
   renderKpiGrid('trainingGrid', data.training || []);
   renderKpiGrid('roleplayGrid', data.roleplay || []);
   renderKpiGrid('mentorGrid', data.mentor || []);
