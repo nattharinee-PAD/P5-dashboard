@@ -88,18 +88,22 @@ body::after {
   z-index: 10; min-height: 100vh;
 }
 .sidebar-brand {
-  padding: 24px;
+  padding: 18px 16px;
   background: linear-gradient(90deg, rgba(255, 140, 0, 0.15), rgba(147, 51, 234, 0.08), transparent);
   border-bottom: 1px solid var(--border-slate);
+  box-sizing: border-box;
+  width: 100%;
+  overflow: hidden;
 }
 .logo-text {
-  font-size: 1.1em; font-weight: 800;
-  letter-spacing: 0.02em;
+  font-size: 0.95em; font-weight: 800;
+  letter-spacing: 0.01em;
   background: linear-gradient(90deg, var(--c1-orange), var(--c2-green), var(--c3-blue), var(--c4-purple), var(--c5-pink));
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent; color: transparent;
   text-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
-  white-space: nowrap; line-height: 1.2;
+  white-space: normal; line-height: 1.25;
+  word-break: keep-all;
 }
 .role-selector-wrap {
   padding: 12px 18px;
