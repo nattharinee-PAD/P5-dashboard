@@ -2030,10 +2030,10 @@ function updateRealtimeClock() {
 
 // === Permissions: ใครเห็นเมนูอะไร (role-based) ===
 window.PERMISSIONS = {
-  admin:   ['dashboard', 'training-2-1', 'training-2-2', 'training-2-3', 'training-2-4',
+  admin:   ['dashboard', 'training-2-1', 'training-2-2', 'training-2-3', 'training-2-4', 'training-2-5',
             'mentor-3-1', 'mentor-3-2', 'coach-4-1', 'coach-4-2',
             'roleplay-5-1', 'roleplay-5-2', 'orgcap-6-1', 'orgcap-6-2'],
-  manager: ['dashboard', 'training-2-1', 'training-2-2', 'training-2-3', 'training-2-4',
+  manager: ['dashboard', 'training-2-1', 'training-2-2', 'training-2-3', 'training-2-4', 'training-2-5',
             'mentor-3-1', 'mentor-3-2', 'coach-4-1', 'coach-4-2',
             'roleplay-5-1', 'roleplay-5-2'],
   member:  ['dashboard', 'roleplay-5-1', 'roleplay-5-2']
@@ -2049,6 +2049,7 @@ window.MENU_CONFIG = [
   { id: 'training-2-2', label: '2.2 ขอเปิดอบรม ภายใน/ภายนอก', parent: 'training', permissions: ['admin','manager'] },
   { id: 'training-2-3', label: '2.3 ส่งผลอบรม ภายใน/ภายนอก', parent: 'training', permissions: ['admin','manager'] },
   { id: 'training-2-4', label: '2.4 รายงานการอบรมภายนอก', parent: 'training', permissions: ['admin','manager'] },
+  { id: 'training-2-5', label: '2.5 ตารางการอบรม', parent: 'training', permissions: ['admin','manager'] },
   
   { id: 'mentor', label: 'Mentor', icon: 'fa-user-group', parent: null, permissions: ['admin','manager'] },
   { id: 'mentor-3-1', label: '3.1 Set ระบบพี่เลี้ยงน้องเลี้ยง', parent: 'mentor', permissions: ['admin','manager'] },
