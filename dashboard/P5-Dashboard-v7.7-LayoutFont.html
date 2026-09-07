@@ -1558,17 +1558,16 @@ function renderSummaryKpi(companies) {
   const totalTrainingGoal = totalTrainingDone + companyOnly.reduce((s, c) => s + c.training_remain, 0);
   const overallTrainingPct = totalTrainingGoal > 0 ? (totalTrainingDone / totalTrainingGoal) * 100 : 0;
 
-  // Build 4 pie charts (full circle)
+  // Build 4 donut charts (C: Multi-segment filled vs empty)
   const pieSize = 140;
-  const radius = 60;
+  const radius = 50;
   const cx = pieSize / 2, cy = pieSize / 2;
+  const strokeWidth = 20;
+  const circumference = 2 * Math.PI * radius;
 
   function pieSvg(pct, color1, color2, gid) {
-    const filled = Math.min(pct, 100);
-    const empty = 100 - filled;
-    // Use circle stroke-dasharray for filled portion, full circle visible
-    const circumference = 2 * Math.PI * radius;
-    const filledDash = (filled / 100) * circumference;
+    const filled = (Math.min(pct, 100) / 100) * circumference;
+    const empty = circumference - filled;
     return `
       <svg class="pie-svg" viewBox="0 0 ${pieSize} ${pieSize}">
         <defs>
@@ -1577,15 +1576,18 @@ function renderSummaryKpi(companies) {
             <stop offset="100%" stop-color="${color2}"/>
           </linearGradient>
         </defs>
-        <!-- Empty/background circle (full, soft color) -->
-        <circle cx="${cx}" cy="${cy}" r="${radius}" fill="url(#grad-${gid})" fill-opacity="0.18"/>
-        <!-- Filled portion using stroke-dasharray -->
+        <!-- Empty segment (faded) -->
         <circle cx="${cx}" cy="${cy}" r="${radius}" fill="none"
-          stroke="url(#grad-${gid})" stroke-width="${radius * 2}"
-          stroke-dasharray="${filledDash} ${circumference}"
+          stroke="url(#grad-${gid})" stroke-width="${strokeWidth}"
+          stroke-dasharray="0 ${filled} ${empty}" stroke-dashoffset="${filled/2}"
+          opacity="0.2"
+          transform="rotate(90 ${cx} ${cy})"/>
+        <!-- Filled segment -->
+        <circle cx="${cx}" cy="${cy}" r="${radius}" fill="none"
+          stroke="url(#grad-${gid})" stroke-width="${strokeWidth}"
+          stroke-dasharray="${filled} ${empty}" stroke-linecap="butt"
           transform="rotate(-90 ${cx} ${cy})"/>
-        <!-- Inner white circle to make it look like a pie chart (no center hole) -->
-        <text x="${cx}" y="${cy + 8}" text-anchor="middle" font-size="26" font-weight="800"
+        <text x="${cx}" y="${cy + 8}" text-anchor="middle" font-size="22" font-weight="800"
           fill="${color1}" font-family="Inter, sans-serif">${pct.toFixed(0)}%</text>
       </svg>`;
   }
