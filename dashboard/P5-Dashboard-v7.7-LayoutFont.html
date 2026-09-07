@@ -1343,29 +1343,31 @@ function renderKpiGrid(elementId, items) {
 function renderSummaryTable(data) {
   const table = document.getElementById('summaryTable');
   if (!table || !data || !data.rows || data.rows.length === 0) {
-    table.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--text-mute);">ไม่มีข้อมูล</td></tr>';
+    table.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--text-mute);">ไม่มีข้อมูล</td></tr>';
     return;
   }
-  const sorted = [...data.rows].sort((a, b) => (b.credit_pct || 0) - (a.credit_pct || 0));
+  const sorted = [...data.rows].sort((a, b) => (b.training_pct || 0) - (a.training_pct || 0));
   let html = '<thead><tr>';
   html += '<th class="cname">บริษัท</th>';
   html += '<th class="num">สมาชิก</th>';
+  html += '<th class="num">ผ่านอบรม</th>';
+  html += '<th class="num">% อบรม</th>';
   html += '<th class="num">ครบ 44 หน่วย</th>';
   html += '<th class="num">ยังไม่ครบ</th>';
   html += '<th class="num">% ครบ</th>';
   html += '<th class="num">GPA ผ่าน</th>';
-  html += '<th class="num">GPA ไม่ผ่าน</th>';
   html += '<th class="num">% GPA</th>';
   html += '</tr></thead><tbody>';
   sorted.forEach(c => {
     html += `<tr>
       <td class="cname">${c.name || ''}</td>
       <td class="num">${c.members || 0}</td>
+      <td class="num">${c.training_done || 0}</td>
+      <td class="num"><strong>${(c.training_pct || 0).toFixed(2)}%</strong></td>
       <td class="num">${c.credit_done || 0}</td>
       <td class="num">${c.credit_remain || 0}</td>
-      <td class="num"><strong>${(c.credit_pct || 0).toFixed(2)}%</strong></td>
+      <td class="num">${(c.credit_pct || 0).toFixed(2)}%</td>
       <td class="num">${c.gpa_pass || 0}</td>
-      <td class="num">${c.gpa_fail || 0}</td>
       <td class="num">${(c.gpa_pct || 0).toFixed(2)}%</td>
     </tr>`;
   });
@@ -1409,7 +1411,7 @@ function renderLgTable(data) {
 // ============================================================
 // Fetch from Google Sheet (v7.7+)
 // ============================================================
-const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=245123772';
+const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=473614158';
 
 function parseCsv(text) {
   const lines = text.trim().split('\n');
@@ -1436,19 +1438,27 @@ async function fetchSheetData() {
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const csv = await res.text();
     const rows = parseCsv(csv);
-    // Skip header row
-    const dataRows = rows.slice(1).filter(r => r[0] && r[0].length > 0);
+    // Skip header rows (rows 1-2 are headers/multiline, real data starts at row 3)
+    // Filter: skip empty + skip "รวม" summary row
+    const dataRows = rows.slice(2).filter(r => {
+      const name = (r[0] || '').replace(/\s+/g, '').trim();
+      return name && name.length > 0 && name !== 'รวม' && !name.startsWith('เป้าหมาย');
+    });
     const companies = dataRows.map(r => ({
-      name: r[0],
-      members: parseInt(r[1]) || 0,
-      credit_done: parseInt(r[2]) || 0,
-      credit_remain: parseInt(r[3]) || 0,
-      credit_pct: pctToNum(r[4]),
-      gpa_pass: parseInt(r[5]) || 0,
-      gpa_fail: parseInt(r[6]) || 0,
-      gpa_pct: pctToNum(r[7])
+      name: (r[0] || '').replace(/\s+/g, ' ').trim(),
+      members: parseInt(r[5]) || 0,                    // F: จำนวนสมาชิก
+      credit_done: parseInt(r[6]) || 0,               // G: ครบ 44 หน่วย/คน
+      credit_remain: parseInt(r[7]) || 0,             // H: ยังไม่ครบ/คน
+      credit_pct: pctToNum(r[8]),                     // I: % ครบหน่วยกิต
+      gpa_pass: parseInt(r[9]) || 0,                  // J: GPA ผ่าน 3.5/คน
+      gpa_fail: parseInt(r[10]) || 0,                 // K: GPA ไม่ผ่าน
+      gpa_pct: pctToNum(r[11]),                       // L: % GPA
+      training_goal: parseInt(r[1]) || 0,             // B: เป้าหมายฝึกอบรม
+      training_done: parseInt(r[2]) || 0,             // C: เสร็จ
+      training_remain: parseInt(r[3]) || 0,           // D: รออบรม
+      training_pct: pctToNum(r[4])                    // E: % อบรม
     }));
-    if (dataSource) dataSource.innerHTML = `✅ Live · Google Sheet · อัปเดตเมื่อ ${new Date().toLocaleTimeString('th-TH')} · <strong>${companies.length} บริษัท</strong>`;
+    if (dataSource) dataSource.innerHTML = `✅ Live · Google Sheet (อัปเดตทุกวัน) · โหลดเมื่อ ${new Date().toLocaleTimeString('th-TH')} · <strong>${companies.length} บริษัท</strong>`;
     return companies;
   } catch (e) {
     if (dataSource) dataSource.innerHTML = `❌ โหลดไม่สำเร็จ — ใช้ข้อมูล fallback (${e.message})`;
@@ -1466,6 +1476,9 @@ function renderSummaryKpi(companies) {
   const totalGpaPass = companies.reduce((s, c) => s + c.gpa_pass, 0);
   const totalGpaGoal = totalGpaPass + companies.reduce((s, c) => s + c.gpa_fail, 0);
   const overallGpaPct = totalGpaGoal > 0 ? (totalGpaPass / totalGpaGoal) * 100 : 0;
+  const totalTrainingDone = companies.reduce((s, c) => s + c.training_done, 0);
+  const totalTrainingGoal = totalTrainingDone + companies.reduce((s, c) => s + c.training_remain, 0);
+  const overallTrainingPct = totalTrainingGoal > 0 ? (totalTrainingDone / totalTrainingGoal) * 100 : 0;
 
   grid.innerHTML = `
     <div class="kpi-card">
@@ -1473,6 +1486,12 @@ function renderSummaryKpi(companies) {
       <div class="kpi-label">สมาชิกทั้งหมด</div>
       <div class="kpi-value">${totalMembers}<span class="kpi-unit">คน</span></div>
       <div class="kpi-trend trend-up"><i class="fa-solid fa-building"></i> ${companies.filter(c => c.members > 0).length} บริษัท</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+      <div class="kpi-label">ผ่านการอบรม</div>
+      <div class="kpi-value">${overallTrainingPct.toFixed(1)}<span class="kpi-unit">%</span></div>
+      <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> ${totalTrainingDone}/${totalTrainingGoal} คน</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-icon"><i class="fa-solid fa-graduation-cap"></i></div>
@@ -1485,12 +1504,6 @@ function renderSummaryKpi(companies) {
       <div class="kpi-label">GPA ผ่าน 3.5</div>
       <div class="kpi-value">${overallGpaPct.toFixed(1)}<span class="kpi-unit">%</span></div>
       <div class="kpi-trend trend-up"><i class="fa-solid fa-arrow-up"></i> ${totalGpaPass}/${totalGpaGoal} คน</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-icon"><i class="fa-solid fa-percent"></i></div>
-      <div class="kpi-label">เฉลี่ยรวม</div>
-      <div class="kpi-value">${((overallCreditPct + overallGpaPct) / 2).toFixed(1)}<span class="kpi-unit">%</span></div>
-      <div class="kpi-trend trend-up"><i class="fa-solid fa-chart-line"></i> Credit + GPA</div>
     </div>
   `;
 }
