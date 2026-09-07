@@ -1343,31 +1343,47 @@ function renderKpiGrid(elementId, items) {
 function renderSummaryTable(data) {
   const table = document.getElementById('summaryTable');
   if (!table || !data || !data.rows || data.rows.length === 0) {
-    table.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--text-mute);">ไม่มีข้อมูล</td></tr>';
+    table.innerHTML = '<tr><td colspan="12" style="text-align:center;padding:20px;color:var(--text-mute);">ไม่มีข้อมูล</td></tr>';
     return;
   }
-  const sorted = [...data.rows].sort((a, b) => (b.training_pct || 0) - (a.training_pct || 0));
+  // Move "รวม" row to the end (sort by training_pct desc, then รวม last)
+  const sorted = [...data.rows].sort((a, b) => {
+    const aIsTotal = (a.name || '').trim() === 'รวม';
+    const bIsTotal = (b.name || '').trim() === 'รวม';
+    if (aIsTotal && !bIsTotal) return 1;
+    if (!aIsTotal && bIsTotal) return -1;
+    return (b.training_pct || 0) - (a.training_pct || 0);
+  });
   let html = '<thead><tr>';
-  html += '<th class="cname">บริษัท</th>';
-  html += '<th class="num">สมาชิก</th>';
-  html += '<th class="num">ผ่านอบรม</th>';
+  html += '<th class="cname">BU</th>';
+  html += '<th class="num">เป้าหมายอบรม</th>';
+  html += '<th class="num">แล้วเสร็จ</th>';
+  html += '<th class="num">รออบรม</th>';
   html += '<th class="num">% อบรม</th>';
-  html += '<th class="num">ครบ 44 หน่วย</th>';
-  html += '<th class="num">ยังไม่ครบ</th>';
+  html += '<th class="num">จำนวนสมาชิก</th>';
+  html += '<th class="num">ครบ 44 หน่วย/คน</th>';
+  html += '<th class="num">ยังไม่ครบ/คน</th>';
   html += '<th class="num">% ครบ</th>';
-  html += '<th class="num">GPA ผ่าน</th>';
+  html += '<th class="num">GPA ผ่าน 3.5/คน</th>';
+  html += '<th class="num">GPA ไม่ผ่าน 3.5/คน</th>';
   html += '<th class="num">% GPA</th>';
   html += '</tr></thead><tbody>';
   sorted.forEach(c => {
-    html += `<tr>
-      <td class="cname">${c.name || ''}</td>
-      <td class="num">${c.members || 0}</td>
+    const isTotal = (c.name || '').trim() === 'รวม';
+    const rowStyle = isTotal ? ' style="background: linear-gradient(90deg, rgba(34,197,94,0.15), rgba(34,197,94,0.05)); font-weight: 700; border-top: 2px solid rgba(34,197,94,0.4);"' : '';
+    const cnameStyle = isTotal ? ' style="color: #16A34A;"' : '';
+    html += `<tr${rowStyle}>
+      <td class="cname"${cnameStyle}>${c.name || ''}</td>
+      <td class="num">${c.training_goal || 0}</td>
       <td class="num">${c.training_done || 0}</td>
+      <td class="num">${c.training_remain || 0}</td>
       <td class="num"><strong>${(c.training_pct || 0).toFixed(2)}%</strong></td>
+      <td class="num">${c.members || 0}</td>
       <td class="num">${c.credit_done || 0}</td>
       <td class="num">${c.credit_remain || 0}</td>
       <td class="num">${(c.credit_pct || 0).toFixed(2)}%</td>
       <td class="num">${c.gpa_pass || 0}</td>
+      <td class="num">${c.gpa_fail || 0}</td>
       <td class="num">${(c.gpa_pct || 0).toFixed(2)}%</td>
     </tr>`;
   });
@@ -1439,10 +1455,10 @@ async function fetchSheetData() {
     const csv = await res.text();
     const rows = parseCsv(csv);
     // Skip header rows (rows 1-2 are headers/multiline, real data starts at row 3)
-    // Filter: skip empty + skip "รวม" summary row
+    // Include รวม row (summary) — do NOT filter it out
     const dataRows = rows.slice(2).filter(r => {
       const name = (r[0] || '').replace(/\s+/g, '').trim();
-      return name && name.length > 0 && name !== 'รวม' && !name.startsWith('เป้าหมาย');
+      return name && name.length > 0 && !name.startsWith('เป้าหมาย');
     });
     const companies = dataRows.map(r => ({
       name: (r[0] || '').replace(/\s+/g, ' ').trim(),
