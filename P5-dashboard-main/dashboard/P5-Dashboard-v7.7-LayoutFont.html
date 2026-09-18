@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>P5 Dashboard · v7.7 (Layout+Font v2) — Production</title>
+<title>P5 Dashboard · v7.7 (Layout+Font v2) — Production · latest</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 /* (Same CSS as share.html) */
@@ -650,6 +650,89 @@ body::after {
   .lg-table { font-size: 0.72em; }
   .lg-table th, .lg-table td { padding: 6px 4px; }
 }
+
+/* ============================================================ */
+/* 2.2 ขอเปิดอบรม ภายใน/ภายนอก — Training Request Cockpit       */
+/* ============================================================ */
+.tr22 { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 18px; }
+@media (max-width: 1100px) { .tr22 { grid-template-columns: 1fr; } }
+
+.tr22-pagemap { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 16px; }
+.tr22-pill { flex: 0 0 auto; display: flex; gap: 10px; align-items: flex-start; text-align: left;
+  background: var(--card-bg); border: 1px solid var(--border-slate); border-radius: 14px;
+  padding: 10px 14px; cursor: default; max-width: 280px; }
+.tr22-pill.active { border-color: var(--c1-orange); box-shadow: 0 0 0 2px rgba(255,140,0,.15); }
+.tr22-pill .pid { font-weight: 800; color: var(--c1-orange); font-size: .85rem; }
+.tr22-pill strong { display: block; font-size: .8rem; color: var(--text-primary); }
+.tr22-pill small { display: block; font-size: .68rem; color: var(--text-mute); }
+.tr22-pill em { margin-left: auto; font-style: normal; font-size: .65rem; color: var(--text-mute); white-space: nowrap; }
+
+.tr22-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin: 14px 0; }
+.tr22-kpi { background: var(--card-bg); border: 1px solid var(--border-slate); border-left: 4px solid var(--c3-blue);
+  border-radius: 12px; padding: 12px 14px; }
+.tr22-kpi.orange { border-left-color: var(--c1-orange); }
+.tr22-kpi.green  { border-left-color: var(--c2-green); }
+.tr22-kpi.purple { border-left-color: var(--c4-purple); }
+.tr22-kpi.pink   { border-left-color: var(--c5-pink); }
+.tr22-kpi .lbl { font-size: .68rem; color: var(--text-mute); }
+.tr22-kpi .val { font-size: 1.35rem; font-weight: 800; color: var(--text-primary); line-height: 1.2; }
+.tr22-kpi .unit { font-size: .65rem; color: var(--text-mute); }
+
+.tr22-toolbar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.tr22-chip { border: 1px solid var(--border-slate); background: var(--card-bg); color: var(--text-secondary);
+  border-radius: 999px; padding: 6px 14px; font-size: .72rem; cursor: pointer; font-family: inherit; }
+.tr22-chip.active { background: var(--c1-orange); border-color: var(--c1-orange); color: #fff; font-weight: 700; }
+.tr22-new { margin-left: auto; border: none; background: var(--c4-purple); color: #fff;
+  border-radius: 999px; padding: 6px 16px; font-size: .72rem; cursor: pointer; font-family: inherit; font-weight: 700; }
+
+.tr22-list { display: flex; flex-direction: column; gap: 14px; }
+.tr22-card { background: var(--card-bg); border: 1px solid var(--border-slate); border-radius: 16px; padding: 16px 18px; }
+.tr22-card[hidden] { display: none; }
+.tr22-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 6px; }
+.tr22-id { font-weight: 800; font-size: .8rem; color: var(--text-primary); }
+.tr22-badge { font-size: .62rem; padding: 3px 9px; border-radius: 999px; background: rgba(59,130,246,.12); color: var(--c3-blue); font-weight: 700; }
+.tr22-badge.warn    { background: rgba(245,158,11,.14); color: #B45309; }
+.tr22-badge.success { background: rgba(34,197,94,.14); color: #15803D; }
+.tr22-badge.muted   { background: rgba(148,163,184,.18); color: var(--text-mute); }
+.tr22-card h4 { font-size: .95rem; color: var(--text-primary); margin-bottom: 2px; }
+.tr22-card > p { font-size: .75rem; color: var(--text-secondary); margin-bottom: 8px; }
+.tr22-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.tr22-meta span { font-size: .68rem; color: var(--text-mute); background: rgba(15,23,41,.04); border-radius: 6px; padding: 3px 8px; }
+.tr22-body { display: grid; grid-template-columns: 1fr 96px; gap: 14px; align-items: center; }
+@media (max-width: 640px) { .tr22-body { grid-template-columns: 1fr; } }
+.tr22-detail { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+.tr22-detail div { font-size: .7rem; }
+.tr22-detail strong { display: block; color: var(--text-mute); font-weight: 600; font-size: .64rem; }
+.tr22-detail span { color: var(--text-primary); }
+.tr22-ring { width: 88px; height: 88px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto;
+  background: conic-gradient(var(--ring-c) calc(var(--pct) * 1%), rgba(148,163,184,.2) 0); }
+.tr22-ring > b { width: 68px; height: 68px; border-radius: 50%; background: var(--card-bg); display: grid; place-items: center;
+  font-size: .85rem; font-weight: 800; color: var(--text-primary); }
+.tr22-ring.green { --ring-c: var(--c2-green); }
+.tr22-ring.gold  { --ring-c: #F59E0B; }
+.tr22-ring.red   { --ring-c: #EF4444; }
+.tr22-ringcap { display: block; text-align: center; font-size: .62rem; color: var(--text-mute); margin-top: 4px; }
+.tr22-check { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.tr22-check span { font-size: .65rem; padding: 3px 9px; border-radius: 999px; border: 1px dashed var(--border-slate); color: var(--text-mute); }
+.tr22-check span.done { border-style: solid; border-color: var(--c2-green); color: #15803D; background: rgba(34,197,94,.08); }
+
+.tr22-side { background: var(--card-bg); border: 1px solid var(--border-slate); border-radius: 16px; padding: 16px 18px; align-self: start; }
+.tr22-side h4 { font-size: .8rem; color: var(--text-primary); margin: 14px 0 8px; }
+.tr22-flow { display: flex; flex-direction: column; gap: 10px; }
+.tr22-step { display: flex; gap: 10px; align-items: flex-start; }
+.tr22-step > i { width: 10px; height: 10px; border-radius: 50%; margin-top: 5px; flex: 0 0 auto;
+  background: rgba(148,163,184,.4); }
+.tr22-step.done > i   { background: var(--c2-green); }
+.tr22-step.active > i { background: var(--c1-orange); box-shadow: 0 0 0 4px rgba(255,140,0,.18); }
+.tr22-step strong { display: block; font-size: .76rem; color: var(--text-primary); }
+.tr22-step small { font-size: .66rem; color: var(--text-mute); }
+.tr22-cloud { display: flex; flex-wrap: wrap; gap: 6px; }
+.tr22-cloud span { font-size: .65rem; padding: 3px 9px; border-radius: 999px; background: rgba(147,51,234,.08); color: var(--c4-purple); }
+.tr22-rules { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.tr22-rules li { font-size: .68rem; color: var(--text-secondary); padding-left: 14px; position: relative; }
+.tr22-rules li::before { content: '•'; position: absolute; left: 0; color: var(--c1-orange); }
+.tr22-hr { height: 1px; background: var(--border-slate); margin: 14px 0; }
+
 </style>
 
 <!-- ⭐ EMBEDDED FALLBACK DATA: PKGemployee 481 รายการ (auto-fill) -->
@@ -1135,6 +1218,175 @@ console.log('📦 Embedded employee data loaded:', EMPLOYEE_EMBEDDED_CSV.split('
     </form>
   </div>
 </template>
+
+<!-- ============================================================ -->
+<!-- Template: 2.2 ขอเปิดอบรม ภายใน/ภายนอก (Training Request Cockpit) -->
+<!-- ============================================================ -->
+<template id="tpl-form-2-2">
+  <div class="glow-card">
+    <div class="kpi-section">
+      <div class="section-title" style="margin-bottom: 4px;">
+        <i class="fa-solid fa-file-circle-plus"></i>
+        <span>2.2 ขอเปิดอบรม ภายใน/ภายนอก</span>
+      </div>
+      <div class="section-subtitle">Training request cockpit · ใช้คุมคำขอก่อนส่งอนุมัติและเปิดรุ่นอบรม</div>
+    </div>
+    <div id="tr22Root"></div>
+  </div>
+</template>
+
+<script>
+// ============================================================
+// 2.2 Training Request Cockpit (UI prototype · mock data)
+// ============================================================
+window.TR22_PAGES = [
+  { id: '2.1', title: 'ลงทะเบียนหลักสูตร', goal: 'ค้นหา/ลงทะเบียนผู้เรียนตามแผนราย BU', status: 'next' },
+  { id: '2.2', title: 'ขอเปิดอบรม ภายใน/ภายนอก', goal: 'รวมคำขอเปิดอบรม ตรวจความพร้อม และส่งอนุมัติ', status: 'prototype' },
+  { id: '2.3', title: 'ส่งผลอบรม ภายใน/ภายนอก', goal: 'บันทึกผล อัปโหลดหลักฐาน และปิดรอบอบรม', status: 'next' },
+  { id: '2.4', title: 'รายงานการอบรมภายนอก', goal: 'ติดตามค่าใช้จ่าย provider และผลลัพธ์หลังอบรม', status: 'next' },
+  { id: '2.5', title: 'ตารางการอบรม', goal: 'มุมมองปฏิทินหลักสูตร/ห้อง/วิทยากร', status: 'next' }
+];
+
+window.TR22_REQUESTS = [
+  { id: 'TR-2569-022', course: 'Core Competency: Ownership in Action', type: 'ภายใน', bu: 'PMSg', owner: 'ณัฐฑริณี',
+    trainer: 'ทีม LDC-PAD', dateRange: '24-25 มิ.ย. 2569', venue: 'Training Room A / Online backup',
+    learners: 42, budget: 0, status: 'รออนุมัติ', readiness: 86,
+    objective: 'ยกระดับพฤติกรรม Ownership และการส่งมอบงานข้ามทีม',
+    blockers: ['รอยืนยันรายชื่อ PMSg รอบสุดท้าย', 'รออนุมัติ agenda จากผู้จัดการสายงาน'],
+    checklist: ['หลักสูตรพร้อม', 'วิทยากรพร้อม', 'รายชื่อผู้เรียน 90%', 'ห้องอบรมพร้อม', 'แบบประเมินพร้อม'] },
+  { id: 'TR-2569-023', course: 'GPA Coaching for Frontline Leader', type: 'ภายนอก', bu: 'AAMg', owner: 'ธนภูมิ',
+    trainer: 'External Provider: SkillLab', dateRange: '28 มิ.ย. 2569', venue: 'SkillLab Bangkok',
+    learners: 28, budget: 84000, status: 'รอตรวจงบ', readiness: 64,
+    objective: 'เตรียมหัวหน้างานให้ coach สมาชิกที่ GPA ต่ำกว่าเป้าหมาย',
+    blockers: ['รอใบเสนอราคา signed copy', 'รอ cost center จาก BU'],
+    checklist: ['หลักสูตรพร้อม', 'วิทยากรพร้อม', 'รายชื่อผู้เรียน 70%', 'งบประมาณรอตรวจ', 'แบบประเมินร่างแล้ว'] },
+  { id: 'TR-2569-024', course: 'Safety Mindset for Roleplay Team', type: 'ภายใน', bu: 'RPLCg', owner: 'วิไลรัตน์',
+    trainer: 'Internal SME', dateRange: '2 ก.ค. 2569', venue: 'RPLC Plant / Room 2',
+    learners: 18, budget: 0, status: 'พร้อมเปิด', readiness: 96,
+    objective: 'เติมทักษะ safety conversation ก่อนประเมิน Roleplay รอบใหม่',
+    blockers: [],
+    checklist: ['หลักสูตรพร้อม', 'วิทยากรพร้อม', 'รายชื่อผู้เรียนครบ', 'ห้องอบรมพร้อม', 'แบบประเมินพร้อม'] },
+  { id: 'TR-2569-025', course: 'Data Literacy for PAD Dashboard Users', type: 'ภายนอก', bu: 'CPDg', owner: 'ปาริชาติ',
+    trainer: 'Data Academy', dateRange: '8-9 ก.ค. 2569', venue: 'Online live',
+    learners: 35, budget: 125000, status: 'แบบร่าง', readiness: 38,
+    objective: 'ให้ผู้ใช้ dashboard อ่าน KPI และ action insight ได้ตรงกัน',
+    blockers: ['รอสรุป scope จาก provider', 'รอรายชื่อกลุ่มเป้าหมาย'],
+    checklist: ['หลักสูตรร่าง', 'รอวิทยากรยืนยัน', 'รายชื่อผู้เรียน 40%', 'ไม่ต้องจองห้อง', 'ยังไม่มีแบบประเมิน'] }
+];
+
+function tr22Num(n) { return Number(n || 0).toLocaleString('en-US'); }
+
+function tr22Card(r) {
+  const ringCls = r.readiness >= 85 ? 'green' : r.readiness >= 60 ? 'gold' : 'red';
+  const stCls = r.status === 'พร้อมเปิด' ? 'success' : r.status === 'แบบร่าง' ? 'muted' : 'warn';
+  const doneN = Math.round(r.readiness / 20);
+  return `
+  <article class="tr22-card" data-type="${r.type}" data-status="${r.status}">
+    <div class="tr22-head">
+      <span class="tr22-id">${r.id}</span>
+      <span class="tr22-badge">${r.type}</span>
+      <span class="tr22-badge ${stCls}">${r.status}</span>
+    </div>
+    <h4>${r.course}</h4>
+    <p>${r.objective}</p>
+    <div class="tr22-meta">
+      <span>${r.bu}</span><span>${r.dateRange}</span><span>${r.learners} คน</span><span>ผู้ขอ: ${r.owner}</span>
+    </div>
+    <div class="tr22-body">
+      <div class="tr22-detail">
+        <div><strong>วิทยากร</strong><span>${r.trainer}</span></div>
+        <div><strong>สถานที่</strong><span>${r.venue}</span></div>
+        <div><strong>งบ</strong><span>${r.budget ? tr22Num(r.budget) + ' บาท' : 'ไม่ใช้งบ'}</span></div>
+        <div><strong>Blocker</strong><span>${r.blockers.length ? r.blockers.join(' · ') : 'ไม่มี'}</span></div>
+      </div>
+      <div>
+        <div class="tr22-ring ${ringCls}" style="--pct:${r.readiness}"><b>${r.readiness}%</b></div>
+        <small class="tr22-ringcap">ความพร้อม</small>
+      </div>
+    </div>
+    <div class="tr22-check">
+      ${r.checklist.map((c, i) => `<span class="${i < doneN ? 'done' : ''}">${c}</span>`).join('')}
+    </div>
+  </article>`;
+}
+
+function tr22Filter(btn, key) {
+  btn.parentElement.querySelectorAll('.tr22-chip').forEach(b => b.classList.toggle('active', b === btn));
+  document.querySelectorAll('#tr22Root .tr22-card').forEach(card => {
+    card.hidden = !(key === 'all' || card.dataset.type === key || card.dataset.status.indexOf(key) === 0);
+  });
+}
+
+function renderTR22() {
+  const root = document.getElementById('tr22Root');
+  if (!root) return;
+  const rs = window.TR22_REQUESTS;
+  const ready = rs.filter(r => r.status === 'พร้อมเปิด').length;
+  const waiting = rs.filter(r => r.status.indexOf('รอ') === 0).length;
+  const learners = rs.reduce((s, r) => s + r.learners, 0);
+  const budget = rs.reduce((s, r) => s + r.budget, 0);
+  const avg = rs.length ? Math.round(rs.reduce((s, r) => s + r.readiness, 0) / rs.length) : 0;
+  const kpi = (lbl, val, unit, cls) =>
+    `<div class="tr22-kpi ${cls}"><div class="lbl">${lbl}</div><div class="val">${val}</div><div class="unit">${unit}</div></div>`;
+  const step = (t, s, state) =>
+    `<div class="tr22-step ${state}"><i></i><div><strong>${t}</strong><small>${s}</small></div></div>`;
+
+  root.innerHTML = `
+    <div class="tr22-pagemap">
+      ${window.TR22_PAGES.map(p => `
+        <div class="tr22-pill ${p.id === '2.2' ? 'active' : ''}">
+          <span class="pid">${p.id}</span>
+          <span><strong>${p.title}</strong><small>${p.goal}</small></span>
+          <em>${p.status === 'prototype' ? 'กำลังทำ' : 'ต่อไป'}</em>
+        </div>`).join('')}
+    </div>
+
+    <div class="tr22-kpis">
+      ${kpi('คำขอทั้งหมด', rs.length, 'รายการ', 'purple')}
+      ${kpi('รออนุมัติ/ตรวจงบ', waiting, 'รายการ', 'orange')}
+      ${kpi('ผู้เรียนรวม', tr22Num(learners), 'คน', '')}
+      ${kpi('งบประมาณรวม', tr22Num(budget), 'บาท', 'green')}
+      ${kpi('ความพร้อมเฉลี่ย', avg + '%', 'readiness', avg >= 80 ? 'green' : 'pink')}
+    </div>
+
+    <div class="tr22">
+      <div>
+        <div class="tr22-toolbar">
+          <button class="tr22-chip active" type="button" onclick="tr22Filter(this,'all')">ทั้งหมด (${rs.length})</button>
+          <button class="tr22-chip" type="button" onclick="tr22Filter(this,'ภายใน')">ภายใน</button>
+          <button class="tr22-chip" type="button" onclick="tr22Filter(this,'ภายนอก')">ภายนอก</button>
+          <button class="tr22-chip" type="button" onclick="tr22Filter(this,'รอ')">รออนุมัติ (${waiting})</button>
+          <button class="tr22-chip" type="button" onclick="tr22Filter(this,'พร้อมเปิด')">พร้อมเปิด (${ready})</button>
+          <button class="tr22-new" type="button" onclick="navigateTo('training-2-1')">+ สร้างคำขอ</button>
+        </div>
+        <div class="tr22-list">${rs.map(tr22Card).join('')}</div>
+      </div>
+
+      <aside class="tr22-side">
+        <h4 style="margin-top:0">มุมมองอนุมัติ</h4>
+        <div class="tr22-flow">
+          ${step('รับคำขอ', 'PAD ตรวจข้อมูลเบื้องต้น', 'done')}
+          ${step('ตรวจความพร้อม', 'หลักสูตร/วิทยากร/รายชื่อ/ห้อง/งบ', 'active')}
+          ${step('ส่งอนุมัติ', 'Manager หรือ HRBP ตามประเภทอบรม', '')}
+          ${step('เปิดรุ่นอบรม', 'สร้างรอบและแจ้งผู้เรียน', '')}
+        </div>
+        <div class="tr22-hr"></div>
+        <h4>ข้อมูลที่ฟอร์ม 2.2 ต้องมี</h4>
+        <div class="tr22-cloud">
+          ${['ชื่อหลักสูตร','ประเภทอบรม','BU','วันที่','สถานที่','จำนวนผู้เรียน','วิทยากร','งบประมาณ','ผู้ขอ','วัตถุประสงค์'].map(f => `<span>${f}</span>`).join('')}
+        </div>
+        <div class="tr22-hr"></div>
+        <h4>กติกาแจ้งเตือน</h4>
+        <ul class="tr22-rules">
+          <li>Readiness ต่ำกว่า 60% ให้ติดป้ายแบบร่าง</li>
+          <li>อบรมภายนอกต้องมีงบและ provider ก่อนส่งอนุมัติ</li>
+          <li>รายการพร้อมเปิดต้องไม่มี blocker ค้าง</li>
+        </ul>
+      </aside>
+    </div>`;
+}
+</script>
+
 
 <!-- ============================================================ -->
 <!-- Dynamic Menu Config + Permissions -->
@@ -2156,6 +2408,7 @@ function renderPage(menuId) {
   // Sub-pages: เลือก template ตาม menuId
   let tplId = 'tpl-page';
   if (menuId === 'training-2-1') tplId = 'tpl-form-2-1';
+  if (menuId === 'training-2-2') tplId = 'tpl-form-2-2';
   // เพิ่ม form อื่นๆ ที่นี่
 
   const tpl = document.getElementById(tplId);
@@ -2173,6 +2426,7 @@ function renderPage(menuId) {
       }
     }
     // ⭐ Hook สำหรับ Form 2.1: เริ่มโหลด employee map ทันที และถ้ามีค่าใน input ให้ auto-fill
+    if (tplId === 'tpl-form-2-2') renderTR22();
     if (tplId === 'tpl-form-2-1') {
       // โหลดข้อมูลล่วงหน้า (preload)
       loadEmployeeMap();
