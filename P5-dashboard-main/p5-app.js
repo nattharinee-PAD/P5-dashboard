@@ -94,6 +94,7 @@
   };
 
   let currentCRUD = null;
+  let currentPage = 'dashboard';
 
   window.openCRUDModal = function(tabKey, mode, rowIndex) {
     if (!window.P5_API?.hasUrl()) {
@@ -306,13 +307,19 @@
   function initTabs() {
     document.querySelectorAll('.tab').forEach(tab => {
       tab.addEventListener('click', () => {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        tab.classList.add('active');
-        const el = $('#page-' + tab.dataset.page);
-        if (el) el.classList.add('active');
+        currentPage = tab.dataset.page || 'dashboard';
+        activatePage(currentPage);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
+    });
+  }
+
+  function activatePage(pageId) {
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.classList.toggle('active', tab.dataset.page === pageId);
+    });
+    document.querySelectorAll('.page').forEach(page => {
+      page.classList.toggle('active', page.id === 'page-' + pageId);
     });
   }
 
@@ -327,6 +334,7 @@
       renderMentor() +
       renderCoach() +
       renderOther();
+    activatePage(currentPage);
 
     requestAnimationFrame(() => {
       animateMiniBars();
