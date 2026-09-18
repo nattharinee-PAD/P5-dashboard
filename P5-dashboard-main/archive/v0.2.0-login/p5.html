@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P5 — ระบบพัฒนาสมาชิก PKG</title>
+  <link rel="stylesheet" href="p5-style.css">
+</head>
+<body>
+
+<!-- ====================== LOGIN SCREEN ====================== -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-box">
+    <div class="login-logo">🏛️</div>
+    <h1 class="login-title">P5 — ระบบพัฒนาสมาชิก PKG</h1>
+    <p class="login-subtitle">ระบบพัฒนาสมาชิก กลุ่มบริษัท PKG</p>
+
+    <div class="login-input-wrap">
+      <input type="text" id="loginInput" class="login-input" placeholder="รหัสสมาชิก / ADMIN PAD / BMC" autocomplete="off">
+    </div>
+
+    <button class="login-btn" onclick="doLogin()">🔐 เข้าสู่ระบบ</button>
+    <div class="login-error" id="loginError">❌ รหัสไม่ถูกต้อง กรุณาลองใหม่</div>
+
+    <p class="login-hint">
+      ใส่รหัสสมาชิก เช่น <strong>6407049</strong><br>
+      <strong>ADMIN PAD</strong> = ดูได้ทุกระบบ &nbsp;|&nbsp; <strong>BMC</strong> = ดูภาพรวม
+    </p>
+
+    <div class="login-guest">
+      <a onclick="doLogin('guest')">👁️ เข้าชมแบบไม่ Login (Dashboard เท่านั้น)</a>
+    </div>
+  </div>
+</div>
+
+<!-- ====================== MAIN APP ====================== -->
+<div id="appScreen" class="app-screen" style="display:none">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+      <div class="brand">
+        <span class="brand-icon">🏛️</span>
+        <span class="brand-text">P5</span>
+        <span class="brand-gold">PKG</span>
+        <span class="brand-sub">ระบบพัฒนาสมาชิก</span>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="user-badge">
+        <div class="ub-avatar" id="userAvatarTop">?</div>
+        <span id="userNameTop">—</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-layout">
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>📊 เมนูหลัก</h2>
+        <p>P5 — ระบบพัฒนาสมาชิก</p>
+      </div>
+
+      <div class="nav-section">ภาพรวม</div>
+      <div class="nav-item active" data-page="dashboard" onclick="showPage('dashboard')">
+        <span class="icon">📊</span>
+        <span class="label">Dashboard P5</span>
+      </div>
+
+      <div class="nav-section">ระบบ 5 ระบบหลัก</div>
+      <div class="nav-item" data-page="training" onclick="showPage('training')">
+        <span class="icon">📚</span>
+        <span class="label">Training</span>
+        <span class="badge-count">44</span>
+      </div>
+      <div class="nav-item" data-page="mentor" onclick="showPage('mentor')">
+        <span class="icon">👥</span>
+        <span class="label">Mentor</span>
+      </div>
+      <div class="nav-item" data-page="coach" onclick="showPage('coach')">
+        <span class="icon">🎯</span>
+        <span class="label">Coach</span>
+      </div>
+      <div class="nav-item" data-page="roleplay" onclick="showPage('roleplay')">
+        <span class="icon">🎭</span>
+        <span class="label">Roleplay</span>
+      </div>
+      <div class="nav-item" data-page="capital" onclick="showPage('capital')">
+        <span class="icon">🏛️</span>
+        <span class="label">กำกับทุนองค์กร</span>
+      </div>
+
+      <div class="nav-section">อื่นๆ</div>
+      <div class="nav-item" data-page="other" onclick="showPage('other')">
+        <span class="icon">⚙️</span>
+        <span class="label">อื่นๆ</span>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sf-info">
+          <div class="sf-avatar" id="userAvatarSide">?</div>
+          <div>
+            <div class="sf-name" id="userNameSide">—</div>
+            <div class="sf-role" id="userRole">—</div>
+          </div>
+        </div>
+        <button class="logout-btn" onclick="doLogout()">🚪 ออกจากระบบ</button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <div class="page-content" id="pageContent">
+        <!-- JS จะ render ทุกอย่าง -->
+      </div>
+    </main>
+  </div>
+</div>
+
+<script src="data/p5-data.js"></script>
+<script src="p5-app.js"></script>
+</body>
+</html>

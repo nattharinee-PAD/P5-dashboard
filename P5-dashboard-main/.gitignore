@@ -1,0 +1,29 @@
+# ============================================
+# P5 Admin Pad — Git Ignore
+# ============================================
+
+# Old/duplicate files
+*.html.bak
+*.zip
+
+# Mockup-only files (ไม่ใช่ production)
+mockup-*.html
+mockup-*.png
+
+# Old version files
+p5-dashboard-v7.zip
+P5-Dashboard-v7.html
+p5-*.png
+p5-*-tabs.png
+p5-*-bu.png
+p5-api-check.png
+test-modal.png
+
+# Build artifacts
+node_modules/
+*.log
+.DS_Store
+
+# Temporary
+tmp/
+*.tmp

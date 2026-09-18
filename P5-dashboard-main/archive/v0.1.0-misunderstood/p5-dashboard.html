@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P5 Dashboard — ระบบพัฒนาสมาชิก PKG</title>
+  <link rel="stylesheet" href="p5-dashboard.css">
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="bg-blobs" aria-hidden="true">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+  </div>
+
+  <div class="app">
+    <!-- ==================== HEADER ==================== -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-logo">
+          <span class="logo-mark">P5</span>
+        </div>
+        <div class="brand-text">
+          <h1>People Performance & Progress</h1>
+          <p>ระบบพัฒนาสมาชิก · PKG Group</p>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="period-chip">
+          <span class="dot"></span>
+          Q2/2569 · เม.ย. - มิ.ย.
+        </div>
+        <button class="icon-btn" title="ค้นหา">🔍</button>
+        <button class="icon-btn" title="แจ้งเตือน">
+          🔔<span class="badge">3</span>
+        </button>
+        <div class="avatar">🐻</div>
+      </div>
+    </header>
+
+    <!-- ==================== HERO ==================== -->
+    <section class="hero">
+      <div class="hero-text">
+        <div class="philo-tag">6 รับ · 9 มาตรฐาน · 20 วัฒนธรรม · 9 บรรยากาศ · Servant Leadership</div>
+        <h2>สวัสดีตอนเช้า ลูกหมี 🌅</h2>
+        <p>วันนี้มีสมาชิกใหม่ <strong>3 คน</strong> เข้าสู่ระบบ และมี KPI รออนุมัติ <strong>12 รายการ</strong></p>
+      </div>
+      <div class="hero-cta">
+        <button class="btn btn-primary">+ เพิ่มสมาชิก</button>
+        <button class="btn btn-ghost">📊 ส่งออกรายงาน</button>
+      </div>
+    </section>
+
+    <!-- ==================== KPI CARDS ==================== -->
+    <section class="kpi-grid" id="kpiGrid"><!-- JS เติม --></section>
+
+    <!-- ==================== CHART ROW 1: DONUT + DONUT ==================== -->
+    <section class="chart-row">
+      <div class="card glass">
+        <div class="card-head">
+          <div>
+            <h3>สัดส่วนสมาชิกตาม BU</h3>
+            <p>ทั้งหมด 1,042 คน · 6 หน่วยงาน</p>
+          </div>
+          <div class="card-chip">Live</div>
+        </div>
+        <div class="donut-wrap">
+          <div class="donut-stage">
+            <svg id="donutBU" viewBox="0 0 200 200" aria-label="Donut chart"></svg>
+            <div class="donut-center">
+              <div class="donut-center-num" id="donutBUCenter">1,042</div>
+              <div class="donut-center-label">สมาชิกทั้งหมด</div>
+            </div>
+          </div>
+          <ul class="legend" id="legendBU"><!-- JS เติม --></ul>
+        </div>
+      </div>
+
+      <div class="card glass">
+        <div class="card-head">
+          <div>
+            <h3>ระดับการพัฒนา (6 รับ)</h3>
+            <p>เส้นทางเติบโตตามปรัชญา PKG</p>
+          </div>
+          <div class="card-chip">Live</div>
+        </div>
+        <div class="donut-wrap">
+          <div class="donut-stage">
+            <svg id="donutDev" viewBox="0 0 200 200" aria-label="Donut chart"></svg>
+            <div class="donut-center">
+              <div class="donut-center-num" id="donutDevCenter">987</div>
+              <div class="donut-center-label">Active Members</div>
+            </div>
+          </div>
+          <ul class="legend" id="legendDev"><!-- JS เติม --></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CHART ROW 2: BAR ==================== -->
+    <section class="chart-row">
+      <div class="card glass chart-wide">
+        <div class="card-head">
+          <div>
+            <h3>KPI 9 มาตรฐาน — คะแนนเฉลี่ย (%)</h3>
+            <p>เป้าหมาย: ≥ 80% · เฉลี่ยรวม: <strong>85.6%</strong></p>
+          </div>
+          <div class="card-chip">Q2/2569</div>
+        </div>
+        <div class="bar-wrap" id="barStandards"></div>
+      </div>
+    </section>
+
+    <!-- ==================== CHART ROW 3: TWO BARS ==================== -->
+    <section class="chart-row">
+      <div class="card glass">
+        <div class="card-head">
+          <div>
+            <h3>Top 10 วัฒนธรรมองค์กร</h3>
+            <p>คะแนนเฉลี่ย 20 ข้อ (Top 10)</p>
+          </div>
+          <div class="card-chip success">💜 89%</div>
+        </div>
+        <div class="bar-wrap bar-h" id="barCulture"></div>
+      </div>
+
+      <div class="card glass">
+        <div class="card-head">
+          <div>
+            <h3>กิจกรรมพัฒนารายเดือน</h3>
+            <p>จำนวนคนเข้าร่วม (ม.ค. - มิ.ย.)</p>
+          </div>
+          <div class="card-chip">📈 +66%</div>
+        </div>
+        <div class="bar-wrap" id="barMonthly"></div>
+      </div>
+    </section>
+
+    <!-- ==================== FOOTER STRIP ==================== -->
+    <section class="card glass feed">
+      <div class="card-head">
+        <div>
+          <h3>🔥 กิจกรรมล่าสุด</h3>
+          <p>อัปเดตแบบ Real-time</p>
+        </div>
+        <div class="card-chip">Live</div>
+      </div>
+      <ul class="feed-list" id="feedList"><!-- JS เติม --></ul>
+    </section>
+
+    <footer class="foot">
+      <span>P5 v0.1.0 · Demo Dashboard · AliClaw 🐾</span>
+      <span>สร้างเมื่อ 10 มิ.ย. 2569</span>
+    </footer>
+  </div>
+
+  <script src="data/p5-mock-data.js"></script>
+  <script src="p5-charts.js"></script>
+</body>
+</html>

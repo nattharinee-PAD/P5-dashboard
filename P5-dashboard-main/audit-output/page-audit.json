@@ -1,0 +1,987 @@
+{
+  "generatedAt": "2026-09-18T07:04:20.468Z",
+  "results": [
+    {
+      "file": "3e3p-motivation/index.html",
+      "url": "http://127.0.0.1:63035/3e3p-motivation/index.html",
+      "status": 200,
+      "title": "แบบประเมิน 3E3P (แรงจูงใจ) — PKG",
+      "bodyTextLength": 1057,
+      "screenshot": "audit-output/screenshots/3e3p_motivation_index_html.png",
+      "loadError": "",
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "pageErrors": [],
+      "failedRequests": [],
+      "badResponses": []
+    },
+    {
+      "file": "archive/v0.1.0-misunderstood/p5-dashboard.html",
+      "url": "http://127.0.0.1:63035/archive/v0.1.0-misunderstood/p5-dashboard.html",
+      "status": 200,
+      "title": "P5 Dashboard — ระบบพัฒนาสมาชิก PKG",
+      "bodyTextLength": 744,
+      "screenshot": "audit-output/screenshots/archive_v0_1_0_misunderstood_p5_dashboard_html.png",
+      "loadError": "",
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        },
+        {
+          "type": "error",
+          "text": "P5_DATA not loaded"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "http://127.0.0.1:63035/archive/v0.1.0-misunderstood/data/p5-mock-data.js",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:63035/archive/v0.1.0-misunderstood/assets/fonts/Inter-SemiBold.ttf",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:63035/archive/v0.1.0-misunderstood/assets/fonts/Sarabun-Bold.ttf",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:63035/archive/v0.1.0-misunderstood/assets/fonts/Sarabun-Regular.ttf",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:63035/archive/v0.1.0-misunderstood/assets/fonts/Sarabun-Medium.ttf",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:63035/archive/v0.1.0-misunderstood/assets/fonts/Sarabun-SemiBold.ttf",
+          "failure": "net::ERR_ABORTED"
+        }
+      ],
+      "badResponses": [
+        {
+          "status": 404,
+          "url": "http://127.0.0.1:63035/archive/v0.1.0-misunderstood/data/p5-mock-data.js"
+        },
+        {
+          "status": 404,
+          "url": "http://127.0.0.1:63035/archive/v0.1.0-misunderstood/assets/fonts/Inter-SemiBold.ttf"
+        },
+        {
+          "status": 404,
+          "url": "http://127.0.0.1:63035/archive/v0.1.0-misunderstood/assets/fonts/Sarabun-Bold.ttf"
+        },
+        {
+          "status": 404,
+          "url": "http://127.0.0.1:63035/archive/v0.1.0-misunderstood/assets/fonts/Sarabun-Regular.ttf"
+        },
+        {
+          "status": 404,
+          "url": "http://127.0.0.1:63035/archive/v0.1.0-misunderstood/assets/fonts/Sarabun-Medium.ttf"
+        },
+        {
+          "status": 404,
+          "url": "http://127.0.0.1:63035/archive/v0.1.0-misunderstood/assets/fonts/Sarabun-SemiBold.ttf"
+        }
+      ]
+    },
+    {
+      "file": "archive/v0.2.0-login/p5.html",
+      "url": "http://127.0.0.1:63035/archive/v0.2.0-login/p5.html",
+      "status": 200,
+      "title": "P5 — ระบบพัฒนาสมาชิก PKG",
+      "bodyTextLength": 194,
+      "screenshot": "audit-output/screenshots/archive_v0_2_0_login_p5_html.png",
+      "loadError": "",
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        },
+        {
+          "type": "error",
+          "text": "P5_DATA not loaded"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "http://127.0.0.1:63035/archive/v0.2.0-login/data/p5-data.js",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:63035/archive/v0.2.0-login/assets/fonts/Sarabun-Regular.ttf",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:63035/archive/v0.2.0-login/assets/fonts/Sarabun-Bold.ttf",
+          "failure": "net::ERR_ABORTED"
+        }
+      ],
+      "badResponses": [
+        {
+          "status": 404,
+          "url": "http://127.0.0.1:63035/archive/v0.2.0-login/data/p5-data.js"
+        },
+        {
+          "status": 404,
+          "url": "http://127.0.0.1:63035/archive/v0.2.0-login/assets/fonts/Sarabun-Regular.ttf"
+        },
+        {
+          "status": 404,
+          "url": "http://127.0.0.1:63035/archive/v0.2.0-login/assets/fonts/Sarabun-Bold.ttf"
+        }
+      ]
+    },
+    {
+      "file": "archive/v1.0-original/p5.html",
+      "url": "http://127.0.0.1:63035/archive/v1.0-original/p5.html",
+      "status": 200,
+      "title": "P5 — ระบบพัฒนาสมาชิก PKG (PAD-02)",
+      "bodyTextLength": 575,
+      "screenshot": "audit-output/screenshots/archive_v1_0_original_p5_html.png",
+      "loadError": "",
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+        }
+      ],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "http://127.0.0.1:63035/archive/v1.0-original/data/p5-data.js",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:63035/archive/v1.0-original/assets/fonts/Inter-SemiBold.ttf",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:63035/archive/v1.0-original/assets/fonts/Sarabun-Bold.ttf",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:63035/archive/v1.0-original/assets/fonts/Sarabun-Regular.ttf",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:63035/archive/v1.0-original/assets/fonts/Sarabun-Medium.ttf",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://127.0.0.1:63035/archive/v1.0-original/assets/fonts/Sarabun-SemiBold.ttf",
+          "failure": "net::ERR_ABORTED"
+        }
+      ],
+      "badResponses": [
+        {
+          "status": 404,
+          "url": "http://127.0.0.1:63035/archive/v1.0-original/data/p5-data.js"
+        },
+        {
+          "status": 404,
+          "url": "http://127.0.0.1:63035/archive/v1.0-original/assets/fonts/Inter-SemiBold.ttf"
+        },
+        {
+          "status": 404,
+          "url": "http://127.0.0.1:63035/archive/v1.0-original/assets/fonts/Sarabun-Bold.ttf"
+        },
+        {
+          "status": 404,
+          "url": "http://127.0.0.1:63035/archive/v1.0-original/assets/fonts/Sarabun-Regular.ttf"
+        },
+        {
+          "status": 404,
+          "url": "http://127.0.0.1:63035/archive/v1.0-original/assets/fonts/Sarabun-Medium.ttf"
+        },
+        {
+          "status": 404,
+          "url": "http://127.0.0.1:63035/archive/v1.0-original/assets/fonts/Sarabun-SemiBold.ttf"
+        }
+      ]
+    },
+    {
+      "file": "dashboard/index-standalone.html",
+      "url": "http://127.0.0.1:63035/dashboard/index-standalone.html",
+      "status": 200,
+      "title": "P5 Dashboard · Self-contained (v0.7)",
+      "bodyTextLength": 2994,
+      "screenshot": "audit-output/screenshots/dashboard_index_standalone_html.png",
+      "loadError": "",
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        }
+      ],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        }
+      ],
+      "badResponses": []
+    },
+    {
+      "file": "dashboard/index.html",
+      "url": "http://127.0.0.1:63035/dashboard/index.html",
+      "status": 200,
+      "title": "P5 · Dashboard (Share Version)",
+      "bodyTextLength": 2994,
+      "screenshot": "audit-output/screenshots/dashboard_index_html.png",
+      "loadError": "",
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        }
+      ],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        }
+      ],
+      "badResponses": []
+    },
+    {
+      "file": "dashboard/P5-Dashboard-v7.3-RealAutoFill.html",
+      "url": "http://127.0.0.1:63035/dashboard/P5-Dashboard-v7.3-RealAutoFill.html",
+      "status": 200,
+      "title": "P5 Dashboard · Self-contained (v7 — Open Directly)",
+      "bodyTextLength": 2945,
+      "screenshot": "audit-output/screenshots/dashboard_P5_Dashboard_v7_3_RealAutoFill_html.png",
+      "loadError": "",
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "warning",
+          "text": "⚠️ Primary URL failed, trying fallback (allorigins.win): Failed to fetch"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "❌ โหลดข้อมูลสมาชิกล้มเหลวทั้ง 2 วิธี: Failed to fetch / Failed to fetch"
+        }
+      ],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=572791880&tq=select%20A%2CC%2CD",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://api.allorigins.win/raw?url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM%2Fgviz%2Ftq%3Ftqx%3Dout%3Acsv%26gid%3D572791880%26tq%3Dselect%2520A%252CC%252CD",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        }
+      ],
+      "badResponses": []
+    },
+    {
+      "file": "dashboard/P5-Dashboard-v7.4-SuperRobust.html",
+      "url": "http://127.0.0.1:63035/dashboard/P5-Dashboard-v7.4-SuperRobust.html",
+      "status": 200,
+      "title": "P5 Dashboard · Self-contained (v7 — Open Directly)",
+      "bodyTextLength": 2945,
+      "screenshot": "audit-output/screenshots/dashboard_P5_Dashboard_v7_4_SuperRobust_html.png",
+      "loadError": "",
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "warning",
+          "text": "⚠️ Primary failed: Failed to fetch"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "warning",
+          "text": "⚠️ Fallback failed: Failed to fetch"
+        }
+      ],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=572791880&tq=select%20A%2CC%2CD",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://api.allorigins.win/raw?url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM%2Fgviz%2Ftq%3Ftqx%3Dout%3Acsv%26gid%3D572791880%26tq%3Dselect%2520A%252CC%252CD",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        }
+      ],
+      "badResponses": []
+    },
+    {
+      "file": "dashboard/P5-Dashboard-v7.5-ReOrderResultKPI.html",
+      "url": "http://127.0.0.1:63035/dashboard/P5-Dashboard-v7.5-ReOrderResultKPI.html",
+      "status": 200,
+      "title": "P5 Dashboard · v7.5 Super Robust (Result+KPI Fixed Order)",
+      "bodyTextLength": 2945,
+      "screenshot": "audit-output/screenshots/dashboard_P5_Dashboard_v7_5_ReOrderResultKPI_html.png",
+      "loadError": "",
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "warning",
+          "text": "⚠️ Primary failed: Failed to fetch"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "warning",
+          "text": "⚠️ Fallback failed: Failed to fetch"
+        }
+      ],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=572791880&tq=select%20A%2CC%2CD",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://api.allorigins.win/raw?url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM%2Fgviz%2Ftq%3Ftqx%3Dout%3Acsv%26gid%3D572791880%26tq%3Dselect%2520A%252CC%252CD",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        }
+      ],
+      "badResponses": []
+    },
+    {
+      "file": "dashboard/P5-Dashboard-v7.6-RealSheet.html",
+      "url": "http://127.0.0.1:63035/dashboard/P5-Dashboard-v7.6-RealSheet.html",
+      "status": 200,
+      "title": "P5 Dashboard · v7.5 Super Robust (Result+KPI Fixed Order)",
+      "bodyTextLength": 2945,
+      "screenshot": "audit-output/screenshots/dashboard_P5_Dashboard_v7_6_RealSheet_html.png",
+      "loadError": "",
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "warning",
+          "text": "⚠️ Primary failed: Failed to fetch"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "warning",
+          "text": "⚠️ Fallback failed: Failed to fetch"
+        }
+      ],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=572791880&tq=select%20A%2CC%2CD",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://api.allorigins.win/raw?url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM%2Fgviz%2Ftq%3Ftqx%3Dout%3Acsv%26gid%3D572791880%26tq%3Dselect%2520A%252CC%252CD",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        }
+      ],
+      "badResponses": []
+    },
+    {
+      "file": "dashboard/P5-Dashboard-v7.7-Donut-C.html",
+      "url": "http://127.0.0.1:63035/dashboard/P5-Dashboard-v7.7-Donut-C.html",
+      "status": 200,
+      "title": "P5 Dashboard · v7.7 (Donut Style C)",
+      "bodyTextLength": 3219,
+      "screenshot": "audit-output/screenshots/dashboard_P5_Dashboard_v7_7_Donut_C_html.png",
+      "loadError": "",
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "warning",
+          "text": "⚠️ Primary failed: Failed to fetch"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "warning",
+          "text": "⚠️ Fallback failed: Failed to fetch"
+        }
+      ],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=473614158",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=572791880&tq=select%20A%2CC%2CD",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://api.allorigins.win/raw?url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM%2Fgviz%2Ftq%3Ftqx%3Dout%3Acsv%26gid%3D572791880%26tq%3Dselect%2520A%252CC%252CD",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        }
+      ],
+      "badResponses": []
+    },
+    {
+      "file": "dashboard/P5-Dashboard-v7.7-LayoutFont.html",
+      "url": "http://127.0.0.1:63035/dashboard/P5-Dashboard-v7.7-LayoutFont.html",
+      "status": 200,
+      "title": "P5 Dashboard · v7.7 (Layout+Font v2) — Production",
+      "bodyTextLength": 2884,
+      "screenshot": "audit-output/screenshots/dashboard_P5_Dashboard_v7_7_LayoutFont_html.png",
+      "loadError": "",
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Training fetch failed: TypeError: Failed to fetch\n    at fetchTrainingData (http://127.0.0.1:63035/dashboard/P5-Dashboard-v7.7-LayoutFont.html:1668:23)\n    at loadData (http://127.0.0.1:63035/dashboard/P5-Dashboard-v7.7-LayoutFont.html:1979:5)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Roleplay fetch failed: TypeError: Failed to fetch\n    at fetchRoleplayData (http://127.0.0.1:63035/dashboard/P5-Dashboard-v7.7-LayoutFont.html:1688:23)\n    at loadData (http://127.0.0.1:63035/dashboard/P5-Dashboard-v7.7-LayoutFont.html:1980:5)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Mentor fetch failed: TypeError: Failed to fetch\n    at fetchMentorData (http://127.0.0.1:63035/dashboard/P5-Dashboard-v7.7-LayoutFont.html:1708:23)\n    at loadData (http://127.0.0.1:63035/dashboard/P5-Dashboard-v7.7-LayoutFont.html:1981:5)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Coach fetch failed: TypeError: Failed to fetch\n    at fetchCoachData (http://127.0.0.1:63035/dashboard/P5-Dashboard-v7.7-LayoutFont.html:1728:23)\n    at loadData (http://127.0.0.1:63035/dashboard/P5-Dashboard-v7.7-LayoutFont.html:1982:5)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "LG fetch failed: TypeError: Failed to fetch\n    at fetchLgData (http://127.0.0.1:63035/dashboard/P5-Dashboard-v7.7-LayoutFont.html:1748:23)\n    at loadData (http://127.0.0.1:63035/dashboard/P5-Dashboard-v7.7-LayoutFont.html:1983:5)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "warning",
+          "text": "⚠️ Primary failed: Failed to fetch"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "warning",
+          "text": "⚠️ Fallback failed: Failed to fetch"
+        }
+      ],
+      "pageErrors": [
+        "TypeError: Cannot set properties of null (setting 'innerHTML')\n    at renderLgTable (http://127.0.0.1:63035/dashboard/P5-Dashboard-v7.7-LayoutFont.html:1492:21)\n    at loadData (http://127.0.0.1:63035/dashboard/P5-Dashboard-v7.7-LayoutFont.html:1990:34)"
+      ],
+      "failedRequests": [
+        {
+          "url": "https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=473614158",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=1727556684",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=698361957",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=283294680",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=609300653",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=1597413003",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=572791880&tq=select%20A%2CC%2CD",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://api.allorigins.win/raw?url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM%2Fgviz%2Ftq%3Ftqx%3Dout%3Acsv%26gid%3D572791880%26tq%3Dselect%2520A%252CC%252CD",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        }
+      ],
+      "badResponses": []
+    },
+    {
+      "file": "dashboard/P5-Dashboard-v8-MOCKUP-DarkGlow.html",
+      "url": "http://127.0.0.1:63035/dashboard/P5-Dashboard-v8-MOCKUP-DarkGlow.html",
+      "status": 200,
+      "title": "P5 Dashboard · v8 MOCKUP (Dark · Glass · Glow)",
+      "bodyTextLength": 2871,
+      "screenshot": "audit-output/screenshots/dashboard_P5_Dashboard_v8_MOCKUP_DarkGlow_html.png",
+      "loadError": "",
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        }
+      ],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        }
+      ],
+      "badResponses": []
+    },
+    {
+      "file": "dashboard/share.html",
+      "url": "http://127.0.0.1:63035/dashboard/share.html",
+      "status": 200,
+      "title": "P5 · Dashboard (Share Version)",
+      "bodyTextLength": 2994,
+      "screenshot": "audit-output/screenshots/dashboard_share_html.png",
+      "loadError": "",
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        }
+      ],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        }
+      ],
+      "badResponses": []
+    },
+    {
+      "file": "deploy-package/P5-Dashboard-v7.6-RealSheet.html",
+      "url": "http://127.0.0.1:63035/deploy-package/P5-Dashboard-v7.6-RealSheet.html",
+      "status": 200,
+      "title": "P5 Dashboard · v7.5 Super Robust (Result+KPI Fixed Order)",
+      "bodyTextLength": 2945,
+      "screenshot": "audit-output/screenshots/deploy_package_P5_Dashboard_v7_6_RealSheet_html.png",
+      "loadError": "",
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "warning",
+          "text": "⚠️ Primary failed: Failed to fetch"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "warning",
+          "text": "⚠️ Fallback failed: Failed to fetch"
+        }
+      ],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM/gviz/tq?tqx=out:csv&gid=572791880&tq=select%20A%2CC%2CD",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://api.allorigins.win/raw?url=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1CkBSi_votE01b0fxFFwU1EQb_7mzEJgGvWGaegocbeM%2Fgviz%2Ftq%3Ftqx%3Dout%3Acsv%26gid%3D572791880%26tq%3Dselect%2520A%252CC%252CD",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        }
+      ],
+      "badResponses": []
+    },
+    {
+      "file": "index.html",
+      "url": "http://127.0.0.1:63035/index.html",
+      "status": 200,
+      "title": "P5 · Dashboard (Share Version)",
+      "bodyTextLength": 2994,
+      "screenshot": "audit-output/screenshots/index_html.png",
+      "loadError": "",
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        }
+      ],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        }
+      ],
+      "badResponses": []
+    },
+    {
+      "file": "mockup-dashboard.html",
+      "url": "http://127.0.0.1:63035/mockup-dashboard.html",
+      "status": 200,
+      "title": "P5 · Dashboard (MOCKUP)",
+      "bodyTextLength": 1084,
+      "screenshot": "audit-output/screenshots/mockup_dashboard_html.png",
+      "loadError": "",
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        }
+      ],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        }
+      ],
+      "badResponses": []
+    },
+    {
+      "file": "okr-stock-demo/CEO_Contract_Form.html",
+      "url": "http://127.0.0.1:63035/okr-stock-demo/CEO_Contract_Form.html",
+      "status": 200,
+      "title": "CEO Contract of Extreme Ownership",
+      "bodyTextLength": 84,
+      "screenshot": "audit-output/screenshots/okr_stock_demo_CEO_Contract_Form_html.png",
+      "loadError": "",
+      "consoleMessages": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "badResponses": []
+    },
+    {
+      "file": "okr-stock-demo/test-integration.html",
+      "url": "http://127.0.0.1:63035/okr-stock-demo/test-integration.html",
+      "status": 200,
+      "title": "Test: CEO Form ↔ OKR Stock Integration",
+      "bodyTextLength": 785,
+      "screenshot": "audit-output/screenshots/okr_stock_demo_test_integration_html.png",
+      "loadError": "",
+      "consoleMessages": [],
+      "pageErrors": [],
+      "failedRequests": [],
+      "badResponses": []
+    },
+    {
+      "file": "p5.html",
+      "url": "http://127.0.0.1:63035/p5.html",
+      "status": 200,
+      "title": "P5 · ระบบพัฒนาบุคลากร PKG",
+      "bodyTextLength": 2108,
+      "screenshot": "audit-output/screenshots/p5_html.png",
+      "loadError": "",
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "warning",
+          "text": "⚠️ Sheet sync failed: Failed to fetch"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "warning",
+          "text": "⚠️ loadReport (Google Sheet) failed, using mock: Failed to fetch"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "type": "warning",
+          "text": "⚠️ loadReport (Google Sheet) failed, using mock: Failed to fetch"
+        }
+      ],
+      "pageErrors": [
+        "TypeError: Failed to fetch\n    at http://127.0.0.1:63035/p5-sheet-sync.js:40:9\n    at new Promise (<anonymous>)\n    at makeRequest (http://127.0.0.1:63035/p5-sheet-sync.js:36:12)\n    at call (http://127.0.0.1:63035/p5-sheet-sync.js:59:23)\n    at sync (http://127.0.0.1:63035/p5-sheet-sync.js:183:26)\n    at Object.startAutoSync (http://127.0.0.1:63035/p5-sheet-sync.js:213:5)\n    at HTMLDocument.init (http://127.0.0.1:63035/p5-app.js:221:23)"
+      ],
+      "failedRequests": [
+        {
+          "url": "https://script.google.com/macros/s/AKfycbwumlA99bfJOQgbuw5CrwfOLZRu3kuTtzIWJasEZe037BMHFhYSUuUWXKu69gyVca1UDg/exec?action=read",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/15a8s_tLpuwBdIqJqwEv0be8Sy8162gnYti6kTggngh0/gviz/tq?tqx=out:csv&gid=1104115053&t=1789715029843",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        },
+        {
+          "url": "https://docs.google.com/spreadsheets/d/15a8s_tLpuwBdIqJqwEv0be8Sy8162gnYti6kTggngh0/gviz/tq?tqx=out:csv&gid=1104115053&t=1789715031749",
+          "failure": "net::ERR_NETWORK_ACCESS_DENIED"
+        }
+      ],
+      "badResponses": []
+    }
+  ]
+}
